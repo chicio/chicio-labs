@@ -1,3 +1,4 @@
+import { labs } from "../../types/configuration/labs";
 import { tracking } from "../../types/configuration/tracking";
 
 interface ProjectCallToAction {
@@ -71,7 +72,7 @@ export const projects: Record<string, Project> = {
         trackingCategory: tracking.category.home,
         trackingAction: tracking.action.open_matrix_rain_webgpu_demo,
         trackingLabel: tracking.label.body,
-        link: "https://labs.fabrizioduroni.it/matrix-rain/",
+        link: labs.matrixRainUrl,
       },
       {
         label: "Github",

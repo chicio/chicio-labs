@@ -1,13 +1,11 @@
 import { slugs } from "@/types/configuration/slug";
+import { labs } from "@/types/configuration/labs";
 import { siteMetadata } from "@/types/configuration/site-metadata";
 import { tracking } from "@/types/configuration/tracking";
 import type { MenuEntry } from "@/components/features/design-system-next/menu";
 import type { FooterLink, SocialContactLinks } from "@/components/features/design-system-next/footer";
 
 export type NavigationTracker = (action: string) => void;
-
-const chicioLabsHref = "https://labs.fabrizioduroni.it/";
-const matrixRainHref = "https://labs.fabrizioduroni.it/matrix-rain/";
 
 const authorPagesPrefix = `${slugs.blog.author.replace("/[authorId]", "")}/`;
 
@@ -92,7 +90,7 @@ export const buildMenuEntries = (onTrack?: NavigationTracker): MenuEntry[] => [
                 items: [
                     {
                         label: "Matrix Rain",
-                        to: matrixRainHref,
+                        to: labs.matrixRainUrl,
                         external: true,
                         onClick: clickTracker(onTrack, tracking.action.open_matrix_rain_webgpu),
                     },
@@ -133,7 +131,7 @@ export const buildMenuEntries = (onTrack?: NavigationTracker): MenuEntry[] => [
                 items: [
                     {
                         label: "Chicio Labs",
-                        to: chicioLabsHref,
+                        to: labs.url,
                         external: true,
                         onClick: clickTracker(onTrack, tracking.action.open_chicio_labs),
                     },
