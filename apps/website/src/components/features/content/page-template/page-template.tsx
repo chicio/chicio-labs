@@ -39,7 +39,7 @@ export const PageTemplate: FC<BlogPageProps> = ({
             <div className="mt-4">{children}</div>
         </ContentContainer>
         <Footer
-            author={author}
+            signature={`> Made with 💝 by ${author} 'Chicio'`}
             links={footerLinks}
             contactHref={contactHref}
             socialLinks={socialLinks}

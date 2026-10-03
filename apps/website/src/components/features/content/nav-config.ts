@@ -6,6 +6,7 @@ import type { FooterLink, SocialContactLinks } from "@/components/features/desig
 
 export type NavigationTracker = (action: string) => void;
 
+const chicioLabsHref = "https://labs.fabrizioduroni.it/";
 const matrixRainHref = "https://labs.fabrizioduroni.it/matrix-rain/";
 
 const authorPagesPrefix = `${slugs.blog.author.replace("/[authorId]", "")}/`;
@@ -124,6 +125,17 @@ export const buildMenuEntries = (onTrack?: NavigationTracker): MenuEntry[] => [
                         label: "Contact me",
                         to: slugs.contact,
                         onClick: clickTracker(onTrack, tracking.action.open_contact),
+                    },
+                ],
+            },
+            {
+                label: "Lab",
+                items: [
+                    {
+                        label: "Chicio Labs",
+                        to: chicioLabsHref,
+                        external: true,
+                        onClick: clickTracker(onTrack, tracking.action.open_chicio_labs),
                     },
                 ],
             },

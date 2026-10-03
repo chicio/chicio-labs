@@ -25,7 +25,7 @@ describe("Footer binding", () => {
     it("renders the navigation links through next/link", () => {
         render(
             <Footer
-                author="Fabrizio"
+                signature="> Made with"
                 links={[{ label: "Blog", to: "/blog" }]}
                 contactHref="/contact"
                 socialLinks={socialLinks}
@@ -35,7 +35,7 @@ describe("Footer binding", () => {
     });
 
     it("leads the contact call to action to the given page", () => {
-        render(<Footer author="Fabrizio" links={[]} contactHref="/contact" socialLinks={socialLinks} />);
+        render(<Footer signature="> Made with" links={[]} contactHref="/contact" socialLinks={socialLinks} />);
         expect(screen.getAllByRole("link").some((link) => link.getAttribute("href") === "/contact")).toBe(true);
     });
 });

@@ -35,6 +35,17 @@ test.describe("Homepage and primary navigation", () => {
         await expect(hobbies.nth(1)).toHaveAttribute("href", "/manga");
     });
 
+    test("the Author nav dropdown lists the Lab group with a Chicio Labs link opening the Labs Hub in a new tab", async ({
+        page,
+    }) => {
+        await page.goto("/");
+        await page.getByRole("button", { name: "The Author" }).first().click();
+        const lab = page.getByRole("list", { name: "The Author" }).first().getByRole("list", { name: "Lab" });
+        const link = lab.getByRole("link", { name: "Chicio Labs" });
+        await expect(link).toHaveAttribute("href", "https://labs.fabrizioduroni.it/");
+        await expect(link).toHaveAttribute("target", "_blank");
+    });
+
     test("the chat page keeps the menu with the Manga hobby entry", async ({ page }) => {
         await page.goto("/chat");
         await page.getByRole("button", { name: "The Author" }).first().click();
