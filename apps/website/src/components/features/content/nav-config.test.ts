@@ -42,6 +42,21 @@ describe("nav-config", () => {
             ]);
         });
 
+        it("places the Lab group between Profile and Hobbies in The Author", () => {
+            expect(findDropdown(buildMenuEntries(), "The Author").groups.map((group) => group.label)).toEqual([
+                "Profile",
+                "Lab",
+                "Hobbies",
+            ]);
+        });
+
+        it("links Chicio Labs to the Labs Hub", () => {
+            expect(findLink(buildMenuEntries(), "Chicio Labs")).toMatchObject({
+                to: "https://labs.fabrizioduroni.it/",
+                external: true,
+            });
+        });
+
         it("keeps the Authors link selected on the author pages", () => {
             expect(findLink(buildMenuEntries(), "Authors")).toMatchObject({
                 to: slugs.blog.authors,
@@ -76,6 +91,7 @@ describe("nav-config", () => {
                 tracking.action.open_easter_egg_hunt,
                 tracking.action.open_about_me,
                 tracking.action.open_contact,
+                tracking.action.open_chicio_labs,
                 tracking.action.open_art,
                 tracking.action.open_manga_collection,
                 tracking.action.open_videogame_collection,
