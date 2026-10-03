@@ -48,3 +48,6 @@ No per-PR facts — those go stale.
 - [component-moved-into-ds-css-ownership.md](component-moved-into-ds-css-ownership.md) — Website→DS component move: utilities come via the DS dist @source, but custom classes must live in DS styles or other hosts lose them
 - [review-static-site-from-its-dist.md](review-static-site-from-its-dist.md) — scan an Astro workspace's existing dist/ (hrefs, dup ids, empty `<p></p>`); manifest fields can be present-but-empty
 - [gate-typecheck-red-quoting-absent-type.md](gate-typecheck-red-quoting-absent-type.md) — gate typecheck red quoting a type absent at HEAD = stale incremental state; prove with `tsc --noEmit --incremental false`
+- [slot-wrapper-layout-ab-probe.md](slot-wrapper-layout-ab-probe.md) — flex child moved into a slot wrapper: unwrap the DOM back in a port-free probe, compare rects across breakpoints
+- [optional-peer-entry-from-always-mounted-ui.md](optional-peer-entry-from-always-mounted-ui.md) — always-mounted UI importing /command-palette, /chart, /markdown: grep initial chunks for the peer
+- [migration-notes-vs-last-released-api.md](migration-notes-vs-last-released-api.md) — "Migrating from N.x" on a branch lists phantom unreleased props, misses sibling units' breaks; diff vs origin/main
