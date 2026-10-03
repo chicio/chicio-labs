@@ -3,12 +3,26 @@ name: Deploy Pages
 on:
   push:
     branches: [main]
+    # The hub renders documents from all over the repository, so a change to any of them must redeploy it. The
+    # release workflows dispatch this workflow by hand, because the pushes they make with GITHUB_TOKEN do not
+    # trigger it.
     paths:
-      - "packages/matrix-design-system/**"
+      - "apps/labs-hub/**"
       - "apps/matrix-design-system-showcase/**"
-      - "packages/matrix-rain-webgpu/**"
       - "apps/matrix-rain-showcase/**"
-      - ".github/pages/**"
+      - "packages/matrix-design-system/**"
+      - "packages/matrix-component-store/**"
+      - "packages/matrix-rain-webgpu/**"
+      - "claude-plugins/**"
+      - ".claude-plugin/marketplace.json"
+      - "**/README.md"
+      - "**/CHANGELOG.md"
+      - "**/GLOSSARY*.md"
+      - "**/docs/adr/**"
+      - "brand/readme-hero.jpg"
+      - "package.json"
+      - "apps/*/package.json"
+      - "packages/*/package.json"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -33,12 +47,24 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm ci
-      - name: Build the showcase
-        run: npx turbo run build --filter=matrix-design-system-showcase --filter=matrix-rain-showcase
+      - name: Build the Labs Hub and the Showcases
+        run: >-
+          npx turbo run build
+          --filter=labs-hub
+          --filter=matrix-design-system-showcase
+          --filter=matrix-rain-showcase
+      # The hub owns the root of the site; each Showcase owns a folder. Copying the hub first and refusing to
+      # go on if it emitted either folder keeps a Showcase from being overwritten, or overwriting the hub.
       - name: Assemble the site
         run: |
+          for reserved in design-system matrix-rain; do
+            if [ -e "apps/labs-hub/dist/$reserved" ]; then
+              echo "::error::The Labs Hub emitted /$reserved/, which belongs to a Showcase."
+              exit 1
+            fi
+          done
           mkdir -p _site
-          cp .github/pages/index.html .github/pages/logo.png _site/
+          cp -r apps/labs-hub/dist/. _site/
           cp -r apps/matrix-design-system-showcase/dist _site/design-system
           cp -r apps/matrix-rain-showcase/dist _site/matrix-rain
           echo "assembled:" && find _site -maxdepth 2 -name index.html
