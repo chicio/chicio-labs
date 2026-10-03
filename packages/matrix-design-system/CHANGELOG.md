@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0](https://github.com/chicio/chicio-labs/compare/glossary-browser--v0.2.0...matrix-design-system%402.0.1) (2026-10-03)
+
+### ⚠ BREAKING CHANGES
+
+* **capabilities:** BrandHeader takes required title, tagline and logoAlt; the hard-coded Chicio Coding identity is gone (ADR-0003).
+* **capabilities:** Footer takes a required signature instead of author; socialLinks and contactHref are optional; FooterLink gains external.
+* **capabilities:** Menu takes a required showPaletteTrigger. When false, no search button and no shortcut hint.
+
+### Features
+
+* **capabilities:** :sparkles: the Labs Hub, and matrix-design-system 3.0.0 with required Host Identity ([#746](https://github.com/chicio/chicio-labs/issues/746)) ([df02a4e](https://github.com/chicio/chicio-labs/commit/df02a4ed3c1b6c1427974434b4ba2ad733d9a83c))
+* **capabilities:** :truck: rename the repository to Chicio Labs ([#744](https://github.com/chicio/chicio-labs/issues/744)) ([76bbab2](https://github.com/chicio/chicio-labs/commit/76bbab2faaa1681bc9c9a2f7cacfa4ef77001e0e))
+
+### Bug Fixes
+
+* **ux:** :bug: serve the labs hub from labs.fabrizioduroni.it ([#743](https://github.com/chicio/chicio-labs/issues/743)) ([fb8b0d7](https://github.com/chicio/chicio-labs/commit/fb8b0d77cc1719c57b792f952764001944218890))
+* **ux:** :lipstick: rework the Labs Hub after the first look ([#747](https://github.com/chicio/chicio-labs/issues/747)) ([f9ff572](https://github.com/chicio/chicio-labs/commit/f9ff5723cef2f4ef6e320bafe0742dafeef06a52))
+
 ## [2.0.1](https://github.com/chicio/chicio-labs/compare/matrix-design-system%402.0.0...matrix-design-system%402.0.1) (2026-10-03)
 
 ### Features
