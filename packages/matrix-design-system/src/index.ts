@@ -70,6 +70,7 @@ export * from "./molecules/menu/dropdown-menu";
 export * from "./molecules/menu/hamburger-menu";
 export * from "./molecules/menu/menu-item";
 export * from "./molecules/previous-next-navigation";
+export * from "./molecules/project-card/project-card";
 export * from "./molecules/stat-card";
 export * from "./molecules/terminal-list-item";
 export * from "./molecules/terminal-progress-bar";
