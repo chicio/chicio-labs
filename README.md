@@ -28,15 +28,16 @@ every Lab Project is published. Each one is presented on the **[Labs Hub](https:
 
 npm workspaces, orchestrated by [Turborepo](https://turborepo.com).
 
-| Workspace                                                                  | What it is                                                                                                      |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| [`apps/website`](apps/website)                                             | The site: Next.js 16 App Router, MDX content, an AI chat, an in-page terminal and a few easter eggs             |
-| [`packages/matrix-design-system`](packages/matrix-design-system)           | The design system, published to npm. Framework-agnostic React components plus their stylesheet                  |
-| [`packages/matrix-component-store`](packages/matrix-component-store)       | The `ComponentStore` / `StateStore` / `EffectsStore` contract every component's store hook returns              |
-| [`packages/eslint-plugin-chicio`](packages/eslint-plugin-chicio)           | The lint rules enforcing that contract, shared across the workspaces                                            |
-| [`packages/matrix-rain-webgpu`](packages/matrix-rain-webgpu)               | The WebGPU/TypeGPU digital-rain effect, published to npm. Keeps its own toolchain (oxlint, Vite)                |
-| [`apps/matrix-design-system-showcase`](apps/matrix-design-system-showcase) | Storybook over the design system's stories → [`/design-system/`](https://labs.fabrizioduroni.it/design-system/) |
-| [`apps/matrix-rain-showcase`](apps/matrix-rain-showcase)                   | Astro docs and playground for the rain effect → [`/matrix-rain/`](https://labs.fabrizioduroni.it/matrix-rain/)  |
+| Workspace                                                                  | What it is                                                                                                                                        |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`apps/website`](apps/website)                                             | The site: Next.js 16 App Router, MDX content, an AI chat, an in-page terminal and a few easter eggs                                               |
+| [`packages/matrix-design-system`](packages/matrix-design-system)           | The design system, published to npm. Framework-agnostic React components plus their stylesheet                                                    |
+| [`packages/matrix-component-store`](packages/matrix-component-store)       | The `ComponentStore` / `StateStore` / `EffectsStore` contract every component's store hook returns                                                |
+| [`packages/eslint-plugin-chicio`](packages/eslint-plugin-chicio)           | The lint rules enforcing that contract, shared across the workspaces                                                                              |
+| [`packages/matrix-rain-webgpu`](packages/matrix-rain-webgpu)               | The WebGPU/TypeGPU digital-rain effect, published to npm. Keeps its own toolchain (oxlint, Vite)                                                  |
+| [`apps/matrix-design-system-showcase`](apps/matrix-design-system-showcase) | Storybook over the design system's stories → [`/design-system/`](https://labs.fabrizioduroni.it/design-system/)                                   |
+| [`apps/matrix-rain-showcase`](apps/matrix-rain-showcase)                   | Astro docs and playground for the rain effect → [`/matrix-rain/`](https://labs.fabrizioduroni.it/matrix-rain/)                                    |
+| [`apps/labs-hub`](apps/labs-hub)                                           | The Labs Hub: an Astro site presenting every Lab Project, with their docs generated from this repository → [`/`](https://labs.fabrizioduroni.it/) |
 
 The website depends on the packages by version, and npm resolves that to the workspace copy — so the
 site always builds against local source, while the packages stay publishable for anyone else.

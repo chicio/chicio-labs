@@ -1,0 +1,49 @@
+---
+import { ProjectCard, SectionHeading, TerminalButton } from "matrix-design-system";
+import Layout from "../layouts/Layout.astro";
+import { cardCallToActions, cardFeatures, splitCatalog } from "../lib/catalog";
+import { loadHubContent } from "../lib/content";
+import { hubIdentity } from "../lib/navigation";
+
+const { projects } = await loadHubContent();
+const { published, workbench } = splitCatalog(projects);
+---
+
+<Layout title="Chicio Labs" big>
+    <SectionHeading
+        title="Lab Projects"
+        description="Everything Chicio Labs publishes, each with its docs generated from the repository."
+    />
+    {
+        published.map((project) => (
+            <div class="mb-6 flex flex-col items-start">
+                <ProjectCard
+                    name={project.name}
+                    description={project.description}
+                    features={cardFeatures(project)}
+                    callToActions={cardCallToActions(project)}
+                    image={hubIdentity.logo}
+                />
+                <TerminalButton label={`Read the ${project.name} docs`} to={project.url} />
+            </div>
+        ))
+    }
+
+    <section id="workbench" class="scroll-target mt-12">
+        <SectionHeading
+            title="Workbench"
+            description="The Lab Projects that only work inside Chicio Labs: the tools the published ones are built with."
+        />
+        <div class="grid gap-4 md:grid-cols-2">
+            {
+                workbench.map((project) => (
+                    <div class="glow-container flex flex-col items-start gap-3 p-4 md:p-6">
+                        <h3 class="m-0">{project.name}</h3>
+                        <p class="m-0">{project.description}</p>
+                        <TerminalButton label="Docs" to={project.url} />
+                    </div>
+                ))
+            }
+        </div>
+    </section>
+</Layout>

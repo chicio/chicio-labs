@@ -11,7 +11,7 @@ recover them before reviewing:
 
 - Journal: `~/.claude/projects/<project-dir>/<session-id>/subagents/workflows/wf_*/journal.jsonl`. The project dir for a
   pipeline worktree is the worktree path with `/` and `.` turned into `-` (for example
-  `-Users-fduroni-Code-Fabrizio-chicio-blog--claude-worktrees-<name>`). The session id is the scratchpad's parent dir.
+  `-Users-fduroni-Code-Fabrizio-chicio-labs--claude-worktrees-<name>`). The session id is the scratchpad's parent dir.
 - Each agent has an `agent-<id>.meta.json` whose `description` is the step label (`WU3:review-r1`, `WU3:fix-r1`).
 - Journal lines `{"type":"result","agentId":…,"result":{…}}` carry the reviewer's `blocking` / `nonBlocking` and the
   implementer's `resolutions` (per id: outcome + note). Read them with a short `python3 -c` over the JSONL.
