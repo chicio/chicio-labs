@@ -34,7 +34,7 @@ export const menuEntries = (contexts: readonly Pick<GlossaryContext, "name" | "u
             {
                 label: "Sites",
                 items: [
-                    { label: "Website", to: WEBSITE_URL, external: true },
+                    { label: "fabrizioduroni.it", to: WEBSITE_URL, external: true },
                     { label: designSystemShowcase.label, to: designSystemShowcase.url, external: true },
                     { label: matrixRainShowcase.label, to: matrixRainShowcase.url, external: true },
                 ],
