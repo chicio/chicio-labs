@@ -45,25 +45,25 @@ describe("SocialContacts", () => {
         it("never renders a link without an href when devto is omitted", () => {
             const { devto, ...withoutDevto } = links;
             expect(devto).toBeDefined();
-            render(<SocialContacts links={withoutDevto} contactHref="/contact" />);
+            const { container } = render(<SocialContacts links={withoutDevto} contactHref="/contact" />);
             expect(screen.queryByTitle("Devto")).not.toBeInTheDocument();
-            screen.getAllByRole("link").forEach((link) => {
-                expect(link).toHaveAttribute("href");
+            container.querySelectorAll("a").forEach((anchor) => {
+                expect(anchor).toHaveAttribute("href");
             });
+            expect(container.querySelectorAll("a")).toHaveLength(7);
         });
 
         it("renders the contact envelope only when contactHref is provided", () => {
-            const { rerender } = render(<SocialContacts links={links} />);
-            expect(document.querySelector('a[href="/contact"]')).toBeNull();
-            expect(screen.getAllByRole("link")).toHaveLength(7);
+            const { container, rerender } = render(<SocialContacts links={links} />);
+            expect(container.querySelectorAll("a")).toHaveLength(7);
             rerender(<SocialContacts links={links} contactHref="/contact" />);
-            expect(document.querySelector('a[href="/contact"]')).not.toBeNull();
-            expect(screen.getAllByRole("link")).toHaveLength(8);
+            expect(container.querySelectorAll("a")).toHaveLength(8);
+            expect(container.querySelector('a[href="/contact"]')).not.toBeNull();
         });
 
         it("renders nothing interactive when no platform and no contact are provided", () => {
-            render(<SocialContacts links={{}} />);
-            expect(screen.queryAllByRole("link")).toHaveLength(0);
+            const { container } = render(<SocialContacts links={{}} />);
+            expect(container.querySelectorAll("a")).toHaveLength(0);
         });
     });
 
