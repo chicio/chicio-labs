@@ -1,0 +1,32 @@
+---
+import { SectionHeading, TerminalListItem } from "matrix-design-system";
+
+interface Props {
+    heading: string;
+    id?: string;
+    entries: { title: string; description: string; href?: string }[];
+}
+
+const { heading, id, entries } = Astro.props;
+---
+
+{
+    entries.length > 0 && (
+        <section id={id} class="scroll-target mt-10">
+            <SectionHeading title={heading} />
+            <ul class="m-0 flex list-none flex-col gap-3 p-0">
+                {entries.map((entry) => (
+                    <li class="before:content-none pl-0">
+                        {entry.href ? (
+                            <a href={entry.href} class="no-underline">
+                                <TerminalListItem title={entry.title} description={entry.description} />
+                            </a>
+                        ) : (
+                            <TerminalListItem title={entry.title} description={entry.description} />
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </section>
+    )
+}

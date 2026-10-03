@@ -1,0 +1,62 @@
+---
+import { Font } from "astro:assets";
+import { BrandHeader, ContentContainer, Footer, Menu } from "matrix-design-system";
+import "../styles/global.css";
+import { loadHubContent } from "../lib/content";
+import { footerContactHref, footerLinks, footerSocialLinks, hubIdentity, menuEntries } from "../lib/navigation";
+
+interface Props {
+    title: string;
+    description?: string;
+    /** The tall header of the catalog, as on the Website's home. */
+    big?: boolean;
+}
+
+const siteName = "Chicio Labs";
+const defaultDescription =
+    "Fabrizio Duroni's lab: every Lab Project, published or not, with the docs generated from the repository.";
+const { title, description = defaultDescription, big = false } = Astro.props;
+const { contexts } = await loadHubContent();
+const pageTitle = title === siteName ? siteName : `${title} | ${siteName}`;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
+        <meta name="generator" content={Astro.generator} />
+        <link rel="icon" type="image/png" href={hubIdentity.logo} />
+        <title>{pageTitle}</title>
+        <Font cssVariable="--font-open-sans" preload />
+        <Font cssVariable="--font-courier-prime" preload />
+    </head>
+    <body>
+        <Menu
+            client:load
+            currentPath={Astro.url.pathname}
+            entries={menuEntries(contexts)}
+            showPaletteTrigger={false}
+        />
+        <ContentContainer>
+            <BrandHeader
+                client:load
+                big={big}
+                title={hubIdentity.title}
+                tagline={hubIdentity.tagline}
+                logoAlt={hubIdentity.logoAlt}
+                logo={hubIdentity.logo}
+            />
+            <div class="mt-4">
+                <slot />
+            </div>
+        </ContentContainer>
+        <Footer
+            signature={hubIdentity.signature}
+            links={footerLinks}
+            contactHref={footerContactHref}
+            socialLinks={footerSocialLinks}
+        />
+    </body>
+</html>

@@ -1,0 +1,38 @@
+---
+import DocumentBody from "../../../components/DocumentBody.astro";
+import EntryList from "../../../components/EntryList.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { loadHubContent, type GlossaryContext } from "../../../lib/content";
+
+export async function getStaticPaths() {
+    const { contexts } = await loadHubContent();
+
+    return contexts.map((context) => ({ params: { context: context.id }, props: { context } }));
+}
+
+interface Props {
+    context: GlossaryContext;
+}
+
+const { context } = Astro.props;
+---
+
+<Layout title={`${context.name} glossary`} description={`The ubiquitous language of ${context.name}.`}>
+    <DocumentBody html={context.glossary.html} />
+    <EntryList
+        heading="Decisions"
+        entries={context.adrs.map((adr) => ({
+            title: adr.title,
+            description: `ADR ${adr.number}`,
+            href: adr.url,
+        }))}
+    />
+    <EntryList
+        heading="Lab Projects in this context"
+        entries={context.projects.map((project) => ({
+            title: project.name,
+            description: project.url,
+            href: project.url,
+        }))}
+    />
+</Layout>

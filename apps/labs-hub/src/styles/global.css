@@ -1,0 +1,75 @@
+/*
+ * Exactly what a consumer writes, and in the order the design system's README specifies.
+ * The @source lets Tailwind find the class names in the hub's own templates.
+ */
+@import "tailwindcss";
+@import "matrix-design-system/styles.css";
+@source "../**/*.astro";
+
+/*
+ * Astro's Fonts API suffixes the family name with a hash ("Open Sans-7ddc..."), so the design system's own
+ * `--font-sans: "Open Sans"` would match nothing: point its tokens at the variables Astro generates instead.
+ */
+:root {
+    --font-sans: var(--font-open-sans);
+    --font-mono: var(--font-courier-prime);
+}
+
+@layer components {
+    .docs {
+        @apply w-full min-w-0 break-words;
+    }
+
+    .docs :is(h1, h2, h3, h4, h5, h6) {
+        @apply mb-3;
+        scroll-margin-top: 6rem;
+    }
+
+    .docs :is(h2, h3, h4) {
+        @apply mt-8;
+    }
+
+    .docs p {
+        @apply my-3;
+    }
+
+    .docs ol {
+        @apply m-4 list-decimal pl-6;
+    }
+
+    .docs ol li {
+        @apply mb-2;
+    }
+
+    .docs li > :is(ul, ol) {
+        @apply my-2;
+    }
+
+    .docs pre {
+        @apply border-accent bg-primary-dark my-4 overflow-x-auto rounded-xl border p-4 font-mono text-sm;
+    }
+
+    .docs code {
+        @apply text-accent font-mono text-sm;
+    }
+
+    .docs pre code {
+        @apply text-primary-text;
+    }
+
+    .docs img {
+        @apply my-4 h-auto max-w-full rounded-xl;
+    }
+
+    .docs hr {
+        @apply my-8;
+    }
+
+    .docs table {
+        @apply my-0;
+    }
+
+    .scroll-target {
+        scroll-margin-top: 6rem;
+    }
+}
