@@ -6,3 +6,5 @@ export { CommandPaletteItem } from "./command-palette-item";
 export type { CommandPaletteItemProps } from "./command-palette-item";
 export { ToggleMotionItem } from "./toggle-motion-item";
 export type { ToggleMotionItemProps } from "./toggle-motion-item";
+export { CommandPaletteTrigger } from "./command-palette-trigger";
+export type { CommandPaletteTriggerProps } from "./command-palette-trigger";

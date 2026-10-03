@@ -1,8 +1,7 @@
 "use client";
 
 import { AnimatePresence, Variants } from "framer-motion";
-import { FC } from "react";
-import { BiSearchAlt } from "react-icons/bi";
+import { FC, ReactNode } from "react";
 import { Close } from "../../molecules/menu/close";
 import { DropdownMenu } from "../../molecules/menu/dropdown-menu";
 import { HamburgerMenu } from "../../molecules/menu/hamburger-menu";
@@ -10,8 +9,6 @@ import { MenuItem } from "../../molecules/menu/menu-item";
 import type { LinkComponent } from "../../atoms/links/anchor-link";
 import { useGlassmorphism } from "../../hooks/use-glassmorphism";
 import { MotionDiv } from "../../atoms/animation/motion-div";
-import { LuCommand } from "react-icons/lu";
-import { ImCtrl } from "react-icons/im";
 import { useMenuStore } from "./use-menu-store";
 
 const menuVariants: Variants = {
@@ -65,9 +62,8 @@ export interface MenuProps {
     entries: MenuEntry[];
     /** Paths on which the menu never hides on scroll. */
     pinnedOnPaths?: string[];
-    /** Whether the search button and its keyboard shortcut hint are shown. Required: no host gets one silently. */
-    showPaletteTrigger: boolean;
-    onPaletteTrigger?: () => void;
+    /** Content aligned to the end of the bar (e.g. a `CommandPaletteTrigger`). Nothing is rendered without it. */
+    trailing?: ReactNode;
 }
 
 const noPinnedPaths: string[] = [];
@@ -77,15 +73,14 @@ const isDropdown = (entry: MenuEntry): entry is MenuDropdown => "groups" in entr
 export const Menu: FC<MenuProps> = ({
     entries,
     pinnedOnPaths = noPinnedPaths,
-    showPaletteTrigger,
-    onPaletteTrigger,
+    trailing,
     linkComponent,
     currentPath,
 }) => {
     const { glassmorphismClass } = useGlassmorphism({ noScale: true });
-    const { state, effects } = useMenuStore(currentPath, pinnedOnPaths, onPaletteTrigger);
-    const { shouldHideMenu, shouldOpenMenu, modifierKey } = state;
-    const { openMenu, closeMenu, handlePaletteTrigger, handleLinkClick, isSelected } = effects;
+    const { state, effects } = useMenuStore(currentPath, pinnedOnPaths);
+    const { shouldHideMenu, shouldOpenMenu } = state;
+    const { openMenu, closeMenu, handleLinkClick, isSelected } = effects;
 
     const baseClassName = (isMobile: boolean) => (isMobile ? "mb-2 w-80" : "hidden sm:flex xs:mb-0 xs:w-auto");
     const dropdownClassName = (isMobile: boolean) =>
@@ -151,35 +146,7 @@ export const Menu: FC<MenuProps> = ({
                             <HamburgerMenu onClick={openMenu} />
                         </div>
                     )}
-                    {showPaletteTrigger && (
-                        <button
-                            className="group border-accent bg-accent/10 hover:border-accent hover:bg-accent/20 ml-auto flex min-h-10 w-auto cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 transition-all duration-200 sm:mr-3 md:w-60"
-                            onClick={handlePaletteTrigger}
-                            aria-label="Open command palette"
-                        >
-                            <BiSearchAlt className="text-accent group-hover:text-accent size-3.5 shrink-0 transition-colors duration-200" />
-                            <span className="text-accent/40 group-hover:text-accent/60 hidden flex-1 text-left font-mono text-sm leading-none transition-colors duration-200 md:block">
-                                Search...
-                            </span>
-                            {modifierKey !== null && (
-                                <span className="hidden items-center gap-1 md:inline-flex">
-                                    <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-sm leading-none transition-colors duration-200">
-                                        {modifierKey === "meta" ? (
-                                            <LuCommand className="size-3" />
-                                        ) : (
-                                            <ImCtrl className="size-3" />
-                                        )}
-                                    </kbd>
-                                    <span className="text-accent/70 group-hover:text-accent font-mono text-sm leading-none transition-colors duration-200">
-                                        +
-                                    </span>
-                                    <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-base leading-none transition-colors duration-200">
-                                        K
-                                    </kbd>
-                                </span>
-                            )}
-                        </button>
-                    )}
+                    {trailing && <div className="ml-auto sm:mr-3">{trailing}</div>}
                 </div>
             </MotionDiv>
             <AnimatePresence>
