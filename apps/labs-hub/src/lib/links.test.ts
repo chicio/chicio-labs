@@ -89,6 +89,13 @@ describe("links", () => {
             });
         });
 
+        it("repairs the triple-slash compare links of old changelog entries", () => {
+            expect(rewriteLink("CHANGELOG.md", "///compare/v3.5.0...v3.6.0", context)).toEqual({
+                href: "https://github.com/chicio/chicio-labs/compare/v3.5.0...v3.6.0",
+                external: true,
+            });
+        });
+
         it("leaves an empty link and a query-only link alone", () => {
             expect(rewriteLink("README.md", "", context)).toEqual({ href: "", external: false });
             expect(rewriteLink("README.md", "?tab=a", context)).toEqual({ href: "?tab=a", external: false });

@@ -19,6 +19,8 @@ export interface LabProjectDefinition {
     /** The repository path of the folder the Lab Project lives in. */
     sourcePath: string;
     manifest: ManifestSource;
+    /** Where the version lives when it is not in the manifest above: the Website is versioned from the root. */
+    versionManifest?: string;
     /** Absent: the page falls back to the manifest description. Present: the file must exist. */
     readme?: string;
     changelog?: string;
@@ -52,6 +54,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         kind: "website",
         sourcePath: "apps/website",
         manifest: { type: "package" },
+        versionManifest: "package.json",
         readme: "apps/website/README.md",
         changelog: "CHANGELOG.md",
         glossaryContext: "website",

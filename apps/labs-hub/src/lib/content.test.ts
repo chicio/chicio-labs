@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { describeProject, loadHubContent, loadHubContentFrom, type HubContent } from "./content";
-import { findRepoRoot } from "./repo";
+import { findRepoRoot, readRepoJson } from "./repo";
 import { labProjects } from "./registry";
 
 describe("content", () => {
@@ -52,6 +52,12 @@ describe("content", () => {
             expect(designSystem?.packageName).toBe("matrix-design-system");
             expect(designSystem?.version).toMatch(/^\d+\.\d+\.\d+/);
             expect(designSystem?.description).not.toBe("");
+        });
+
+        it("versions the Website from the root manifest, where its releases are cut", () => {
+            const rootVersion = readRepoJson<{ version: string }>(findRepoRoot(), "package.json").version;
+
+            expect(content.projects.find((project) => project.id === "website")?.version).toBe(rootVersion);
         });
 
         it("renders a README as HTML with its source path, and falls back to the description without one", () => {

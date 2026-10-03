@@ -245,7 +245,9 @@ const buildContent = async (root: string): Promise<HubContent> => {
             url: labUrl(definition.id),
             changelogUrl: definition.changelog ? changelogUrl(definition.id) : undefined,
             packageName: definition.manifest.type === "package" ? manifest.name : undefined,
-            version: manifest.version,
+            version: definition.versionManifest
+                ? readRepoJson<Manifest>(root, definition.versionManifest).version
+                : manifest.version,
             description,
             sourceUrl: `${REPOSITORY_URL}/tree/main/${definition.sourcePath}`,
             readme: definition.readme ? await document(definition.readme) : undefined,

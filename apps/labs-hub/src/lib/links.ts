@@ -34,11 +34,16 @@ const escapesRepository = (repoPath: string): boolean => repoPath === ".." || re
 
 /**
  * Rewrites a link found in a document of the repository, the way GitHub resolves it, to where it should lead from
- * the hub: a page the hub renders, else the file or folder on GitHub, else (absolute) untouched.
+ * the hub: a page the hub renders, else the file or folder on GitHub, else (absolute) untouched. A `///path` link,
+ * which old changelog entries carry in place of the compare URL, is a path on GitHub.
  */
 export const rewriteLink = (sourcePath: string, href: string, context: LinkContext): RewrittenLink => {
     if (href === "" || href.startsWith("#")) {
         return { href, external: false };
+    }
+
+    if (href.startsWith("///")) {
+        return { href: `${REPOSITORY_URL}/${href.slice(3)}`, external: true };
     }
 
     if (schemePattern.test(href)) {

@@ -15,7 +15,7 @@ export const splitCatalog = (
     workbench: projects.filter((project) => !isPublishedProject(project)),
 });
 
-const kindLabel: Record<LabProject["kind"], string> = {
+export const kindLabel: Record<LabProject["kind"], string> = {
     website: "The Website",
     "public-package": "npm package",
     "public-plugin": "Public Claude Code plugin",
