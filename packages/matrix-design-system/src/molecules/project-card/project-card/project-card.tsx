@@ -6,6 +6,8 @@ import type { ImageComponent, ImageSource } from "../../../atoms/effects/plain-i
 export interface ProjectCardCallToAction {
     label: string;
     link: string;
+    /** Opens the link in the same tab, for a link that stays on the host; every other link opens a new tab. */
+    sameTab?: boolean;
 }
 
 export interface ProjectCardProps {
@@ -40,8 +42,8 @@ export const ProjectCard: FC<ProjectCardProps> = ({
                         <CallToActionExternalWithTracking
                             key={callToAction.label}
                             href={callToAction.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={callToAction.sameTab ? undefined : "_blank"}
+                            rel={callToAction.sameTab ? undefined : "noopener noreferrer"}
                         >
                             {callToAction.label}
                         </CallToActionExternalWithTracking>

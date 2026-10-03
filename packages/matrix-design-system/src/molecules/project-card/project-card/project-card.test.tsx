@@ -44,6 +44,19 @@ describe("ProjectCard", () => {
             );
         });
 
+        it("opens a same-tab call to action in the current tab", () => {
+            render(
+                <ProjectCard
+                    {...props}
+                    callToActions={[{ label: "Docs", link: "/lab/matrix-rain/", sameTab: true }]}
+                />,
+            );
+            const docs = screen.getByRole("link", { name: "Docs" });
+            expect(docs).toHaveAttribute("href", "/lab/matrix-rain/");
+            expect(docs).not.toHaveAttribute("target");
+            expect(docs).not.toHaveAttribute("rel");
+        });
+
         it("renders no call to action when none are given", () => {
             render(<ProjectCard {...props} callToActions={[]} />);
             expect(screen.queryByRole("link")).not.toBeInTheDocument();
