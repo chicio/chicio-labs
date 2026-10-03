@@ -10,7 +10,7 @@ reuseExistingServer: !process.env.CI }`. **Locally `reuseExistingServer` is `tru
 listening on :3000, Playwright skips the build entirely and runs all 80 specs against that other app. The run looks
 completely normal.
 
-**Why:** the user frequently has `next dev` running on :3000 from the *main repo root* (`/Users/fduroni/Code/Fabrizio/chicio-blog`),
+**Why:** the user frequently has `next dev` running on :3000 from the *main repo root* (`/Users/fduroni/Code/Fabrizio/chicio-labs`),
 which is a different branch than the worktree under review. In one review this made the two assertions the diff had
 just added fail with "element(s) not found", and I nearly reported both as blocking regressions. The a11y snapshot in
 `error-context.md` gave it away: it showed output of a component the diff had **deleted** (`heading [level=3]` from a
