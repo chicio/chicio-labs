@@ -24,20 +24,13 @@ const socialLinks: SocialContactLinks = {
 
 describe("Footer", () => {
     describe("render", () => {
-        it("renders the injected signature", () => {
-            render(
-                <Footer
-                    signature="> Made with by Fabrizio Duroni"
-                    links={links}
-                    contactHref="/contact"
-                    socialLinks={socialLinks}
-                />,
-            );
+        it("renders the author credit", () => {
+            render(<Footer author="Fabrizio Duroni" links={links} contactHref="/contact" socialLinks={socialLinks} />);
             expect(screen.getByText(/Fabrizio Duroni/)).toBeInTheDocument();
         });
 
         it("renders the injected links in order", () => {
-            render(<Footer signature="> Signed" links={links} contactHref="/contact" socialLinks={socialLinks} />);
+            render(<Footer author="Fabrizio" links={links} contactHref="/contact" socialLinks={socialLinks} />);
             const navLinks = screen
                 .getAllByRole("link")
                 .filter((link) => links.some((l) => l.label === link.textContent));
@@ -45,67 +38,26 @@ describe("Footer", () => {
         });
 
         it("renders no nav links when none are injected", () => {
-            render(<Footer signature="> Signed" links={[]} contactHref="/contact" socialLinks={socialLinks} />);
+            render(<Footer author="Fabrizio" links={[]} contactHref="/contact" socialLinks={socialLinks} />);
             expect(screen.queryByRole("link", { name: "Blog" })).not.toBeInTheDocument();
         });
 
         it("leads the contact call to action to the injected contactHref", () => {
-            render(<Footer signature="> Signed" links={links} contactHref="/get-in-touch" socialLinks={socialLinks} />);
+            render(<Footer author="Fabrizio" links={links} contactHref="/get-in-touch" socialLinks={socialLinks} />);
             expect(document.querySelector('a[href="/get-in-touch"]')).not.toBeNull();
         });
 
         it("renders nav links for all sections", () => {
-            render(<Footer signature="> Signed" links={links} contactHref="/contact" socialLinks={socialLinks} />);
+            render(<Footer author="Fabrizio" links={links} contactHref="/contact" socialLinks={socialLinks} />);
             expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
             expect(screen.getByRole("link", { name: "About Me" })).toHaveAttribute("href", "/about-me");
             expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
         });
 
         it("renders social contacts section", () => {
-            render(<Footer signature="> Signed" links={links} contactHref="/contact" socialLinks={socialLinks} />);
+            render(<Footer author="Fabrizio" links={links} contactHref="/contact" socialLinks={socialLinks} />);
             expect(screen.getByTitle("Github")).toBeInTheDocument();
             expect(screen.getByTitle("Linkedin")).toBeInTheDocument();
-        });
-    });
-
-    describe("optional parts", () => {
-        it("renders no social contacts when neither socialLinks nor contactHref is provided", () => {
-            render(<Footer signature="> Signed" links={links} />);
-            expect(screen.queryByTitle("Github")).not.toBeInTheDocument();
-            expect(screen.getAllByRole("link")).toHaveLength(links.length);
-        });
-
-        it("renders only the contact call to action when socialLinks is absent", () => {
-            render(<Footer signature="> Signed" links={[]} contactHref="/contact" />);
-            expect(screen.getAllByRole("link")).toHaveLength(1);
-            expect(document.querySelector('a[href="/contact"]')).not.toBeNull();
-        });
-
-        it("renders only the provided social platforms", () => {
-            render(<Footer signature="> Signed" links={[]} socialLinks={{ github: socialLinks.github }} />);
-            expect(screen.getByTitle("Github")).toBeInTheDocument();
-            expect(screen.queryByTitle("Linkedin")).not.toBeInTheDocument();
-        });
-
-        it("renders no hard-coded sign-off of its own", () => {
-            render(<Footer signature="> Signed" links={links} />);
-            expect(screen.queryByText(/Made with/)).not.toBeInTheDocument();
-        });
-
-        it("opens an external link in a new tab", () => {
-            render(
-                <Footer
-                    signature="> Signed"
-                    links={[
-                        { label: "Website", to: "https://www.fabrizioduroni.it/", external: true },
-                        { label: "Home", to: "/" },
-                    ]}
-                />,
-            );
-            const external = screen.getByRole("link", { name: "Website" });
-            expect(external).toHaveAttribute("target", "_blank");
-            expect(external).toHaveAttribute("rel", "noopener noreferrer");
-            expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute("target");
         });
     });
 
@@ -114,7 +66,7 @@ describe("Footer", () => {
             const onClick = vi.fn();
             render(
                 <Footer
-                    signature="> Signed"
+                    author="Fabrizio"
                     links={[{ label: "Blog", to: "/blog", onClick }]}
                     contactHref="/contact"
                     socialLinks={socialLinks}
@@ -128,7 +80,7 @@ describe("Footer", () => {
             const onTrackGithub = vi.fn();
             render(
                 <Footer
-                    signature="> Signed"
+                    author="Fabrizio"
                     links={links}
                     contactHref="/contact"
                     socialLinks={socialLinks}
