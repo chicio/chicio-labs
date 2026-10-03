@@ -1,7 +1,6 @@
 ---
-import { CallToActionExternalWithTracking, Chip, TerminalButton } from "matrix-design-system";
+import { CallToActionExternalWithTracking, Chip, SectionHeading } from "matrix-design-system";
 import DocumentBody from "../../../components/DocumentBody.astro";
-import EntryList from "../../../components/EntryList.astro";
 import Layout from "../../../layouts/Layout.astro";
 import { kindLabel } from "../../../lib/catalog";
 import { loadHubContent, type LabProject } from "../../../lib/content";
@@ -21,26 +20,6 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
 ---
 
 <Layout title={project.name} description={project.description}>
-    <div class="mb-4 flex flex-wrap items-center gap-2">
-        <Chip>{kindLabel[project.kind]}</Chip>
-        {project.version && project.kind !== "workbench" && <Chip>{`version ${project.version}`}</Chip>}
-        {project.packageName && <Chip>{project.packageName}</Chip>}
-    </div>
-    <div class="mb-6 flex flex-wrap items-center gap-4">
-        {project.changelogUrl && <TerminalButton label="Changelog" to={project.changelogUrl} />}
-        {project.glossaryContext && <TerminalButton label="Glossary" to={project.glossaryContext.url} />}
-        {
-            project.showcase && (
-                <CallToActionExternalWithTracking href={project.showcase.url} {...newTab}>
-                    {project.showcase.label}
-                </CallToActionExternalWithTracking>
-            )
-        }
-        <CallToActionExternalWithTracking href={project.sourceUrl} {...newTab}>
-            Source
-        </CallToActionExternalWithTracking>
-    </div>
-
     {
         project.readme ? (
             <DocumentBody html={project.readme.html} />
@@ -52,12 +31,29 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
         )
     }
 
-    <EntryList
-        heading="Agents"
-        entries={project.agents.map((agent) => ({ title: agent.name, description: agent.description }))}
-    />
-    <EntryList
-        heading="Skills"
-        entries={project.skills.map((skill) => ({ title: `/${skill.name}`, description: skill.description }))}
-    />
+    <section class="glow-container mt-12 flex flex-col gap-5 p-4 md:p-8">
+        <SectionHeading title={`More about ${project.name}`} />
+        <div class="flex flex-wrap items-center gap-2">
+            <Chip>{kindLabel[project.kind]}</Chip>
+            {project.version && project.kind !== "workbench" && <Chip>{`version ${project.version}`}</Chip>}
+            {project.packageName && <Chip>{project.packageName}</Chip>}
+        </div>
+        <div class="flex flex-wrap items-center gap-4">
+            {
+                project.changelogUrl && (
+                    <CallToActionExternalWithTracking href={project.changelogUrl}>Changelog</CallToActionExternalWithTracking>
+                )
+            }
+            {
+                project.showcase && (
+                    <CallToActionExternalWithTracking href={project.showcase.url} {...newTab}>
+                        {project.showcase.label}
+                    </CallToActionExternalWithTracking>
+                )
+            }
+            <CallToActionExternalWithTracking href={project.sourceUrl} {...newTab}>
+                Source
+            </CallToActionExternalWithTracking>
+        </div>
+    </section>
 </Layout>

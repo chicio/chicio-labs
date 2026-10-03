@@ -3,6 +3,7 @@ import { TerminalButton } from "matrix-design-system";
 import DocumentBody from "../../../../components/DocumentBody.astro";
 import Layout from "../../../../layouts/Layout.astro";
 import { loadHubContent, type AdrDocument, type GlossaryContext } from "../../../../lib/content";
+import { decisionsAnchor } from "../../../../lib/navigation";
 
 export async function getStaticPaths() {
     const { contexts } = await loadHubContent();
@@ -21,8 +22,8 @@ const { context, adr } = Astro.props;
 ---
 
 <Layout title={`${adr.title} (${context.name})`} description={`ADR ${adr.number} of ${context.name}.`}>
-    <div class="mb-6">
-        <TerminalButton label={`Back to the ${context.name} glossary`} to={context.url} />
-    </div>
     <DocumentBody html={adr.html} />
+    <div class="mt-12">
+        <TerminalButton label={`Back to the ${context.name} decisions`} to={`${context.url}#${decisionsAnchor}`} />
+    </div>
 </Layout>

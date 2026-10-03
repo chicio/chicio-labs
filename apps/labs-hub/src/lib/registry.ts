@@ -26,7 +26,19 @@ export interface LabProjectDefinition {
     changelog?: string;
     glossaryContext?: string;
     showcase?: Showcase;
+    /** The repository path of the image on the Lab Project's Project Card; absent: the hub logo. */
+    image?: string;
 }
+
+/** Every card image the hub presents, by repository path. The catalog optimizes each one at build time. */
+export const cardImages = {
+    website: "brand/featured/featured-horizontal.jpg",
+    designSystem:
+        "apps/website/src/content/blog/post/2026/09/11/monorepo-npm-workspaces-turborepo-nextjs-blog/media/monorepo-npm-workspaces-turborepo.jpg",
+    matrixRain: "apps/website/src/content/about-me/media/projects/matrix-rain-webgpu.png",
+    glossaryBrowser:
+        "apps/website/src/content/blog/post/2026/10/03/claude-code-mods-glossary-browser-domain-modeling-plugin-marketplace/media/claude-code-mods-glossary-browser.jpg",
+} as const;
 
 export interface GlossaryContextDefinition {
     id: string;
@@ -58,6 +70,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         readme: "apps/website/README.md",
         changelog: "CHANGELOG.md",
         glossaryContext: "website",
+        image: cardImages.website,
     },
     {
         id: "matrix-design-system",
@@ -69,6 +82,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         changelog: "packages/matrix-design-system/CHANGELOG.md",
         glossaryContext: "matrix-design-system",
         showcase: designSystemShowcase,
+        image: cardImages.designSystem,
     },
     {
         id: "matrix-component-store",
@@ -78,6 +92,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         manifest: { type: "package" },
         readme: "packages/matrix-component-store/README.md",
         glossaryContext: "matrix-design-system",
+        image: cardImages.designSystem,
     },
     {
         id: "matrix-rain-webgpu",
@@ -89,6 +104,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         changelog: "packages/matrix-rain-webgpu/CHANGELOG.md",
         glossaryContext: "matrix-rain",
         showcase: matrixRainShowcase,
+        image: cardImages.matrixRain,
     },
     {
         id: "glossary-browser",
@@ -98,6 +114,7 @@ export const labProjects: readonly LabProjectDefinition[] = [
         manifest: { type: "plugin" },
         readme: "claude-plugins/glossary-browser/README.md",
         changelog: "claude-plugins/glossary-browser/CHANGELOG.md",
+        image: cardImages.glossaryBrowser,
     },
     {
         id: "chicio-labs-sdlc",

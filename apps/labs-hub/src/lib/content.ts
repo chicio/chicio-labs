@@ -1,5 +1,4 @@
 import { assertComplete, checkCompleteness, discoverLabProjectSources } from "./completeness";
-import { parseFrontmatterEntry } from "./frontmatter";
 import type { LinkContext } from "./links";
 import { extractLead, extractTitle, renderMarkdown } from "./markdown";
 import {
@@ -27,11 +26,6 @@ export interface HubDocument {
     sourcePath: string;
 }
 
-export interface PluginPart {
-    name: string;
-    description: string;
-}
-
 export interface AdrDocument extends HubDocument {
     number: string;
     url: string;
@@ -51,8 +45,8 @@ export interface LabProject {
     changelog?: HubDocument;
     glossaryContext?: { id: string; name: string; url: string };
     showcase?: Showcase;
-    agents: PluginPart[];
-    skills: PluginPart[];
+    /** The repository path of the Project Card image; absent: the hub logo. */
+    image?: string;
 }
 
 export interface GlossaryContext {
@@ -65,7 +59,6 @@ export interface GlossaryContext {
 }
 
 export interface SystemDocuments {
-    readme: HubDocument;
     glossaryMap: HubDocument;
     adrs: AdrDocument[];
 }
@@ -91,8 +84,8 @@ export const labUrl = (id: string): string => `/lab/${id}/`;
 export const changelogUrl = (id: string): string => `/lab/${id}/changelog/`;
 export const glossaryUrl = (contextId: string): string => `/glossary/${contextId}/`;
 export const glossaryAdrUrl = (contextId: string, number: string): string => `/glossary/${contextId}/adr/${number}/`;
-export const systemUrl = "/chicio-labs/";
-export const systemAdrUrl = (number: string): string => `/chicio-labs/adr/${number}/`;
+export const systemUrl = "/glossary/chicio-labs/";
+export const systemAdrUrl = (number: string): string => `/glossary/chicio-labs/adr/${number}/`;
 
 const adrPaths = (root: string, directory: string): { number: string; path: string }[] =>
     listRepoDirectory(root, directory).flatMap((file) => {
@@ -153,8 +146,8 @@ const buildPageMap = (root: string, registry: readonly LabProjectDefinition[]): 
         }
     }
 
-    pages.set(systemDocuments.readme, systemUrl);
-    pages.set(systemDocuments.glossaryMap, `${systemUrl}#glossary-map`);
+    pages.set(systemDocuments.readme, "/");
+    pages.set(systemDocuments.glossaryMap, systemUrl);
 
     for (const adr of adrPaths(root, systemDocuments.adrDirectory)) {
         pages.set(adr.path, systemAdrUrl(adr.number));
@@ -162,24 +155,6 @@ const buildPageMap = (root: string, registry: readonly LabProjectDefinition[]): 
 
     return pages;
 };
-
-const listParts = (
-    root: string,
-    pluginName: string,
-    directory: string,
-    fileFor: (entry: string) => string,
-): PluginPart[] =>
-    listRepoDirectory(root, directory).flatMap((entry) => {
-        const file = fileFor(entry);
-
-        if (!repoFileExists(root, file)) {
-            return [];
-        }
-
-        const parsed = parseFrontmatterEntry(readRepoFile(root, file), entry.replace(/\.md$/, ""));
-
-        return [{ name: `${pluginName}:${parsed.name}`, description: parsed.description }];
-    });
 
 const buildContent = async (
     root: string,
@@ -244,13 +219,15 @@ const buildContent = async (
             );
         }
 
+        if (definition.image && !repoFileExists(root, definition.image)) {
+            throw new Error(`${definition.id} names the card image ${definition.image}, which does not exist`);
+        }
+
         const glossaryContext = definition.glossaryContext ? contextNames.get(definition.glossaryContext) : undefined;
 
         if (definition.glossaryContext && !glossaryContext) {
             throw new Error(`${definition.id} names the unknown glossary context ${definition.glossaryContext}`);
         }
-
-        const isPlugin = definition.manifest.type === "plugin";
 
         projects.push({
             id: definition.id,
@@ -272,22 +249,7 @@ const buildContent = async (
                 url: glossaryUrl(glossaryContext.id),
             },
             showcase: definition.showcase,
-            agents: isPlugin
-                ? listParts(
-                      root,
-                      manifest.name ?? definition.id,
-                      `${definition.sourcePath}/agents`,
-                      (entry) => `${definition.sourcePath}/agents/${entry}`,
-                  )
-                : [],
-            skills: isPlugin
-                ? listParts(
-                      root,
-                      manifest.name ?? definition.id,
-                      `${definition.sourcePath}/skills`,
-                      (entry) => `${definition.sourcePath}/skills/${entry}/SKILL.md`,
-                  )
-                : [],
+            image: definition.image,
         });
     }
 
@@ -310,7 +272,6 @@ const buildContent = async (
         projects,
         contexts,
         system: {
-            readme: await document(systemDocuments.readme),
             glossaryMap: await document(systemDocuments.glossaryMap),
             adrs: await adrDocuments(systemDocuments.adrDirectory, systemAdrUrl),
         },

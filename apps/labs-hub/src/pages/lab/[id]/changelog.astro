@@ -21,8 +21,8 @@ const { project, changelog } = Astro.props;
 ---
 
 <Layout title={`${project.name} changelog`} description={`The changelog of ${project.name}.`}>
-    <div class="mb-6">
+    <DocumentBody html={changelog.html} />
+    <div class="mt-12">
         <TerminalButton label={`Back to ${project.name}`} to={project.url} />
     </div>
-    <DocumentBody html={changelog.html} />
 </Layout>

@@ -107,6 +107,35 @@ describe("content", () => {
         });
     });
 
+    describe("a registry that names a missing card image", () => {
+        it("fails the build", async () => {
+            const root = mkdtempSync(path.join(tmpdir(), "labs-hub-"));
+            mkdirSync(path.join(root, "packages/fixture"), { recursive: true });
+            writeFileSync(path.join(root, "package.json"), JSON.stringify({ workspaces: ["packages/*"] }));
+            writeFileSync(
+                path.join(root, "packages/fixture/package.json"),
+                JSON.stringify({ name: "fixture", description: "A" }),
+            );
+
+            try {
+                await expect(
+                    loadHubContentFrom(root, [
+                        {
+                            id: "fixture",
+                            name: "Fixture",
+                            kind: "workbench",
+                            sourcePath: "packages/fixture",
+                            manifest: { type: "package" },
+                            image: "brand/missing.png",
+                        },
+                    ]),
+                ).rejects.toThrow("fixture names the card image brand/missing.png, which does not exist");
+            } finally {
+                rmSync(root, { recursive: true, force: true });
+            }
+        });
+    });
+
     describe("the real repository", () => {
         let content: HubContent;
 
@@ -158,16 +187,13 @@ describe("content", () => {
             ]);
         });
 
-        it("lists a plugin's agents and skills under the plugin's name", () => {
-            const sdlc = content.projects.find((project) => project.id === "chicio-labs-sdlc");
+        it("gives every published Lab Project its own card image", () => {
+            const images = Object.fromEntries(content.projects.map((project) => [project.id, project.image]));
 
-            expect(sdlc?.agents.map((agent) => agent.name)).toContain("chicio-labs-sdlc:implementer");
-            expect(sdlc?.skills.map((skill) => skill.name)).toContain("chicio-labs-sdlc:sdlc");
-            expect(sdlc?.agents.every((agent) => agent.description !== "")).toBe(true);
-        });
-
-        it("gives packages no agents or skills", () => {
-            expect(content.projects.find((project) => project.id === "website")?.agents).toEqual([]);
+            expect(images["website"]).toBe("brand/featured/featured-horizontal.jpg");
+            expect(images["matrix-component-store"]).toBe(images["matrix-design-system"]);
+            expect(images["matrix-rain-webgpu"]).toMatch(/matrix-rain-webgpu\.png$/);
+            expect(images["glossary-browser"]).toMatch(/claude-code-mods-glossary-browser\.jpg$/);
         });
 
         it("attaches the Showcases to their Lab Projects", () => {
@@ -198,24 +224,19 @@ describe("content", () => {
             ]);
         });
 
-        it("renders the system documents and their ADRs", () => {
-            expect(content.system.readme.html).toContain("<h1");
+        it("renders the system documents and their ADRs as the Chicio Labs glossary", () => {
             expect(content.system.glossaryMap.html).toContain("Glossary Map");
             expect(content.system.adrs.length).toBeGreaterThanOrEqual(7);
-            expect(content.system.adrs[0]?.url).toBe("/chicio-labs/adr/0001/");
+            expect(content.system.adrs[0]?.url).toBe("/glossary/chicio-labs/adr/0001/");
         });
 
         it("rewrites links to rendered documents to their hub pages", () => {
             expect(content.system.glossaryMap.html).toContain('href="/glossary/website/"');
         });
 
-        it("serves the images the documents embed", () => {
-            expect(content.mediaPaths).toContain("brand/readme-hero.jpg");
-        });
-
         it("never emits a link to a path the hub does not serve", () => {
             const html = [
-                content.system.readme.html,
+                content.system.glossaryMap.html,
                 ...content.projects.map((project) => project.readme?.html ?? ""),
             ].join("");
 

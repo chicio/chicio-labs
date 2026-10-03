@@ -1,36 +1,39 @@
 import { describe, expect, it } from "vitest";
 import { footerContactHref, footerLinks, footerSocialLinks, hubIdentity, menuEntries } from "./navigation";
 
-const contexts = [
-    { name: "Website", url: "/glossary/website/" },
-    { name: "Matrix Rain", url: "/glossary/matrix-rain/" },
+const domain = [
+    { name: "Chicio Labs", url: "/glossary/chicio-labs/", hasDecisions: true },
+    { name: "Website", url: "/glossary/website/", hasDecisions: true },
+    { name: "Matrix Rain", url: "/glossary/matrix-rain/", hasDecisions: false },
 ];
 
 describe("navigation", () => {
     describe("menuEntries", () => {
-        const entries = menuEntries(contexts);
+        const entries = menuEntries(domain);
 
-        it("lists the internal pages, then the glossaries, then the sites elsewhere", () => {
-            expect(entries.map((entry) => entry.label)).toEqual([
-                "Catalog",
-                "Workbench",
-                "Chicio Labs",
-                "Glossaries",
-                "Elsewhere",
+        it("lists the catalog, then the Domain, then the Websites", () => {
+            expect(entries.map((entry) => entry.label)).toEqual(["Catalog", "Domain", "Websites"]);
+        });
+
+        it("builds the Domain dropdown from every glossary, and its decisions from the ones that record any", () => {
+            const domainMenu = entries.find((entry) => entry.label === "Domain");
+            const groups = domainMenu && "groups" in domainMenu ? domainMenu.groups : [];
+
+            expect(groups.map((group) => group.label)).toEqual(["Glossaries", "Decisions"]);
+            expect(groups[0]?.items.map((item) => item.to)).toEqual([
+                "/glossary/chicio-labs/",
+                "/glossary/website/",
+                "/glossary/matrix-rain/",
+            ]);
+            expect(groups[1]?.items.map((item) => item.to)).toEqual([
+                "/glossary/chicio-labs/#decisions",
+                "/glossary/website/#decisions",
             ]);
         });
 
-        it("builds the glossary dropdown from the contexts", () => {
-            const glossaries = entries.find((entry) => entry.label === "Glossaries");
-
-            expect(
-                glossaries && "groups" in glossaries ? glossaries.groups[0]?.items.map((item) => item.to) : [],
-            ).toEqual(["/glossary/website/", "/glossary/matrix-rain/"]);
-        });
-
         it("links every Showcase and the Website absolutely, in a new tab", () => {
-            const elsewhere = entries.find((entry) => entry.label === "Elsewhere");
-            const items = elsewhere && "groups" in elsewhere ? elsewhere.groups.flatMap((group) => group.items) : [];
+            const websites = entries.find((entry) => entry.label === "Websites");
+            const items = websites && "groups" in websites ? websites.groups.flatMap((group) => group.items) : [];
 
             expect(items.map((item) => item.to)).toEqual([
                 "https://www.fabrizioduroni.it",

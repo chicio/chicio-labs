@@ -3,7 +3,7 @@ import type { LinkContext } from "./links";
 import { extractLead, extractTitle, renderMarkdown } from "./markdown";
 
 const links: LinkContext = {
-    pages: new Map([["docs/adr/0001-a.md", "/chicio-labs/adr/0001/"]]),
+    pages: new Map([["docs/adr/0001-a.md", "/glossary/chicio-labs/adr/0001/"]]),
     isDirectory: () => false,
 };
 
@@ -45,7 +45,7 @@ describe("markdown", () => {
         it("rewrites a link to a registered document to its hub page", async () => {
             const html = await render("[ADR](docs/adr/0001-a.md)");
 
-            expect(html).toContain('<a href="/chicio-labs/adr/0001/">ADR</a>');
+            expect(html).toContain('<a href="/glossary/chicio-labs/adr/0001/">ADR</a>');
         });
 
         it("opens a link that leaves the hub in a new tab", async () => {

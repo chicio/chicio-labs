@@ -4,6 +4,7 @@ import { WEBSITE_URL } from "./repo";
 export interface CardCallToAction {
     label: string;
     link: string;
+    sameTab?: boolean;
 }
 
 export const isPublishedProject = (project: LabProject): boolean => project.kind !== "workbench";
@@ -22,7 +23,7 @@ export const kindLabel: Record<LabProject["kind"], string> = {
     workbench: "Workbench",
 };
 
-/** The bullet points of a Project Card: what kind of thing it is, which version, and what else it comes with. */
+/** The bullet points of a Project Card: what kind of thing it is, which version, and its Showcase. */
 export const cardFeatures = (project: LabProject): string[] => {
     const features = [
         project.version ? `${kindLabel[project.kind]}, version ${project.version}` : kindLabel[project.kind],
@@ -32,16 +33,12 @@ export const cardFeatures = (project: LabProject): string[] => {
         features.push(`Showcase: ${project.showcase.label}`);
     }
 
-    if (project.glossaryContext) {
-        features.push(`Glossary: ${project.glossaryContext.name}`);
-    }
-
     return features;
 };
 
-/** The outward links of a Project Card; the card opens them in a new tab, so none of them leads into the hub. */
+/** The links of a Project Card: its docs in the hub first, then the outward links, which open in a new tab. */
 export const cardCallToActions = (project: LabProject): CardCallToAction[] => {
-    const actions: CardCallToAction[] = [];
+    const actions: CardCallToAction[] = [{ label: "Docs", link: project.url, sameTab: true }];
 
     if (project.showcase) {
         actions.push({ label: "Showcase", link: project.showcase.url });
