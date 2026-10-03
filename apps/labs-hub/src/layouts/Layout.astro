@@ -33,12 +33,7 @@ const pageTitle = title === siteName ? siteName : `${title} | ${siteName}`;
         <Font cssVariable="--font-courier-prime" preload />
     </head>
     <body>
-        <Menu
-            client:load
-            currentPath={Astro.url.pathname}
-            entries={menuEntries(contexts)}
-            showPaletteTrigger={false}
-        />
+        <Menu client:load currentPath={Astro.url.pathname} entries={menuEntries(contexts)} />
         <ContentContainer>
             <BrandHeader
                 client:load

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { MenuEntry, MenuProps } from "matrix-design-system";
 import { Menu } from "./menu";
 
@@ -16,17 +17,20 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("matrix-design-system", () => ({
-    Menu: ({ currentPath, pinnedOnPaths, entries, linkComponent: Link, showPaletteTrigger }: MenuProps) => (
-        <nav
-            data-current-path={currentPath}
-            data-pinned={pinnedOnPaths?.join(",")}
-            data-palette-trigger={String(showPaletteTrigger)}
-        >
+    Menu: ({ currentPath, pinnedOnPaths, entries, linkComponent: Link, trailing }: MenuProps) => (
+        <nav data-current-path={currentPath} data-pinned={pinnedOnPaths?.join(",")}>
+            {trailing}
             {Link && <Link href="/probe">probe</Link>}
             {entries.map((entry) => (
                 <span key={entry.label}>{entry.label}</span>
             ))}
         </nav>
+    ),
+}));
+
+vi.mock("matrix-design-system/command-palette", () => ({
+    CommandPaletteTrigger: ({ onTrigger }: { onTrigger?: () => void }) => (
+        <button onClick={onTrigger}>palette trigger</button>
     ),
 }));
 
@@ -43,9 +47,16 @@ describe("Menu binding", () => {
         expect(screen.getByRole("navigation")).toHaveAttribute("data-pinned", "/chat");
     });
 
-    it("always shows the command palette trigger", () => {
+    it("always fills the trailing slot with the command palette trigger", () => {
         render(<Menu entries={entries} />);
-        expect(screen.getByRole("navigation")).toHaveAttribute("data-palette-trigger", "true");
+        expect(screen.getByRole("button", { name: "palette trigger" })).toBeInTheDocument();
+    });
+
+    it("wires onPaletteTrigger to the command palette trigger", async () => {
+        const onPaletteTrigger = vi.fn();
+        render(<Menu entries={entries} onPaletteTrigger={onPaletteTrigger} />);
+        await userEvent.click(screen.getByRole("button", { name: "palette trigger" }));
+        expect(onPaletteTrigger).toHaveBeenCalledOnce();
     });
 
     it("renders links through next/link", () => {
