@@ -107,8 +107,19 @@ const entries: MenuEntry[] = [
     },
 ];
 
-<Menu currentPath={pathname} entries={entries} pinnedOnPaths={["/chat"]} linkComponent={NextLink} />
-<Footer author="Jane" links={[{ label: "Home", to: "/" }]} contactHref="/contact" socialLinks={social} />
+<Menu
+    currentPath={pathname}
+    entries={entries}
+    pinnedOnPaths={["/chat"]}
+    linkComponent={NextLink}
+    showPaletteTrigger
+/>
+<Footer
+    signature="Made by Jane"
+    links={[{ label: "Home", to: "/" }]}
+    contactHref="/contact"
+    socialLinks={social}
+/>
 ```
 
 An entry is either a link (`MenuLink`) or a dropdown of grouped links (`MenuDropdown`, told apart by its
