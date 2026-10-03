@@ -7,8 +7,6 @@ import { NextLink } from "@/components/features/design-system-next/next-link";
 import { slugs } from "@/types/configuration/slug";
 import { useMenuStore } from "./use-menu-store";
 
-export type { MenuProps };
-
 type MenuBindingProps = Omit<MenuProps, "linkComponent" | "currentPath" | "pinnedOnPaths" | "trailing"> & {
     onPaletteTrigger?: () => void;
 };
