@@ -66,6 +66,13 @@ Composed classes worth reaching for: `.glassmorphism` (and `-lite`, `-no-scale`)
 
 Fonts are not bundled: load Open Sans and Courier Prime yourself.
 
+## Host Identity
+
+The name a host presents itself with is never defaulted: `BrandHeader` requires `title`, `tagline` and
+`logoAlt`, `Footer` requires a `signature`, and `Menu` requires `showPaletteTrigger`. The social
+contacts of the footer are optional, platform by platform
+([ADR-0003](docs/adr/0003-host-identity-has-no-default.md)).
+
 ## Framework-agnostic by design
 
 The package imports nothing from any framework. Where a component needs framework behaviour it takes
@@ -77,7 +84,7 @@ import NextImage from "next/image";
 
 <InternalLink to="/blog" linkComponent={NextLink}>Blog</InternalLink>
 <ImageGlow src={photo} alt="" imageComponent={NextImage} />
-<Menu currentPath={usePathname()} entries={entries} linkComponent={NextLink} />
+<Menu currentPath={usePathname()} entries={entries} linkComponent={NextLink} showPaletteTrigger />
 ```
 
 Without them you get a real `<a>` and a real `<img>` — `PlainImage` reproduces `next/image`'s
