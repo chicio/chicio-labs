@@ -5,8 +5,8 @@ const context: LinkContext = {
     pages: new Map([
         ["packages/lib/README.md", "/lab/lib/"],
         ["packages/lib/CHANGELOG.md", "/lab/lib/changelog/"],
-        ["GLOSSARY-MAP.md", "/chicio-labs/#glossary-map"],
-        ["docs/adr/0001-monorepo.md", "/chicio-labs/adr/0001/"],
+        ["GLOSSARY-MAP.md", "/glossary/chicio-labs/"],
+        ["docs/adr/0001-monorepo.md", "/glossary/chicio-labs/adr/0001/"],
     ]),
     isDirectory: (repoPath) => repoPath === "packages/lib" || repoPath === "claude-plugins",
 };
@@ -45,13 +45,13 @@ describe("links", () => {
 
         it("resolves a link relative to the document it appears in", () => {
             expect(rewriteLink("claude-plugins/x/README.md", "../../docs/adr/0001-monorepo.md", context).href).toBe(
-                "/chicio-labs/adr/0001/",
+                "/glossary/chicio-labs/adr/0001/",
             );
         });
 
         it("resolves a root-absolute link against the repository root", () => {
             expect(rewriteLink("packages/lib/README.md", "/GLOSSARY-MAP.md", context).href).toBe(
-                "/chicio-labs/#glossary-map",
+                "/glossary/chicio-labs/",
             );
         });
 

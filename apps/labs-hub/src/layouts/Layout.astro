@@ -3,20 +3,23 @@ import { Font } from "astro:assets";
 import { BrandHeader, ContentContainer, Footer, Menu } from "matrix-design-system";
 import "../styles/global.css";
 import { loadHubContent } from "../lib/content";
+import { systemUrl } from "../lib/content";
 import { footerContactHref, footerLinks, footerSocialLinks, hubIdentity, menuEntries } from "../lib/navigation";
 
 interface Props {
     title: string;
     description?: string;
-    /** The tall header of the catalog, as on the Website's home. */
-    big?: boolean;
 }
 
 const siteName = "Chicio Labs";
 const defaultDescription =
     "Fabrizio Duroni's lab: every Lab Project, published or not, with the docs generated from the repository.";
-const { title, description = defaultDescription, big = false } = Astro.props;
-const { contexts } = await loadHubContent();
+const { title, description = defaultDescription } = Astro.props;
+const { contexts, system } = await loadHubContent();
+const domain = [
+    { name: siteName, url: systemUrl, hasDecisions: system.adrs.length > 0 },
+    ...contexts.map((context) => ({ name: context.name, url: context.url, hasDecisions: context.adrs.length > 0 })),
+];
 const pageTitle = title === siteName ? siteName : `${title} | ${siteName}`;
 ---
 
@@ -33,11 +36,11 @@ const pageTitle = title === siteName ? siteName : `${title} | ${siteName}`;
         <Font cssVariable="--font-courier-prime" preload />
     </head>
     <body>
-        <Menu client:load currentPath={Astro.url.pathname} entries={menuEntries(contexts)} />
+        <Menu client:load currentPath={Astro.url.pathname} entries={menuEntries(domain)} />
         <ContentContainer>
             <BrandHeader
                 client:load
-                big={big}
+                big={false}
                 title={hubIdentity.title}
                 tagline={hubIdentity.tagline}
                 logoAlt={hubIdentity.logoAlt}

@@ -158,18 +158,6 @@ describe("content", () => {
             ]);
         });
 
-        it("lists a plugin's agents and skills under the plugin's name", () => {
-            const sdlc = content.projects.find((project) => project.id === "chicio-labs-sdlc");
-
-            expect(sdlc?.agents.map((agent) => agent.name)).toContain("chicio-labs-sdlc:implementer");
-            expect(sdlc?.skills.map((skill) => skill.name)).toContain("chicio-labs-sdlc:sdlc");
-            expect(sdlc?.agents.every((agent) => agent.description !== "")).toBe(true);
-        });
-
-        it("gives packages no agents or skills", () => {
-            expect(content.projects.find((project) => project.id === "website")?.agents).toEqual([]);
-        });
-
         it("attaches the Showcases to their Lab Projects", () => {
             const showcases = Object.fromEntries(
                 content.projects.map((project) => [project.id, project.showcase?.url]),
@@ -198,24 +186,19 @@ describe("content", () => {
             ]);
         });
 
-        it("renders the system documents and their ADRs", () => {
-            expect(content.system.readme.html).toContain("<h1");
+        it("renders the system documents and their ADRs as the Chicio Labs glossary", () => {
             expect(content.system.glossaryMap.html).toContain("Glossary Map");
             expect(content.system.adrs.length).toBeGreaterThanOrEqual(7);
-            expect(content.system.adrs[0]?.url).toBe("/chicio-labs/adr/0001/");
+            expect(content.system.adrs[0]?.url).toBe("/glossary/chicio-labs/adr/0001/");
         });
 
         it("rewrites links to rendered documents to their hub pages", () => {
             expect(content.system.glossaryMap.html).toContain('href="/glossary/website/"');
         });
 
-        it("serves the images the documents embed", () => {
-            expect(content.mediaPaths).toContain("brand/readme-hero.jpg");
-        });
-
         it("never emits a link to a path the hub does not serve", () => {
             const html = [
-                content.system.readme.html,
+                content.system.glossaryMap.html,
                 ...content.projects.map((project) => project.readme?.html ?? ""),
             ].join("");
 

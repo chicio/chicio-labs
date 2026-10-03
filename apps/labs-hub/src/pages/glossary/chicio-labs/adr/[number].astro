@@ -1,8 +1,9 @@
 ---
 import { TerminalButton } from "matrix-design-system";
-import DocumentBody from "../../../components/DocumentBody.astro";
-import Layout from "../../../layouts/Layout.astro";
-import { loadHubContent, type AdrDocument } from "../../../lib/content";
+import DocumentBody from "../../../../components/DocumentBody.astro";
+import Layout from "../../../../layouts/Layout.astro";
+import { loadHubContent, systemUrl, type AdrDocument } from "../../../../lib/content";
+import { decisionsAnchor } from "../../../../lib/navigation";
 
 export async function getStaticPaths() {
     const { system } = await loadHubContent();
@@ -18,8 +19,8 @@ const { adr } = Astro.props;
 ---
 
 <Layout title={adr.title} description={`ADR ${adr.number} of Chicio Labs.`}>
-    <div class="mb-6">
-        <TerminalButton label="Back to Chicio Labs" to="/chicio-labs/#decisions" />
-    </div>
     <DocumentBody html={adr.html} />
+    <div class="mt-12">
+        <TerminalButton label="Back to the Chicio Labs decisions" to={`${systemUrl}#${decisionsAnchor}`} />
+    </div>
 </Layout>

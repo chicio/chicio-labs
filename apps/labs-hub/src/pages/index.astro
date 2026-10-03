@@ -9,23 +9,20 @@ const { projects } = await loadHubContent();
 const { published, workbench } = splitCatalog(projects);
 ---
 
-<Layout title="Chicio Labs" big>
+<Layout title="Chicio Labs">
     <SectionHeading
         title="Lab Projects"
         description="Everything Chicio Labs publishes, each with its docs generated from the repository."
     />
     {
         published.map((project) => (
-            <div class="mb-6 flex flex-col items-start">
-                <ProjectCard
-                    name={project.name}
-                    description={project.description}
-                    features={cardFeatures(project)}
-                    callToActions={cardCallToActions(project)}
-                    image={hubIdentity.logo}
-                />
-                <TerminalButton label={`Read the ${project.name} docs`} to={project.url} />
-            </div>
+            <ProjectCard
+                name={project.name}
+                description={project.description}
+                features={cardFeatures(project)}
+                callToActions={cardCallToActions(project)}
+                image={hubIdentity.logo}
+            />
         ))
     }
 

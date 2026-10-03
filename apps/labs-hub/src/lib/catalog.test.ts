@@ -9,8 +9,6 @@ const project = (overrides: Partial<LabProject>): LabProject => ({
     url: "/lab/id/",
     description: "A description",
     sourceUrl: "https://github.com/chicio/chicio-labs/tree/main/packages/id",
-    agents: [],
-    skills: [],
     ...overrides,
 });
 
@@ -34,7 +32,7 @@ describe("catalog", () => {
     });
 
     describe("cardFeatures", () => {
-        it("names the kind with its version, the Showcase and the glossary", () => {
+        it("names the kind with its version and the Showcase, never the glossary", () => {
             const features = cardFeatures(
                 project({
                     version: "3.0.0",
@@ -43,11 +41,7 @@ describe("catalog", () => {
                 }),
             );
 
-            expect(features).toEqual([
-                "npm package, version 3.0.0",
-                "Showcase: Design System Showcase",
-                "Glossary: Matrix Design System",
-            ]);
+            expect(features).toEqual(["npm package, version 3.0.0", "Showcase: Design System Showcase"]);
         });
 
         it("omits the version when there is none", () => {
@@ -56,7 +50,7 @@ describe("catalog", () => {
     });
 
     describe("cardCallToActions", () => {
-        it("links a package to its Showcase, npm and source", () => {
+        it("links a package to its docs in the hub, then its Showcase, npm and source", () => {
             const actions = cardCallToActions(
                 project({
                     packageName: "matrix-design-system",
@@ -65,6 +59,7 @@ describe("catalog", () => {
             );
 
             expect(actions).toEqual([
+                { label: "Docs", link: "/lab/id/", sameTab: true },
                 { label: "Showcase", link: "https://x/design-system/" },
                 { label: "npm", link: "https://www.npmjs.com/package/matrix-design-system" },
                 { label: "Source", link: "https://github.com/chicio/chicio-labs/tree/main/packages/id" },
@@ -74,11 +69,12 @@ describe("catalog", () => {
         it("links the Website to the live site", () => {
             const labels = cardCallToActions(project({ kind: "website" })).map((action) => action.label);
 
-            expect(labels).toEqual(["Visit", "Source"]);
+            expect(labels).toEqual(["Docs", "Visit", "Source"]);
         });
 
-        it("gives a plugin only its source", () => {
+        it("gives a plugin only its docs and its source", () => {
             expect(cardCallToActions(project({ kind: "public-plugin" })).map((action) => action.label)).toEqual([
+                "Docs",
                 "Source",
             ]);
         });
