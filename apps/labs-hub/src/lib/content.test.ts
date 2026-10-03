@@ -1,7 +1,10 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { describeProject, loadHubContent, loadHubContentFrom, type HubContent } from "./content";
 import { findRepoRoot, readRepoJson } from "./repo";
-import { labProjects } from "./registry";
+import { labProjects, type LabProjectDefinition } from "./registry";
 
 describe("content", () => {
     describe("describeProject", () => {
@@ -30,8 +33,77 @@ describe("content", () => {
             );
         });
 
-        it("is empty when the manifest has no description", () => {
+        it("is empty when neither the manifest nor a README says anything", () => {
             expect(website && describeProject(website, {})).toBe("");
+            expect(website && describeProject(website, {}, "# Title only")).toBe("");
+        });
+
+        it("falls back to the README lead paragraph when the manifest has no description", () => {
+            expect(website && describeProject(website, {}, "# Site\n\nThe [source](./x.md) of a **site**.")).toBe(
+                "The source of a site.",
+            );
+        });
+
+        it("prefers the manifest description over the README", () => {
+            expect(website && describeProject(website, { description: "From manifest" }, "# T\n\nFrom README")).toBe(
+                "From manifest",
+            );
+        });
+    });
+
+    describe("a registry that does not describe a Lab Project", () => {
+        let root: string;
+
+        const definition = (overrides: Partial<LabProjectDefinition>): LabProjectDefinition => ({
+            id: "fixture",
+            name: "Fixture",
+            kind: "workbench",
+            sourcePath: "packages/fixture",
+            manifest: { type: "package" },
+            ...overrides,
+        });
+
+        const writeFixture = (files: Record<string, string>): void => {
+            for (const [file, contents] of Object.entries(files)) {
+                mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+                writeFileSync(path.join(root, file), contents);
+            }
+        };
+
+        beforeEach(() => {
+            root = mkdtempSync(path.join(tmpdir(), "labs-hub-"));
+            writeFixture({ "package.json": JSON.stringify({ workspaces: ["packages/*"] }) });
+        });
+
+        afterEach(() => {
+            rmSync(root, { recursive: true, force: true });
+        });
+
+        it("fails the build when the manifest has no description and there is no README", async () => {
+            writeFixture({ "packages/fixture/package.json": JSON.stringify({ name: "fixture" }) });
+
+            await expect(loadHubContentFrom(root, [definition({})])).rejects.toThrow(
+                "fixture has no description to present",
+            );
+        });
+
+        it("fails the build when the README has no lead paragraph either", async () => {
+            writeFixture({
+                "packages/fixture/package.json": JSON.stringify({ name: "fixture" }),
+                "packages/fixture/README.md": "# Fixture\n\n- only a list\n",
+            });
+
+            await expect(
+                loadHubContentFrom(root, [definition({ readme: "packages/fixture/README.md" })]),
+            ).rejects.toThrow("fixture has no description to present");
+        });
+
+        it("fails the build when a Lab Project names a glossary context that is not registered", async () => {
+            writeFixture({ "packages/fixture/package.json": JSON.stringify({ name: "fixture", description: "A" }) });
+
+            await expect(loadHubContentFrom(root, [definition({ glossaryContext: "nowhere" })])).rejects.toThrow(
+                "fixture names the unknown glossary context nowhere",
+            );
         });
     });
 
@@ -52,6 +124,13 @@ describe("content", () => {
             expect(designSystem?.packageName).toBe("matrix-design-system");
             expect(designSystem?.version).toMatch(/^\d+\.\d+\.\d+/);
             expect(designSystem?.description).not.toBe("");
+        });
+
+        it("gives every Project Card a description, the Website's from its README lead", () => {
+            expect(content.projects.every((project) => project.description !== "")).toBe(true);
+            expect(content.projects.find((project) => project.id === "website")?.description).toMatch(
+                /^The source of fabrizioduroni\.it, one of the Lab Projects of Chicio Labs/,
+            );
         });
 
         it("versions the Website from the root manifest, where its releases are cut", () => {

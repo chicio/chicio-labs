@@ -1,7 +1,7 @@
 import { assertComplete, checkCompleteness, discoverLabProjectSources } from "./completeness";
 import { parseFrontmatterEntry } from "./frontmatter";
 import type { LinkContext } from "./links";
-import { extractTitle, renderMarkdown } from "./markdown";
+import { extractLead, extractTitle, renderMarkdown } from "./markdown";
 import {
     glossaryContexts,
     labProjects,
@@ -118,17 +118,22 @@ const readManifest = (root: string, project: LabProjectDefinition): Manifest => 
     return manifestFile === undefined ? {} : readRepoJson<Manifest>(root, manifestFile);
 };
 
-export const describeProject = (project: LabProjectDefinition, manifest: Manifest): string => {
-    const description =
+/**
+ * What a Project Card says about a Lab Project: the manifest description (or the one the registry carries when there
+ * is no manifest), else the lead paragraph of its README, for a package that declares no description of its own.
+ */
+export const describeProject = (project: LabProjectDefinition, manifest: Manifest, readme?: string): string => {
+    const declared =
         project.manifest.type === "none" ? project.manifest.description : (manifest.description ?? "").trim();
+    const description = declared === "" && readme !== undefined ? extractLead(readme) : declared;
 
     return description.replace(pluginPrefixPattern, "");
 };
 
-const buildPageMap = (root: string): Map<string, string> => {
+const buildPageMap = (root: string, registry: readonly LabProjectDefinition[]): Map<string, string> => {
     const pages = new Map<string, string>();
 
-    for (const project of labProjects) {
+    for (const project of registry) {
         if (project.readme) {
             pages.set(project.readme, labUrl(project.id));
         }
@@ -176,12 +181,15 @@ const listParts = (
         return [{ name: `${pluginName}:${parsed.name}`, description: parsed.description }];
     });
 
-const buildContent = async (root: string): Promise<HubContent> => {
-    assertComplete(checkCompleteness(labProjects, discoverLabProjectSources(root)));
+const buildContent = async (
+    root: string,
+    registry: readonly LabProjectDefinition[] = labProjects,
+): Promise<HubContent> => {
+    assertComplete(checkCompleteness(registry, discoverLabProjectSources(root)));
 
     const media = new Set<string>();
     const context: LinkContext = {
-        pages: buildPageMap(root),
+        pages: buildPageMap(root, registry),
         isDirectory: (repoPath) => isRepoDirectory(root, repoPath),
     };
 
@@ -222,12 +230,18 @@ const buildContent = async (root: string): Promise<HubContent> => {
 
     const projects: LabProject[] = [];
 
-    for (const definition of labProjects) {
+    for (const definition of registry) {
         const manifest = readManifest(root, definition);
-        const description = describeProject(definition, manifest);
+        const readme =
+            definition.readme && repoFileExists(root, definition.readme)
+                ? readRepoFile(root, definition.readme)
+                : undefined;
+        const description = describeProject(definition, manifest, readme);
 
-        if (!definition.readme && description === "") {
-            throw new Error(`${definition.id} has neither a README nor a manifest description to present`);
+        if (description === "") {
+            throw new Error(
+                `${definition.id} has no description to present: its manifest declares none and it has no README lead paragraph`,
+            );
         }
 
         const glossaryContext = definition.glossaryContext ? contextNames.get(definition.glossaryContext) : undefined;
@@ -313,4 +327,7 @@ export const loadHubContent = (): Promise<HubContent> => {
     return cached;
 };
 
-export const loadHubContentFrom = (root: string): Promise<HubContent> => buildContent(root);
+export const loadHubContentFrom = (
+    root: string,
+    registry: readonly LabProjectDefinition[] = labProjects,
+): Promise<HubContent> => buildContent(root, registry);
