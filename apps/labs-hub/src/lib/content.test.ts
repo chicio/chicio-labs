@@ -107,6 +107,35 @@ describe("content", () => {
         });
     });
 
+    describe("a registry that names a missing card image", () => {
+        it("fails the build", async () => {
+            const root = mkdtempSync(path.join(tmpdir(), "labs-hub-"));
+            mkdirSync(path.join(root, "packages/fixture"), { recursive: true });
+            writeFileSync(path.join(root, "package.json"), JSON.stringify({ workspaces: ["packages/*"] }));
+            writeFileSync(
+                path.join(root, "packages/fixture/package.json"),
+                JSON.stringify({ name: "fixture", description: "A" }),
+            );
+
+            try {
+                await expect(
+                    loadHubContentFrom(root, [
+                        {
+                            id: "fixture",
+                            name: "Fixture",
+                            kind: "workbench",
+                            sourcePath: "packages/fixture",
+                            manifest: { type: "package" },
+                            image: "brand/missing.png",
+                        },
+                    ]),
+                ).rejects.toThrow("fixture names the card image brand/missing.png, which does not exist");
+            } finally {
+                rmSync(root, { recursive: true, force: true });
+            }
+        });
+    });
+
     describe("the real repository", () => {
         let content: HubContent;
 
@@ -156,6 +185,15 @@ describe("content", () => {
                 "matrix-rain-webgpu",
                 "glossary-browser",
             ]);
+        });
+
+        it("gives every published Lab Project its own card image", () => {
+            const images = Object.fromEntries(content.projects.map((project) => [project.id, project.image]));
+
+            expect(images["website"]).toBe("brand/featured/featured-horizontal.jpg");
+            expect(images["matrix-component-store"]).toBe(images["matrix-design-system"]);
+            expect(images["matrix-rain-webgpu"]).toMatch(/matrix-rain-webgpu\.png$/);
+            expect(images["glossary-browser"]).toMatch(/claude-code-mods-glossary-browser\.jpg$/);
         });
 
         it("attaches the Showcases to their Lab Projects", () => {

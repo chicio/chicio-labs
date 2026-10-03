@@ -45,6 +45,8 @@ export interface LabProject {
     changelog?: HubDocument;
     glossaryContext?: { id: string; name: string; url: string };
     showcase?: Showcase;
+    /** The repository path of the Project Card image; absent: the hub logo. */
+    image?: string;
 }
 
 export interface GlossaryContext {
@@ -217,6 +219,10 @@ const buildContent = async (
             );
         }
 
+        if (definition.image && !repoFileExists(root, definition.image)) {
+            throw new Error(`${definition.id} names the card image ${definition.image}, which does not exist`);
+        }
+
         const glossaryContext = definition.glossaryContext ? contextNames.get(definition.glossaryContext) : undefined;
 
         if (definition.glossaryContext && !glossaryContext) {
@@ -243,6 +249,7 @@ const buildContent = async (
                 url: glossaryUrl(glossaryContext.id),
             },
             showcase: definition.showcase,
+            image: definition.image,
         });
     }
 
