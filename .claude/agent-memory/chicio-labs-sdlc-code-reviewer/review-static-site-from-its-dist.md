@@ -7,7 +7,7 @@ metadata:
 
 When a Unit Review covers a static Astro workspace (`apps/labs-hub`, `apps/matrix-rain-showcase`), the implementer
 usually leaves a fresh `dist/` in the Work Unit's worktree. Check its mtime against the last source commit
-(`git log --format='%h %ad' --date=format:%H:%M`), then scan it with a read-only python script instead of building:
+(`git log --format='%h %ad' --date=iso-strict`), then scan it with a read-only python script instead of building:
 
 - every `href`/`src` starting with `/` must resolve to a file (`<path>/index.html` for trailing slashes); ignore
   matches inside `<pre>` (code samples like `src="/art/x.jpg"` are false positives)
