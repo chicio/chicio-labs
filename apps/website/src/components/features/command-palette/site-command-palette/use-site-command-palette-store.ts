@@ -1,6 +1,6 @@
 "use client";
 
-import { closeCommandPalette, type CommandPaletteTrigger } from "matrix-design-system";
+import { closeCommandPalette, type CommandPaletteChangeCause } from "matrix-design-system";
 import { useSearch } from "@/components/features/search/use-search";
 import { openTerminalOverlay } from "@/lib/terminal/terminal-events";
 import type { ComponentStore } from "matrix-component-store";
@@ -24,7 +24,7 @@ interface SiteCommandPaletteState {
 }
 
 interface SiteCommandPaletteEffects {
-    handleOpenChange: (open: boolean, trigger: CommandPaletteTrigger) => void;
+    handleOpenChange: (open: boolean, cause: CommandPaletteChangeCause) => void;
     handleQueryChange: (query: string) => void;
     handleOpenChat: () => void;
     handleOpenEasterEggHunt: () => void;
@@ -52,13 +52,13 @@ export const useSiteCommandPaletteStore = (
     const onSearchResultSelect = tracking?.onSearchResultSelect;
 
     const handleOpenChange = useCallback(
-        (next: boolean, trigger: CommandPaletteTrigger) => {
+        (next: boolean, cause: CommandPaletteChangeCause) => {
             setOpen(next);
 
             if (next) {
                 // Only the header button counts as an "open" for analytics: the tracking label is
                 // hard-coded to "header", so counting keyboard opens would corrupt that series.
-                if (trigger === "event") {
+                if (cause === "event") {
                     onOpen?.();
                 }
 

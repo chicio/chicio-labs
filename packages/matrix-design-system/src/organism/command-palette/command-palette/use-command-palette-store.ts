@@ -4,7 +4,7 @@ import {
     commandPaletteCloseEvent,
     commandPaletteOpenEvent,
 } from "../../../state/command-palette/command-palette-events";
-import type { CommandPaletteTrigger } from "../../../state/command-palette/command-palette-trigger";
+import type { CommandPaletteChangeCause } from "../../../state/command-palette/command-palette-change-cause";
 import type { ComponentStore } from "matrix-component-store";
 import { useCallback, useEffect, useState } from "react";
 
@@ -19,15 +19,15 @@ interface CommandPaletteEffects {
 }
 
 export const useCommandPaletteStore = (
-    onOpenChange?: (open: boolean, trigger: CommandPaletteTrigger) => void,
+    onOpenChange?: (open: boolean, cause: CommandPaletteChangeCause) => void,
     onQueryChange?: (query: string) => void,
 ): ComponentStore<CommandPaletteState, CommandPaletteEffects> => {
     const [open, setOpen] = useState(false);
 
     const changeOpen = useCallback(
-        (next: boolean, trigger: CommandPaletteTrigger) => {
+        (next: boolean, cause: CommandPaletteChangeCause) => {
             setOpen(next);
-            onOpenChange?.(next, trigger);
+            onOpenChange?.(next, cause);
         },
         [onOpenChange],
     );
