@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Menu } from ".";
+import { CommandPaletteTrigger } from "../command-palette/command-palette-trigger";
 import type { MenuEntry } from ".";
 import { useEffect, useRef } from "react";
 
@@ -106,14 +107,16 @@ const useDropdownOpenedOnMount = (label: string) => {
     return ref;
 };
 
-const DefaultStory = () => <Menu currentPath="/blog" entries={entries} />;
+const DefaultStory = () => <Menu currentPath="/blog" entries={entries} trailing={<CommandPaletteTrigger />} />;
+
+const WithoutTrailingStory = () => <Menu currentPath="/blog" entries={entries} />;
 
 const BlogDropdownOpenStory = () => {
     const ref = useDropdownOpenedOnMount("Blog");
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu currentPath="/blog" entries={entries} trailing={<CommandPaletteTrigger />} />
         </div>
     );
 };
@@ -123,7 +126,7 @@ const ExploreDropdownOpenStory = () => {
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu currentPath="/blog" entries={entries} trailing={<CommandPaletteTrigger />} />
         </div>
     );
 };
@@ -133,12 +136,13 @@ const AuthorDropdownOpenStory = () => {
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu currentPath="/blog" entries={entries} trailing={<CommandPaletteTrigger />} />
         </div>
     );
 };
 
 export const Default: Story = { render: () => <DefaultStory /> };
+export const WithoutTrailing: Story = { render: () => <WithoutTrailingStory /> };
 export const BlogDropdownOpen: Story = { render: () => <BlogDropdownOpenStory /> };
 export const ExploreDropdownOpen: Story = { render: () => <ExploreDropdownOpenStory /> };
 export const AuthorDropdownOpen: Story = { render: () => <AuthorDropdownOpenStory /> };

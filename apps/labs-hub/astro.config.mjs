@@ -1,0 +1,47 @@
+// @ts-check
+import { defineConfig, fontProviders } from "astro/config";
+import react from "@astrojs/react";
+import tailwindcss from "@tailwindcss/vite";
+
+// Deployed at the root of the Chicio Labs GitHub Pages site, beside the two Showcases:
+// https://labs.fabrizioduroni.it/
+// https://astro.build/config
+export default defineConfig({
+    site: "https://labs.fabrizioduroni.it",
+    base: "/",
+    trailingSlash: "always",
+    integrations: [react()],
+    // The design system declares `--font-sans: "Open Sans"` and `--font-mono: "Courier Prime"` and ships
+    // no font files, so these family names must stay exactly these for its components to pick them up.
+    fonts: [
+        {
+            name: "Open Sans",
+            cssVariable: "--font-open-sans",
+            provider: fontProviders.google(),
+            subsets: ["latin"],
+            weights: ["300 800"],
+            styles: ["normal"],
+            display: "swap",
+        },
+        {
+            name: "Courier Prime",
+            cssVariable: "--font-courier-prime",
+            provider: fontProviders.google(),
+            subsets: ["latin"],
+            weights: [400, 700],
+            styles: ["normal"],
+            display: "swap",
+        },
+    ],
+    vite: {
+        plugins: [tailwindcss()],
+        resolve: {
+            // The design system and the rain it embeds are separate workspaces: a second copy of React breaks
+            // the hooks dispatcher, a second TypeGPU breaks its 'use gpu' registry. One copy of each.
+            dedupe: ["react", "react-dom", "framer-motion", "typegpu", "@typegpu/noise", "@typegpu/react"],
+        },
+        server: {
+            fs: { allow: ["../.."] },
+        },
+    },
+});

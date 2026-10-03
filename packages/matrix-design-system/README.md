@@ -17,11 +17,11 @@ would break.
 Everything in the root barrel works with just those installed. Three groups need heavier libraries,
 so they live behind their own entry points and you install a peer only if you import one:
 
-| Import from                            | Install                                                | For                                        |
-| -------------------------------------- | ------------------------------------------------------ | ------------------------------------------ |
-| `matrix-design-system/chart`           | `recharts`                                             | `ChartPanel`, `ChartTooltip`, `DonutChart` |
-| `matrix-design-system/markdown`        | `react-markdown`, `unified`, the remark/rehype plugins | `Markdown`                                 |
-| `matrix-design-system/command-palette` | `cmdk`                                                 | `CommandPalette` and its items             |
+| Import from                            | Install                                                | For                                                     |
+| -------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| `matrix-design-system/chart`           | `recharts`                                             | `ChartPanel`, `ChartTooltip`, `DonutChart`              |
+| `matrix-design-system/markdown`        | `react-markdown`, `unified`, the remark/rehype plugins | `Markdown`                                              |
+| `matrix-design-system/command-palette` | `cmdk`                                                 | `CommandPalette`, its items and `CommandPaletteTrigger` |
 
 Nothing else is optional: the rain effect is part of the design system's identity — `BrandHeader`
 and the matrix backgrounds all render it — so `matrix-rain-webgpu` is a plain dependency and comes
@@ -66,6 +66,13 @@ Composed classes worth reaching for: `.glassmorphism` (and `-lite`, `-no-scale`)
 
 Fonts are not bundled: load Open Sans and Courier Prime yourself.
 
+## Host Identity
+
+The name a host presents itself with is never defaulted: `BrandHeader` requires `title`, `tagline` and
+`logoAlt`, `Footer` requires a `signature`. The social
+contacts of the footer are optional, platform by platform
+([ADR-0003](docs/adr/0003-host-identity-has-no-default.md)).
+
 ## Framework-agnostic by design
 
 The package imports nothing from any framework. Where a component needs framework behaviour it takes
@@ -100,8 +107,19 @@ const entries: MenuEntry[] = [
     },
 ];
 
-<Menu currentPath={pathname} entries={entries} pinnedOnPaths={["/chat"]} linkComponent={NextLink} />
-<Footer author="Jane" links={[{ label: "Home", to: "/" }]} contactHref="/contact" socialLinks={social} />
+<Menu
+    currentPath={pathname}
+    entries={entries}
+    pinnedOnPaths={["/chat"]}
+    linkComponent={NextLink}
+    trailing={<CommandPaletteTrigger />}
+/>
+<Footer
+    signature="Made by Jane"
+    links={[{ label: "Home", to: "/" }]}
+    contactHref="/contact"
+    socialLinks={social}
+/>
 ```
 
 An entry is either a link (`MenuLink`) or a dropdown of grouped links (`MenuDropdown`, told apart by its
@@ -111,6 +129,22 @@ link to `/blog/authors` with `activePathPrefixes: ["/blog/author/"]`); external 
 holding a selected link is highlighted too. A link's
 `onClick` is where tracking goes, and the mobile panel closes on click by itself. The menu hides on scroll
 except on `pinnedOnPaths`.
+
+The end of the bar is a `trailing` slot: pass `<CommandPaletteTrigger />` (from `matrix-design-system/command-palette`,
+with an optional `label` and an `onTrigger` callback for tracking) to get the search button and its shortcut hint, or
+nothing for a host without a palette.
+
+### Migrating from 2.x
+
+- `BrandHeader`: `title`, `tagline` and `logoAlt` are now required; the header no longer assumes any Host Identity.
+  Pass `title="CHICIO CODING" tagline="Pixels. Code. Unplugged." logoAlt="blog logo"` to keep 2.x's text.
+- `Footer`: `author` is gone and `signature` (a `ReactNode`) is required. Pass
+  ``signature={`> Made with 💝 by ${author} 'Chicio'`}`` to keep 2.x's line. `socialLinks` and `contactHref` are now
+  optional, and `FooterLink` accepts `external`.
+- `SocialContacts`: every platform and `contactHref` are optional; only the ones given are rendered.
+- `Menu`: 2.x always rendered the search button, and `onPaletteTrigger` is gone. Pass
+  `trailing={<CommandPaletteTrigger onTrigger={onPaletteTrigger} />}` to keep it, or nothing to drop it.
+- The type `CommandPaletteTrigger` is now `CommandPaletteChangeCause`; the name belongs to the new component.
 
 ### Migrating from 1.x
 

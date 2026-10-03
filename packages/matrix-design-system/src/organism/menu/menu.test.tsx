@@ -7,8 +7,6 @@ import { ScrollDirection } from "../../hooks/use-scroll-direction";
 
 let currentPath = "/";
 let mockScrollDirection: ScrollDirection = ScrollDirection.up;
-let mockModifierKey: "meta" | "ctrl" | null = null;
-const openCommandPaletteMock = vi.fn();
 
 vi.mock("../../hooks/use-scroll-direction", async () => {
     const actual = await vi.importActual<typeof import("../../hooks/use-scroll-direction")>(
@@ -19,14 +17,6 @@ vi.mock("../../hooks/use-scroll-direction", async () => {
         useScrollDirection: () => mockScrollDirection,
     };
 });
-
-vi.mock("../../hooks/use-os-modifier-key", () => ({
-    useOsModifierKey: () => mockModifierKey,
-}));
-
-vi.mock("../../state/command-palette/command-palette-events", () => ({
-    openCommandPalette: () => openCommandPaletteMock(),
-}));
 
 vi.mock("../../atoms/animation/motion-div", () => ({
     MotionDiv: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>,
@@ -94,8 +84,6 @@ const entries = buildEntries();
 afterEach(() => {
     currentPath = "/";
     mockScrollDirection = ScrollDirection.up;
-    mockModifierKey = null;
-    openCommandPaletteMock.mockClear();
     onClickHome.mockClear();
     onClickAuthors.mockClear();
     onClickMatrixRain.mockClear();
@@ -143,10 +131,10 @@ describe("Menu", () => {
             expect(within(menu).getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/blog/stats");
         });
 
-        it("renders nothing but the search button when no entries are injected", () => {
-            render(<Menu entries={[]} currentPath={currentPath} />);
+        it("renders nothing but the trailing slot when no entries are injected", () => {
+            render(<Menu entries={[]} currentPath={currentPath} trailing={<button>Trailing action</button>} />);
             expect(screen.queryByRole("link")).not.toBeInTheDocument();
-            expect(screen.getByRole("button", { name: "Open command palette" })).toBeInTheDocument();
+            expect(screen.getByRole("button", { name: "Trailing action" })).toBeInTheDocument();
         });
 
         it("renders an external link with its own target and rel", async () => {
@@ -158,9 +146,22 @@ describe("Menu", () => {
             expect(link).toHaveAttribute("target", "_blank");
         });
 
-        it("renders the search button", () => {
-            render(<Menu entries={entries} currentPath={currentPath} />);
-            expect(screen.getByRole("button", { name: "Open command palette" })).toBeInTheDocument();
+        it("renders the trailing slot content", () => {
+            render(<Menu entries={entries} currentPath={currentPath} trailing={<button>Trailing action</button>} />);
+            expect(screen.getByRole("button", { name: "Trailing action" })).toBeInTheDocument();
+        });
+
+        it("aligns the trailing slot to the end of the bar", () => {
+            render(<Menu entries={entries} currentPath={currentPath} trailing={<button>Trailing action</button>} />);
+            expect(screen.getByRole("button", { name: "Trailing action" }).parentElement).toHaveClass(
+                "ml-auto",
+                "sm:mr-3",
+            );
+        });
+
+        it("renders no trailing wrapper when no slot is passed", () => {
+            const { container } = render(<Menu entries={entries} currentPath={currentPath} />);
+            expect(container.querySelector(".ml-auto")).toBeNull();
         });
     });
 
@@ -246,20 +247,6 @@ describe("Menu", () => {
     });
 
     describe("interaction", () => {
-        it("calls onPaletteTrigger and opens the command palette when search button is clicked", async () => {
-            const onPaletteTrigger = vi.fn();
-            render(<Menu entries={entries} currentPath={currentPath} onPaletteTrigger={onPaletteTrigger} />);
-            await userEvent.click(screen.getByRole("button", { name: "Open command palette" }));
-            expect(onPaletteTrigger).toHaveBeenCalledOnce();
-            expect(openCommandPaletteMock).toHaveBeenCalledOnce();
-        });
-
-        it("opens the command palette even without an onPaletteTrigger prop", async () => {
-            render(<Menu entries={entries} currentPath={currentPath} />);
-            await userEvent.click(screen.getByRole("button", { name: "Open command palette" }));
-            expect(openCommandPaletteMock).toHaveBeenCalledOnce();
-        });
-
         it("calls the link onClick when a dropdown link is clicked", async () => {
             render(<Menu entries={entries} currentPath={currentPath} />);
             await userEvent.click(screen.getAllByRole("button", { name: "Blog" })[0]);
@@ -358,20 +345,6 @@ describe("Menu", () => {
             );
             const menuBar = container.querySelector(".menu-container");
             expect(menuBar).toHaveAttribute("animate", "visible");
-        });
-    });
-
-    describe("os modifier key shortcut badge", () => {
-        it("shows the K shortcut badge when a modifier key is detected", () => {
-            mockModifierKey = "meta";
-            render(<Menu entries={entries} currentPath={currentPath} />);
-            expect(screen.getByText("K")).toBeInTheDocument();
-        });
-
-        it("hides the shortcut badge when no modifier key is detected", () => {
-            mockModifierKey = null;
-            render(<Menu entries={entries} currentPath={currentPath} />);
-            expect(screen.queryByText("K")).not.toBeInTheDocument();
         });
     });
 });

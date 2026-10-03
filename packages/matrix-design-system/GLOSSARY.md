@@ -33,6 +33,11 @@ A framework-specific version of a design-system component that supplies what the
 the link and image implementations, the current path and the host's assets.
 _Avoid_: adapter, wrapper
 
+**Host Identity**:
+The name, tagline, logo and signature a host presents itself with in the header and footer. The host always supplies
+it; the system never assumes one.
+_Avoid_: branding, brand
+
 **Prefetch Strategy**:
 When a link asks for its destination ahead of the click: on entering the viewport, on hover, or never; how it does so
 is the Binding's business.
@@ -53,6 +58,11 @@ A panel dressed as a terminal session: a prompt header, a body and a footer of k
 **Pill**:
 The film's red or blue pill, used as a button or link motif.
 _Avoid_: pill button, when the motif itself is meant
+
+**Project Card**:
+A glowing card presenting one thing someone built: its name, a description, its features, calls to action and an
+image.
+_Avoid_: feature card, showcase card
 
 **Motion Preference**:
 The visitor's own choice, made on the site, to turn animation on or off.

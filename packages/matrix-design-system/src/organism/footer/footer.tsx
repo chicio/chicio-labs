@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { MenuItem } from "../../molecules/menu/menu-item";
 import { SocialContacts } from "../social-contacts";
 import type { LinkComponent } from "../../atoms/links/anchor-link";
@@ -15,20 +15,31 @@ export interface FooterLink {
     label: string;
     to: string;
     onClick?: () => void;
+    /** Opens the link in a new tab, as `MenuItem` does for its external links. */
+    external?: boolean;
 }
 
 export interface FooterProps {
     linkComponent?: LinkComponent;
-    author: string;
+    /** The Host Identity: the sign-off line, required and never defaulted. */
+    signature: ReactNode;
     /** The navigation links, in display order. */
     links: FooterLink[];
-    /** Where the contact call to action of the social contacts leads. */
-    contactHref: string;
-    socialLinks: SocialContactLinks;
+    /** Where the contact call to action of the social contacts leads. Absent: the call to action is not rendered. */
+    contactHref?: string;
+    /** Absent: the social contacts are not rendered. */
+    socialLinks?: SocialContactLinks;
     socialTracking?: FooterSocialTrackingCallbacks;
 }
 
-export const Footer: FC<FooterProps> = ({ author, links, contactHref, socialLinks, socialTracking, linkComponent }) => {
+export const Footer: FC<FooterProps> = ({
+    signature,
+    links,
+    contactHref,
+    socialLinks,
+    socialTracking,
+    linkComponent,
+}) => {
     const { effects } = useFooterStore(socialTracking);
     const {
         onTrackGithub,
@@ -40,6 +51,7 @@ export const Footer: FC<FooterProps> = ({ author, links, contactHref, socialLink
         onTrackFacebook,
         onTrackInstagram,
     } = effects;
+    const hasSocialContacts = socialLinks !== undefined || contactHref !== undefined;
 
     return (
         <footer className="bg-primary-dark border-t-accent relative w-full shrink-0 snap-start border-t-2 border-solid shadow-lg">
@@ -51,6 +63,7 @@ export const Footer: FC<FooterProps> = ({ author, links, contactHref, socialLink
                             linkComponent={linkComponent}
                             to={link.to}
                             onClick={link.onClick}
+                            external={link.external}
                             selected={false}
                         >
                             {link.label}
@@ -59,21 +72,23 @@ export const Footer: FC<FooterProps> = ({ author, links, contactHref, socialLink
                 </div>
                 <hr />
                 <div className="from-general-background-light to-primary-color-dark flex w-full flex-col items-center justify-center gap-3 bg-gradient-to-b px-4 py-6">
-                    <SocialContacts
-                        linkComponent={linkComponent}
-                        links={socialLinks}
-                        contactHref={contactHref}
-                        onTrackGithub={onTrackGithub}
-                        onTrackLinkedin={onTrackLinkedin}
-                        onTrackContact={onTrackContact}
-                        onTrackMedium={onTrackMedium}
-                        onTrackDevto={onTrackDevto}
-                        onTrackTwitter={onTrackTwitter}
-                        onTrackFacebook={onTrackFacebook}
-                        onTrackInstagram={onTrackInstagram}
-                    />
+                    {hasSocialContacts && (
+                        <SocialContacts
+                            linkComponent={linkComponent}
+                            links={socialLinks ?? {}}
+                            contactHref={contactHref}
+                            onTrackGithub={onTrackGithub}
+                            onTrackLinkedin={onTrackLinkedin}
+                            onTrackContact={onTrackContact}
+                            onTrackMedium={onTrackMedium}
+                            onTrackDevto={onTrackDevto}
+                            onTrackTwitter={onTrackTwitter}
+                            onTrackFacebook={onTrackFacebook}
+                            onTrackInstagram={onTrackInstagram}
+                        />
+                    )}
                     <TerminalLine>
-                        {`> Made with 💝 by ${author} 'Chicio'`}
+                        {signature}
                         <Cursor />
                     </TerminalLine>
                 </div>

@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write # push the bump/changelog commit + tag, create the GH release
+  actions: write # dispatch pages.yml once the release is on main
 
 # Two releases interleaving would race on the tag and the changelog. Never cancel a run in
 # progress: it may already have pushed the tag, and killing it there leaves the repo half-released.
@@ -126,3 +127,11 @@ jobs:
           --ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The push the release step makes with GITHUB_TOKEN does not trigger pages.yml, and the Labs Hub shows this
+      # release's version and changelog, so the redeploy is requested explicitly.
+      - name: Redeploy the Labs Hub
+        if: ${{ !inputs.dry_run }}
+        run: gh workflow run pages.yml --ref "${{ github.event.repository.default_branch }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

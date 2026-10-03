@@ -21,6 +21,14 @@ they are canvas-only and cannot run in jsdom). See `coverage.include` in `apps/w
 |---|---|---|---|---|
 | `packages/matrix-design-system` | 94 | 83 | 91 | 95 |
 | `apps/website` | 90 | 85 | 88 | 90 |
+| `apps/labs-hub` | 95 | 90 | 95 | 95 |
+
+The Labs Hub has a single node Vitest project over `apps/labs-hub/src/lib/**` (its own `vitest.config.ts`, `test:run` and
+`test:coverage` scripts, so the CI `test` job and the pre-push hook cover it). Its tests include integration tests against
+the real repository (the registry's completeness, every registered document rendering), which is why
+`apps/labs-hub/turbo.json` hashes those documents into the test tasks' inputs. Its `.astro` templates have no component
+tests and are not type-checked (`tsc --noEmit` covers the `.ts` only; `astro check` needs the TypeScript 6 API, see
+ADR-0003): they are exercised by the Astro build in CI. It has no ESLint, knip or dependency-cruiser config.
 
 The website's numbers dropped when the design system stopped carrying its average — the floors are
 the measured baseline of each workspace, not the old combined figure. Raise the floor whenever tests improve coverage; never lower it.

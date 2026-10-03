@@ -1,0 +1,28 @@
+---
+import { TerminalButton } from "matrix-design-system";
+import DocumentBody from "../../../../components/DocumentBody.astro";
+import Layout from "../../../../layouts/Layout.astro";
+import { loadHubContent, type AdrDocument, type GlossaryContext } from "../../../../lib/content";
+
+export async function getStaticPaths() {
+    const { contexts } = await loadHubContent();
+
+    return contexts.flatMap((context) =>
+        context.adrs.map((adr) => ({ params: { context: context.id, number: adr.number }, props: { context, adr } })),
+    );
+}
+
+interface Props {
+    context: GlossaryContext;
+    adr: AdrDocument;
+}
+
+const { context, adr } = Astro.props;
+---
+
+<Layout title={`${adr.title} (${context.name})`} description={`ADR ${adr.number} of ${context.name}.`}>
+    <div class="mb-6">
+        <TerminalButton label={`Back to the ${context.name} glossary`} to={context.url} />
+    </div>
+    <DocumentBody html={adr.html} />
+</Layout>

@@ -30,6 +30,43 @@ describe("SocialContacts", () => {
         });
     });
 
+    describe("optional platforms", () => {
+        it("renders only the platforms provided", () => {
+            render(<SocialContacts links={{ github: links.github, linkedin: links.linkedin }} />);
+            expect(screen.getByTitle("Github")).toBeInTheDocument();
+            expect(screen.getByTitle("Linkedin")).toBeInTheDocument();
+            expect(screen.queryByTitle("Medium")).not.toBeInTheDocument();
+            expect(screen.queryByTitle("Devto")).not.toBeInTheDocument();
+            expect(screen.queryByTitle("Twitter")).not.toBeInTheDocument();
+            expect(screen.queryByTitle("Facebook")).not.toBeInTheDocument();
+            expect(screen.queryByTitle("Instagram")).not.toBeInTheDocument();
+        });
+
+        it("never renders a link without an href when devto is omitted", () => {
+            const { devto, ...withoutDevto } = links;
+            expect(devto).toBeDefined();
+            const { container } = render(<SocialContacts links={withoutDevto} contactHref="/contact" />);
+            expect(screen.queryByTitle("Devto")).not.toBeInTheDocument();
+            container.querySelectorAll("a").forEach((anchor) => {
+                expect(anchor).toHaveAttribute("href");
+            });
+            expect(container.querySelectorAll("a")).toHaveLength(7);
+        });
+
+        it("renders the contact envelope only when contactHref is provided", () => {
+            const { container, rerender } = render(<SocialContacts links={links} />);
+            expect(container.querySelectorAll("a")).toHaveLength(7);
+            rerender(<SocialContacts links={links} contactHref="/contact" />);
+            expect(container.querySelectorAll("a")).toHaveLength(8);
+            expect(container.querySelector('a[href="/contact"]')).not.toBeNull();
+        });
+
+        it("renders nothing interactive when no platform and no contact are provided", () => {
+            const { container } = render(<SocialContacts links={{}} />);
+            expect(container.querySelectorAll("a")).toHaveLength(0);
+        });
+    });
+
     describe("interaction", () => {
         it("calls onTrackGithub when github link is clicked", async () => {
             const onTrackGithub = vi.fn();

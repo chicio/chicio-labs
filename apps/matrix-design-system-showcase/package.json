@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "matrix-design-system": "^2.0.0",
+    "matrix-design-system": "^3.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

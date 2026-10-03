@@ -9,7 +9,7 @@ Rule: while reviewing an SDLC pipeline branch from an isolated worktree under
 `.claude/worktrees/<name>/`, do **not** trust `codegraph_explore` for any file the diff touches.
 Use `git diff origin/main...HEAD` plus `Read` on the worktree's absolute paths instead.
 
-**Why:** the `.codegraph/` index sits at the repo root (`/Users/fduroni/Code/Fabrizio/chicio-blog/`),
+**Why:** the `.codegraph/` index sits at the repo root (`/Users/fduroni/Code/Fabrizio/chicio-labs/`),
 so explore resolves against the main working copy even when the tool is invoked with the worktree as
 cwd. It presents that output as "the verbatim, current on-disk source", which reads as authoritative.
 Observed: explore returned the pre-change `dropdown-menu.tsx` (still containing `DropdownMenuEntry`

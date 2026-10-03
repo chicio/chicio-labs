@@ -20,7 +20,8 @@
           ".",
           ":(exclude)packages",
           ":(exclude)apps/matrix-design-system-showcase",
-          ":(exclude)apps/matrix-rain-showcase"
+          ":(exclude)apps/matrix-rain-showcase",
+          ":(exclude)apps/labs-hub"
         ]
       },
       "gitRawCommitsOpts": {
@@ -28,7 +29,8 @@
           ".",
           ":(exclude)packages",
           ":(exclude)apps/matrix-design-system-showcase",
-          ":(exclude)apps/matrix-rain-showcase"
+          ":(exclude)apps/matrix-rain-showcase",
+          ":(exclude)apps/labs-hub"
         ]
       }
     }

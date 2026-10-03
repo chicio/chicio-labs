@@ -3,7 +3,7 @@
 import { Overlay } from "../../../atoms/effects/overlay";
 import { useGlassmorphism } from "../../../hooks/use-glassmorphism";
 import { CommandPaletteContext } from "../../../state/command-palette/command-palette-context";
-import type { CommandPaletteTrigger } from "../../../state/command-palette/command-palette-trigger";
+import type { CommandPaletteChangeCause } from "../../../state/command-palette/command-palette-change-cause";
 import { motion } from "framer-motion";
 import { FC, ReactNode } from "react";
 import { Command } from "cmdk";
@@ -11,7 +11,7 @@ import { useCommandPaletteStore } from "./use-command-palette-store";
 
 export interface CommandPaletteProps {
     placeholder?: string;
-    onOpenChange?: (open: boolean, trigger: CommandPaletteTrigger) => void;
+    onOpenChange?: (open: boolean, cause: CommandPaletteChangeCause) => void;
     onQueryChange?: (query: string) => void;
     children: ReactNode;
 }

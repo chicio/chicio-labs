@@ -1,0 +1,94 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  // The hub generates its pages from files that live outside this workspace: READMEs, CHANGELOGs, glossaries,
+  // ADRs, plugin manifests, agents and skills, every package.json. A task's inputs default to this workspace's
+  // own files, so without these a change to any of them would be a cache hit on a stale build, and the tests
+  // that check the registry against the repository would keep passing after a new workspace or plugin appeared.
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/package.json",
+        "$TURBO_ROOT$/README.md",
+        "$TURBO_ROOT$/CHANGELOG.md",
+        "$TURBO_ROOT$/GLOSSARY-MAP.md",
+        "$TURBO_ROOT$/docs/adr/*.md",
+        "$TURBO_ROOT$/brand/readme-hero.jpg",
+        "$TURBO_ROOT$/apps/*/package.json",
+        "$TURBO_ROOT$/apps/website/README.md",
+        "$TURBO_ROOT$/apps/website/GLOSSARY.md",
+        "$TURBO_ROOT$/apps/website/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/*/package.json",
+        "$TURBO_ROOT$/packages/*/README.md",
+        "$TURBO_ROOT$/packages/*/CHANGELOG.md",
+        "$TURBO_ROOT$/packages/*/GLOSSARY.md",
+        "$TURBO_ROOT$/packages/*/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/matrix-design-system/.design-sync/NOTES.md",
+        "$TURBO_ROOT$/claude-plugins/GLOSSARY.md",
+        "$TURBO_ROOT$/claude-plugins/docs/adr/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/.claude-plugin/plugin.json",
+        "$TURBO_ROOT$/claude-plugins/*/README.md",
+        "$TURBO_ROOT$/claude-plugins/*/CHANGELOG.md",
+        "$TURBO_ROOT$/claude-plugins/*/agents/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/skills/*/SKILL.md"
+      ]
+    },
+    "test:run": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/package.json",
+        "$TURBO_ROOT$/README.md",
+        "$TURBO_ROOT$/CHANGELOG.md",
+        "$TURBO_ROOT$/GLOSSARY-MAP.md",
+        "$TURBO_ROOT$/docs/adr/*.md",
+        "$TURBO_ROOT$/brand/readme-hero.jpg",
+        "$TURBO_ROOT$/apps/*/package.json",
+        "$TURBO_ROOT$/apps/website/README.md",
+        "$TURBO_ROOT$/apps/website/GLOSSARY.md",
+        "$TURBO_ROOT$/apps/website/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/*/package.json",
+        "$TURBO_ROOT$/packages/*/README.md",
+        "$TURBO_ROOT$/packages/*/CHANGELOG.md",
+        "$TURBO_ROOT$/packages/*/GLOSSARY.md",
+        "$TURBO_ROOT$/packages/*/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/matrix-design-system/.design-sync/NOTES.md",
+        "$TURBO_ROOT$/claude-plugins/GLOSSARY.md",
+        "$TURBO_ROOT$/claude-plugins/docs/adr/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/.claude-plugin/plugin.json",
+        "$TURBO_ROOT$/claude-plugins/*/README.md",
+        "$TURBO_ROOT$/claude-plugins/*/CHANGELOG.md",
+        "$TURBO_ROOT$/claude-plugins/*/agents/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/skills/*/SKILL.md"
+      ]
+    },
+    "test:coverage": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/package.json",
+        "$TURBO_ROOT$/README.md",
+        "$TURBO_ROOT$/CHANGELOG.md",
+        "$TURBO_ROOT$/GLOSSARY-MAP.md",
+        "$TURBO_ROOT$/docs/adr/*.md",
+        "$TURBO_ROOT$/brand/readme-hero.jpg",
+        "$TURBO_ROOT$/apps/*/package.json",
+        "$TURBO_ROOT$/apps/website/README.md",
+        "$TURBO_ROOT$/apps/website/GLOSSARY.md",
+        "$TURBO_ROOT$/apps/website/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/*/package.json",
+        "$TURBO_ROOT$/packages/*/README.md",
+        "$TURBO_ROOT$/packages/*/CHANGELOG.md",
+        "$TURBO_ROOT$/packages/*/GLOSSARY.md",
+        "$TURBO_ROOT$/packages/*/docs/adr/*.md",
+        "$TURBO_ROOT$/packages/matrix-design-system/.design-sync/NOTES.md",
+        "$TURBO_ROOT$/claude-plugins/GLOSSARY.md",
+        "$TURBO_ROOT$/claude-plugins/docs/adr/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/.claude-plugin/plugin.json",
+        "$TURBO_ROOT$/claude-plugins/*/README.md",
+        "$TURBO_ROOT$/claude-plugins/*/CHANGELOG.md",
+        "$TURBO_ROOT$/claude-plugins/*/agents/*.md",
+        "$TURBO_ROOT$/claude-plugins/*/skills/*/SKILL.md"
+      ]
+    }
+  }
+}

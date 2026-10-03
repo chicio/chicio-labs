@@ -1,0 +1,10 @@
+---
+interface Props {
+    /** HTML rendered at build time from a Markdown file of the repository. */
+    html: string;
+}
+
+const { html } = Astro.props;
+---
+
+<div class="docs" set:html={html} />

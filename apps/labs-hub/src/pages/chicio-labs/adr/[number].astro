@@ -1,0 +1,25 @@
+---
+import { TerminalButton } from "matrix-design-system";
+import DocumentBody from "../../../components/DocumentBody.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { loadHubContent, type AdrDocument } from "../../../lib/content";
+
+export async function getStaticPaths() {
+    const { system } = await loadHubContent();
+
+    return system.adrs.map((adr) => ({ params: { number: adr.number }, props: { adr } }));
+}
+
+interface Props {
+    adr: AdrDocument;
+}
+
+const { adr } = Astro.props;
+---
+
+<Layout title={adr.title} description={`ADR ${adr.number} of Chicio Labs.`}>
+    <div class="mb-6">
+        <TerminalButton label="Back to Chicio Labs" to="/chicio-labs/#decisions" />
+    </div>
+    <DocumentBody html={adr.html} />
+</Layout>

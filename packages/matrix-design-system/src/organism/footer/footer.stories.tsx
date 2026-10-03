@@ -49,7 +49,12 @@ const socialLinks = {
 const DefaultStory = () => (
     <div className="ds-caret-still">
         <style>{stillCaret}</style>
-        <Footer author="Fabrizio Duroni" links={links} contactHref="/contact" socialLinks={socialLinks} />
+        <Footer
+            signature="> Made with 💝 by Fabrizio Duroni 'Chicio'"
+            links={links}
+            contactHref="/contact"
+            socialLinks={socialLinks}
+        />
     </div>
 );
 
@@ -65,7 +70,12 @@ const AtPageBottomStory = () => (
                 that ran alongside them.
             </p>
         </div>
-        <Footer author="Fabrizio Duroni" links={links} contactHref="/contact" socialLinks={socialLinks} />
+        <Footer
+            signature="> Made with 💝 by Fabrizio Duroni 'Chicio'"
+            links={links}
+            contactHref="/contact"
+            socialLinks={socialLinks}
+        />
     </div>
 );
 

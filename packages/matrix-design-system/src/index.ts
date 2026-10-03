@@ -70,6 +70,7 @@ export * from "./molecules/menu/dropdown-menu";
 export * from "./molecules/menu/hamburger-menu";
 export * from "./molecules/menu/menu-item";
 export * from "./molecules/previous-next-navigation";
+export * from "./molecules/project-card/project-card";
 export * from "./molecules/stat-card";
 export * from "./molecules/terminal-list-item";
 export * from "./molecules/terminal-progress-bar";
@@ -110,7 +111,7 @@ export * from "./hooks/use-typewriter";
 // cross-component state and contracts
 export * from "./state/command-palette/command-palette-context";
 export * from "./state/command-palette/command-palette-events";
-export * from "./state/command-palette/command-palette-trigger";
+export * from "./state/command-palette/command-palette-change-cause";
 export * from "./state/lightbox/lightbox-events";
 export * from "./state/matrix-rain/matrix-settings";
 export * from "./state/motion/motion";
