@@ -16,8 +16,12 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("matrix-design-system", () => ({
-    Menu: ({ currentPath, pinnedOnPaths, entries, linkComponent: Link }: MenuProps) => (
-        <nav data-current-path={currentPath} data-pinned={pinnedOnPaths?.join(",")}>
+    Menu: ({ currentPath, pinnedOnPaths, entries, linkComponent: Link, showPaletteTrigger }: MenuProps) => (
+        <nav
+            data-current-path={currentPath}
+            data-pinned={pinnedOnPaths?.join(",")}
+            data-palette-trigger={String(showPaletteTrigger)}
+        >
             {Link && <Link href="/probe">probe</Link>}
             {entries.map((entry) => (
                 <span key={entry.label}>{entry.label}</span>
@@ -37,6 +41,11 @@ describe("Menu binding", () => {
     it("keeps the menu pinned on the chat page", () => {
         render(<Menu entries={entries} />);
         expect(screen.getByRole("navigation")).toHaveAttribute("data-pinned", "/chat");
+    });
+
+    it("always shows the command palette trigger", () => {
+        render(<Menu entries={entries} />);
+        expect(screen.getByRole("navigation")).toHaveAttribute("data-palette-trigger", "true");
     });
 
     it("renders links through next/link", () => {

@@ -142,6 +142,20 @@ describe("PageTemplate", () => {
             expect(screen.getByText(/Fabrizio Duroni/)).toBeInTheDocument();
         });
 
+        it("signs the footer with the Website's Host Identity line", () => {
+            render(
+                <PageTemplate
+                    header={<div>Header</div>}
+                    author="Fabrizio Duroni"
+                    menuEntries={menuEntries}
+                    footerLinks={footerLinks}
+                    contactHref={contactHref}
+                    socialLinks={socialLinks}
+                />,
+            );
+            expect(screen.getByText("> Made with 💝 by Fabrizio Duroni 'Chicio'")).toBeInTheDocument();
+        });
+
         it("renders navigation menu", () => {
             render(
                 <PageTemplate
