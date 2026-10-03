@@ -136,8 +136,14 @@ nothing for a host without a palette.
 
 ### Migrating from 2.x
 
-- `Menu`: `showPaletteTrigger` and `onPaletteTrigger` are gone. Pass
-  `trailing={<CommandPaletteTrigger onTrigger={onPaletteTrigger} />}` for the old behaviour.
+- `BrandHeader`: `title`, `tagline` and `logoAlt` are now required; the header no longer assumes any Host Identity.
+  Pass `title="CHICIO CODING" tagline="Pixels. Code. Unplugged." logoAlt="blog logo"` to keep 2.x's text.
+- `Footer`: `author` is gone and `signature` (a `ReactNode`) is required. Pass
+  ``signature={`> Made with 💝 by ${author} 'Chicio'`}`` to keep 2.x's line. `socialLinks` and `contactHref` are now
+  optional, and `FooterLink` accepts `external`.
+- `SocialContacts`: every platform and `contactHref` are optional; only the ones given are rendered.
+- `Menu`: 2.x always rendered the search button, and `onPaletteTrigger` is gone. Pass
+  `trailing={<CommandPaletteTrigger onTrigger={onPaletteTrigger} />}` to keep it, or nothing to drop it.
 - The type `CommandPaletteTrigger` is now `CommandPaletteChangeCause`; the name belongs to the new component.
 
 ### Migrating from 1.x
