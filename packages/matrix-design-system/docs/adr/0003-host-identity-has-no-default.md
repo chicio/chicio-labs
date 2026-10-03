@@ -3,7 +3,11 @@
 The header and footer once hard-coded the Website's Host Identity ("CHICIO CODING", "Pixels. Code. Unplugged.", the
 "Made with 💝 by … 'Chicio'" signature), and `Menu` always rendered the Website's command-palette trigger. When the Labs
 Hub became a second host, these became required props with no default (`BrandHeader` `title`, `tagline`, `logoAlt`;
-`Footer` `signature`; `Menu` `showPaletteTrigger`), and the Website passes its own values like any other host.
+`Footer` `signature`), and the Website passes its own values like any other host.
+
+The palette trigger is not Host Identity, it is optional UI: it moved out of `Menu` into a `trailing` slot filled by the
+host, with `CommandPaletteTrigger` (from `matrix-design-system/command-palette`) as the ready-made content. A host
+without a palette passes nothing.
 
 ## Considered Options
 

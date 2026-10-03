@@ -17,11 +17,11 @@ would break.
 Everything in the root barrel works with just those installed. Three groups need heavier libraries,
 so they live behind their own entry points and you install a peer only if you import one:
 
-| Import from                            | Install                                                | For                                        |
-| -------------------------------------- | ------------------------------------------------------ | ------------------------------------------ |
-| `matrix-design-system/chart`           | `recharts`                                             | `ChartPanel`, `ChartTooltip`, `DonutChart` |
-| `matrix-design-system/markdown`        | `react-markdown`, `unified`, the remark/rehype plugins | `Markdown`                                 |
-| `matrix-design-system/command-palette` | `cmdk`                                                 | `CommandPalette` and its items             |
+| Import from                            | Install                                                | For                                                     |
+| -------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| `matrix-design-system/chart`           | `recharts`                                             | `ChartPanel`, `ChartTooltip`, `DonutChart`              |
+| `matrix-design-system/markdown`        | `react-markdown`, `unified`, the remark/rehype plugins | `Markdown`                                              |
+| `matrix-design-system/command-palette` | `cmdk`                                                 | `CommandPalette`, its items and `CommandPaletteTrigger` |
 
 Nothing else is optional: the rain effect is part of the design system's identity — `BrandHeader`
 and the matrix backgrounds all render it — so `matrix-rain-webgpu` is a plain dependency and comes
@@ -69,7 +69,7 @@ Fonts are not bundled: load Open Sans and Courier Prime yourself.
 ## Host Identity
 
 The name a host presents itself with is never defaulted: `BrandHeader` requires `title`, `tagline` and
-`logoAlt`, `Footer` requires a `signature`, and `Menu` requires `showPaletteTrigger`. The social
+`logoAlt`, `Footer` requires a `signature`. The social
 contacts of the footer are optional, platform by platform
 ([ADR-0003](docs/adr/0003-host-identity-has-no-default.md)).
 
@@ -84,7 +84,7 @@ import NextImage from "next/image";
 
 <InternalLink to="/blog" linkComponent={NextLink}>Blog</InternalLink>
 <ImageGlow src={photo} alt="" imageComponent={NextImage} />
-<Menu currentPath={usePathname()} entries={entries} linkComponent={NextLink} showPaletteTrigger />
+<Menu currentPath={usePathname()} entries={entries} linkComponent={NextLink} />
 ```
 
 Without them you get a real `<a>` and a real `<img>` — `PlainImage` reproduces `next/image`'s
@@ -112,7 +112,7 @@ const entries: MenuEntry[] = [
     entries={entries}
     pinnedOnPaths={["/chat"]}
     linkComponent={NextLink}
-    showPaletteTrigger
+    trailing={<CommandPaletteTrigger />}
 />
 <Footer
     signature="Made by Jane"
@@ -129,6 +129,16 @@ link to `/blog/authors` with `activePathPrefixes: ["/blog/author/"]`); external 
 holding a selected link is highlighted too. A link's
 `onClick` is where tracking goes, and the mobile panel closes on click by itself. The menu hides on scroll
 except on `pinnedOnPaths`.
+
+The end of the bar is a `trailing` slot: pass `<CommandPaletteTrigger />` (from `matrix-design-system/command-palette`,
+with an optional `label` and an `onTrigger` callback for tracking) to get the search button and its shortcut hint, or
+nothing for a host without a palette.
+
+### Migrating from 2.x
+
+- `Menu`: `showPaletteTrigger` and `onPaletteTrigger` are gone. Pass
+  `trailing={<CommandPaletteTrigger onTrigger={onPaletteTrigger} />}` for the old behaviour.
+- The type `CommandPaletteTrigger` is now `CommandPaletteChangeCause`; the name belongs to the new component.
 
 ### Migrating from 1.x
 

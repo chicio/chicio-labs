@@ -53,7 +53,8 @@ Where a component needs framework behaviour it takes it as a prop, with a framew
 - site assets, such as `BrandHeader`'s `logo`
 
 **Host Identity is required, never defaulted** ([ADR-0003](../../packages/matrix-design-system/docs/adr/0003-host-identity-has-no-default.md)):
-`BrandHeader` takes `title`, `tagline` and `logoAlt`, `Footer` takes `signature`, `Menu` takes `showPaletteTrigger`.
+`BrandHeader` takes `title`, `tagline` and `logoAlt`, `Footer` takes `signature`. The command-palette trigger is not
+identity: `Menu` has an optional `trailing` slot, and the Website fills it with `CommandPaletteTrigger`.
 A component must never hard-code a host's name, tagline, alt text or sign-off, and a new prop of that kind is
 required, not optional with a fallback. `Footer`'s `socialLinks` and `contactHref` and every platform of
 `SocialContacts` are optional: absent means not rendered. Changing or adding such a prop is a breaking change.
