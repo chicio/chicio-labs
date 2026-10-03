@@ -1,0 +1,25 @@
+---
+import DocumentBody from "../../../components/DocumentBody.astro";
+import EntryList from "../../../components/EntryList.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { loadHubContent } from "../../../lib/content";
+import { decisionsAnchor } from "../../../lib/navigation";
+
+const { system } = await loadHubContent();
+---
+
+<Layout
+    title="Chicio Labs glossary"
+    description="The language of Chicio Labs as a whole, its glossary map and the decisions that shape the whole repository."
+>
+    <DocumentBody html={system.glossaryMap.html} />
+    <EntryList
+        heading="Decisions"
+        id={decisionsAnchor}
+        entries={system.adrs.map((adr) => ({
+            title: adr.title,
+            description: `ADR ${adr.number}`,
+            href: adr.url,
+        }))}
+    />
+</Layout>

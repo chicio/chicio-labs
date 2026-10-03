@@ -1,38 +1,45 @@
 import type { MenuEntry } from "matrix-design-system";
-import type { GlossaryContext } from "./content";
 import { designSystemShowcase, matrixRainShowcase } from "./registry";
 import { REPOSITORY_URL, WEBSITE_URL } from "./repo";
 
 export const catalogUrl = "/";
-export const workbenchUrl = "/#workbench";
-export const systemPageUrl = "/chicio-labs/";
+
+/** A glossary as the menu lists it: its page, and whether that page records any decisions. */
+export interface DomainEntry {
+    name: string;
+    url: string;
+    hasDecisions: boolean;
+}
+
+export const decisionsAnchor = "decisions";
 
 /**
- * The hub's menu. Every Showcase link is absolute, so it works under `astro dev` too, where the Showcases are not
- * served, and opens in a new tab like any other link that leaves the hub.
+ * The hub's menu: the catalog, the Domain (every glossary and its decisions) and the Websites. Every Showcase link is
+ * absolute, so it works under `astro dev` too, where the Showcases are not served, and opens in a new tab like any
+ * other link that leaves the hub.
  */
-export const menuEntries = (contexts: readonly Pick<GlossaryContext, "name" | "url">[]): MenuEntry[] => [
+export const menuEntries = (domain: readonly DomainEntry[]): MenuEntry[] => [
     { label: "Catalog", to: catalogUrl, activePathPrefixes: ["/lab/"] },
-    { label: "Workbench", to: workbenchUrl },
-    { label: "Chicio Labs", to: systemPageUrl, activePathPrefixes: ["/chicio-labs/"] },
     {
-        label: "Glossaries",
+        label: "Domain",
         groups: [
             {
-                label: "Contexts",
-                items: contexts.map((context) => ({
-                    label: context.name,
-                    to: context.url,
-                    activePathPrefixes: [context.url],
-                })),
+                label: "Glossaries",
+                items: domain.map((entry) => ({ label: entry.name, to: entry.url, activePathPrefixes: [entry.url] })),
+            },
+            {
+                label: "Decisions",
+                items: domain
+                    .filter((entry) => entry.hasDecisions)
+                    .map((entry) => ({ label: entry.name, to: `${entry.url}#${decisionsAnchor}` })),
             },
         ],
     },
     {
-        label: "Elsewhere",
+        label: "Websites",
         groups: [
             {
-                label: "Sites",
+                label: "Websites",
                 items: [
                     { label: "Website", to: WEBSITE_URL, external: true },
                     { label: designSystemShowcase.label, to: designSystemShowcase.url, external: true },
