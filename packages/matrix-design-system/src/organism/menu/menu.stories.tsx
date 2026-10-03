@@ -106,14 +106,14 @@ const useDropdownOpenedOnMount = (label: string) => {
     return ref;
 };
 
-const DefaultStory = () => <Menu currentPath="/blog" entries={entries} />;
+const DefaultStory = () => <Menu showPaletteTrigger currentPath="/blog" entries={entries} />;
 
 const BlogDropdownOpenStory = () => {
     const ref = useDropdownOpenedOnMount("Blog");
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu showPaletteTrigger currentPath="/blog" entries={entries} />
         </div>
     );
 };
@@ -123,7 +123,7 @@ const ExploreDropdownOpenStory = () => {
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu showPaletteTrigger currentPath="/blog" entries={entries} />
         </div>
     );
 };
@@ -133,7 +133,7 @@ const AuthorDropdownOpenStory = () => {
 
     return (
         <div ref={ref}>
-            <Menu currentPath="/blog" entries={entries} />
+            <Menu showPaletteTrigger currentPath="/blog" entries={entries} />
         </div>
     );
 };

@@ -65,6 +65,8 @@ export interface MenuProps {
     entries: MenuEntry[];
     /** Paths on which the menu never hides on scroll. */
     pinnedOnPaths?: string[];
+    /** Whether the search button and its keyboard shortcut hint are shown. Required: no host gets one silently. */
+    showPaletteTrigger: boolean;
     onPaletteTrigger?: () => void;
 }
 
@@ -75,6 +77,7 @@ const isDropdown = (entry: MenuEntry): entry is MenuDropdown => "groups" in entr
 export const Menu: FC<MenuProps> = ({
     entries,
     pinnedOnPaths = noPinnedPaths,
+    showPaletteTrigger,
     onPaletteTrigger,
     linkComponent,
     currentPath,
@@ -148,33 +151,35 @@ export const Menu: FC<MenuProps> = ({
                             <HamburgerMenu onClick={openMenu} />
                         </div>
                     )}
-                    <button
-                        className="group border-accent bg-accent/10 hover:border-accent hover:bg-accent/20 ml-auto flex min-h-10 w-auto cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 transition-all duration-200 sm:mr-3 md:w-60"
-                        onClick={handlePaletteTrigger}
-                        aria-label="Open command palette"
-                    >
-                        <BiSearchAlt className="text-accent group-hover:text-accent size-3.5 shrink-0 transition-colors duration-200" />
-                        <span className="text-accent/40 group-hover:text-accent/60 hidden flex-1 text-left font-mono text-sm leading-none transition-colors duration-200 md:block">
-                            Search...
-                        </span>
-                        {modifierKey !== null && (
-                            <span className="hidden items-center gap-1 md:inline-flex">
-                                <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-sm leading-none transition-colors duration-200">
-                                    {modifierKey === "meta" ? (
-                                        <LuCommand className="size-3" />
-                                    ) : (
-                                        <ImCtrl className="size-3" />
-                                    )}
-                                </kbd>
-                                <span className="text-accent/70 group-hover:text-accent font-mono text-sm leading-none transition-colors duration-200">
-                                    +
-                                </span>
-                                <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-base leading-none transition-colors duration-200">
-                                    K
-                                </kbd>
+                    {showPaletteTrigger && (
+                        <button
+                            className="group border-accent bg-accent/10 hover:border-accent hover:bg-accent/20 ml-auto flex min-h-10 w-auto cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 transition-all duration-200 sm:mr-3 md:w-60"
+                            onClick={handlePaletteTrigger}
+                            aria-label="Open command palette"
+                        >
+                            <BiSearchAlt className="text-accent group-hover:text-accent size-3.5 shrink-0 transition-colors duration-200" />
+                            <span className="text-accent/40 group-hover:text-accent/60 hidden flex-1 text-left font-mono text-sm leading-none transition-colors duration-200 md:block">
+                                Search...
                             </span>
-                        )}
-                    </button>
+                            {modifierKey !== null && (
+                                <span className="hidden items-center gap-1 md:inline-flex">
+                                    <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-sm leading-none transition-colors duration-200">
+                                        {modifierKey === "meta" ? (
+                                            <LuCommand className="size-3" />
+                                        ) : (
+                                            <ImCtrl className="size-3" />
+                                        )}
+                                    </kbd>
+                                    <span className="text-accent/70 group-hover:text-accent font-mono text-sm leading-none transition-colors duration-200">
+                                        +
+                                    </span>
+                                    <kbd className="border-accent/50 text-accent/70 group-hover:border-accent group-hover:text-accent inline-flex size-6 items-center justify-center rounded border font-mono text-base leading-none transition-colors duration-200">
+                                        K
+                                    </kbd>
+                                </span>
+                            )}
+                        </button>
+                    )}
                 </div>
             </MotionDiv>
             <AnimatePresence>
