@@ -6,7 +6,7 @@
   "storybookStatic": ".design-sync/sb-reference",
   "storybookConfigDir": "../../apps/matrix-design-system-showcase/.storybook",
   "buildCmd": "npx turbo run build --filter=matrix-design-system",
-  "extraEntries": ["./dist/chart.mjs", "./dist/markdown.mjs", "./dist/command-palette.mjs"],
+  "extraEntries": ["./.design-sync/compiler-runtime-prelude.mjs", "./dist/chart.mjs", "./dist/markdown.mjs", "./dist/command-palette.mjs"],
   "titleMap": {
     "TerminalBlocks": "TerminalLine",
     "PillsLinks": "BluePillLink",

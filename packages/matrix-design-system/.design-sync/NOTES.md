@@ -249,3 +249,39 @@ why the card template's white background wins — worth fixing next time.
   That is intended; it still carries `.d.ts` and `.prompt.md`.
 - The uploaded anchor is now `shape: "storybook"`, so the next re-sync gets a real diff and carried
   grades — this run's full re-verification was a one-off caused by the package→storybook shape change.
+
+## React Compiler runtime: the bundle needs a prelude (2026-10-04) [GENERAL]
+
+Since the package compiles its `"use client"` modules with the React Compiler (ADR-0002), ~70 dist
+modules call `c()` from `react/compiler-runtime`. The converter's React shim (`lib/bundle.mjs`) maps
+that import to `window.React`, and React 19 keeps `c` under `React.__COMPILER_RUNTIME`, not on the
+top-level object. Result: every compiled component (Menu, Footer, MotionDiv, FormField, ExternalLink,
+CommandPaletteTrigger, ...) threw `(0, import_compiler_runtimeN.c) is not a function` when rendered
+straight from `_ds_bundle.js`, which is exactly what a design does.
+
+**The previews hid it.** They render through the preview shim, which proxies every `window.React`
+property, so cards and compare sheets looked perfect. The only signal was ContentProgressBar's floor
+card in the render check (`errs: 1`). To catch it, render a component directly from
+`window.ChicioDS` on a card page (`ReactDOM.createRoot(d).render(React.createElement(ChicioDS.MotionDiv, ...))`).
+
+**Fix, config-only:** `.design-sync/compiler-runtime-prelude.mjs` sets
+`window.React.c = window.React.__COMPILER_RUNTIME.c`, and it is the FIRST `cfg.extraEntries` item.
+Order matters: the generated entry evaluates extra entries before the main entry, and each module
+copies the shim's properties at init, so `c` must exist before the first component module runs. The
+prelude exports `__dsCompilerRuntimePrelude` only so the package's `"sideEffects": ["*.css"]` does
+not tree-shake it away. `bundle.mjs` is app-contract surface and is not forked. Report the shim gap
+upstream; drop the prelude once the converter exports `c`.
+
+## Re-sync risks — 2026-10-04 refresh
+
+- **Keep the prelude first in `extraEntries`.** Moving it after `./dist/chart.mjs` brings the crash
+  back for the chart components, and previews will still look fine.
+- **`SelfHostedVideo` captures blank on both sides** (spinner, no poster): headless Chromium does not
+  play the video. Graded on frame, controls and caption. Not a defect.
+- **The previous upload predates 3.0.0** (Host Identity: `BrandHeader` needs `title`, `tagline`,
+  `logoAlt`; `Footer` needs `signature`). Contract changes clear every grade, so a major release means a
+  full re-grade even when nothing looks different.
+- **`conventions.md` drift found, not yet fixed:** it lists `mt-4` and `md:flex` as absent, but both
+  are now in the shipped CSS; the `xl` 1600 and `2xl` 2000 breakpoints are not emitted (no utility uses
+  them; only 576/768/992/1200 appear); the `html body` claim is still inaccurate; and it says nothing
+  about Host Identity. Propose the edits to Fabrizio rather than rewriting the file.
