@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
-import { labsCatalogMediaUrl } from "@/lib/content/about-me/open-source-projects";
+import { labsCatalogMediaUrl } from "@/lib/content/about-me/open-source-section";
 
 const outputRoot = path.join(process.cwd(), "public", labsCatalogMediaUrl);
 

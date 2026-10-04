@@ -1,11 +1,11 @@
 import NextImage from "next/image";
 import { CallToActionExternalWithTracking, ProjectCard } from "matrix-design-system";
-import { everyLabProjectLink, openSourceProjects } from "@/lib/content/about-me/open-source-projects";
+import { everyLabProjectLink, openSourceSection } from "@/lib/content/about-me/open-source-section";
 import { FC } from "react";
 
 export const Projects: FC = () => (
     <div className="my-9 flex w-full flex-col gap-2 md:gap-3">
-        {openSourceProjects().map(({ id, name, description, links, image }) => (
+        {openSourceSection().map(({ id, name, description, links, image }) => (
             <ProjectCard
                 key={id}
                 name={name}

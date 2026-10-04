@@ -1,5 +1,5 @@
 import { aboutMe } from "@/lib/content/about-me/about-me";
-import { openSourceProjectsMarkdown } from "@/lib/content/about-me/open-source-projects";
+import { openSourceSectionMarkdown } from "@/lib/content/about-me/open-source-section";
 import { contentBodyMarkdown } from "@/lib/mdx/content-body-markdown";
 import { contentItemMarkdown } from "@/lib/mdx/content-item-markdown";
 
@@ -9,5 +9,5 @@ import { contentItemMarkdown } from "@/lib/mdx/content-item-markdown";
  */
 export const aboutMeMarkdown = contentItemMarkdown(
     aboutMe,
-    (page) => `${contentBodyMarkdown(page)}\n\n${openSourceProjectsMarkdown()}\n`,
+    (page) => `${contentBodyMarkdown(page)}\n\n${openSourceSectionMarkdown()}\n`,
 );

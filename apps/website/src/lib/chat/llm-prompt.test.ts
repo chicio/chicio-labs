@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { openSourceProjects } from "@/lib/content/about-me/open-source-projects";
+import { openSourceSection } from "@/lib/content/about-me/open-source-section";
 import { createSystemPrompt } from "./llm-prompt";
 
 describe("createSystemPrompt", () => {
@@ -30,10 +30,10 @@ describe("createSystemPrompt", () => {
     });
 
     describe("notable projects", () => {
-        it("lists every open source project of the About me page with its links", () => {
+        it("lists every Lab Project and Standalone Project of the About me page with its links", () => {
             const prompt = createSystemPrompt();
 
-            openSourceProjects().forEach((project) => {
+            openSourceSection().forEach((project) => {
                 expect(prompt).toContain(project.name);
                 project.links.forEach((link) => {
                     expect(prompt).toContain(`- ${link.label}: ${link.href}`);

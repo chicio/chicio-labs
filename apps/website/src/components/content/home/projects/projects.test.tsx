@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { everyLabProjectLink, openSourceProjects } from "@/lib/content/about-me/open-source-projects";
+import { everyLabProjectLink, openSourceSection } from "@/lib/content/about-me/open-source-section";
 import { Projects } from "./projects";
 
 vi.mock("next/image", () => ({
@@ -11,9 +11,9 @@ vi.mock("next/image", () => ({
 }));
 
 describe("Projects", () => {
-    it("renders a card with the name of every open source project", () => {
+    it("renders a card with the name of every Lab Project and Standalone Project of the Open Source section", () => {
         render(<Projects />);
-        openSourceProjects().forEach((project) => {
+        openSourceSection().forEach((project) => {
             expect(screen.getByRole("heading", { level: 3, name: project.name })).toBeInTheDocument();
         });
     });
@@ -21,7 +21,7 @@ describe("Projects", () => {
     it("renders every link of a project as an external link", () => {
         render(<Projects />);
         const links = screen.getAllByRole("link");
-        openSourceProjects()
+        openSourceSection()
             .flatMap((project) => project.links)
             .forEach((projectLink) => {
                 const link = links.find((candidate) => candidate.getAttribute("href") === projectLink.href);
@@ -32,13 +32,13 @@ describe("Projects", () => {
 
     it("renders the project images through next/image", () => {
         render(<Projects />);
-        const [project] = openSourceProjects();
+        const [project] = openSourceSection();
         expect(screen.getAllByAltText(project.name)[0]).toHaveAttribute("data-next-image", "true");
     });
 
     it("renders the project images from the catalog's media", () => {
         render(<Projects />);
-        const [project] = openSourceProjects();
+        const [project] = openSourceSection();
         expect(screen.getAllByAltText(project.name)[0]).toHaveAttribute("src", project.image);
     });
 

@@ -1,7 +1,7 @@
-import { openSourceProjects } from "@/lib/content/about-me/open-source-projects";
+import { openSourceSection } from "@/lib/content/about-me/open-source-section";
 
 const notableProjects = (): string =>
-    openSourceProjects()
+    openSourceSection()
         .map((project) =>
             [
                 project.name,
