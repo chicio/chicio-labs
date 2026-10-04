@@ -74,6 +74,7 @@ describe("navigation", () => {
     describe("hubIdentity", () => {
         it("is the hub's own identity, not the Website's", () => {
             expect(hubIdentity.title).toBe("CHICIO LABS");
+            expect(hubIdentity.tagline).toBe("Pixels. Code. Unplugged.");
             expect(hubIdentity.signature).toContain("Experiments by Fabrizio Duroni");
         });
     });

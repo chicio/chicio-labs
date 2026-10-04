@@ -67,7 +67,7 @@ export const footerSocialLinks = {
 
 export const hubIdentity = {
     title: "CHICIO LABS",
-    tagline: "Code. AI. Computer graphics.",
+    tagline: "Pixels. Code. Unplugged.",
     logoAlt: "Chicio Labs logo",
     logo: "/logo.png",
     signature: "> Experiments by Fabrizio Duroni 'Chicio'",
