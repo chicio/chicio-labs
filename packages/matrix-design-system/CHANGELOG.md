@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.1.0](https://github.com/chicio/chicio-labs/compare/matrix-design-system%403.0.0...matrix-design-system%403.1.0) (2026-10-04)
+
+### Features
+
+* **ux:** :lipstick: redesign the Labs Hub and make labs-catalog the single source of every project ([#749](https://github.com/chicio/chicio-labs/issues/749)) ([f9df72f](https://github.com/chicio/chicio-labs/commit/f9df72f7892dc6387d747e7b623f614625bba1d5))
+
 ## [3.0.0](https://github.com/chicio/chicio-labs/compare/glossary-browser--v0.2.0...matrix-design-system%402.0.1) (2026-10-03)
 
 ### ⚠ BREAKING CHANGES
