@@ -1,82 +1,209 @@
+import { standaloneProjects, type StandaloneProject } from "labs-catalog";
 import { describe, expect, it } from "vitest";
-import { cardCallToActions, cardFeatures, isPublishedProject, splitCatalog } from "./catalog";
+import { homeSections, isPublishedProject, projectInfo } from "./catalog";
 import type { LabProject } from "./content";
 
 const project = (overrides: Partial<LabProject>): LabProject => ({
     id: "id",
     name: "Name",
     kind: "public-package",
+    type: "npm package",
     url: "/lab/id/",
     description: "A description",
+    sourcePath: "packages/id",
     sourceUrl: "https://github.com/chicio/chicio-labs/tree/main/packages/id",
+    links: { source: "https://github.com/chicio/chicio-labs/tree/main/packages/id" },
+    ...overrides,
+});
+
+const standalone = (overrides: Partial<StandaloneProject> = {}): StandaloneProject => ({
+    id: "tracer",
+    name: "Tracer",
+    type: "Computer graphics",
+    meta: "C++",
+    description: "A ray tracer",
+    links: { github: "https://github.com/chicio/Tracer" },
+    cardImage: "tracer.jpg",
     ...overrides,
 });
 
 describe("catalog", () => {
-    describe("splitCatalog", () => {
-        it("separates the published Lab Projects from the Workbench, keeping the order", () => {
-            const { published, workbench } = splitCatalog([
-                project({ id: "a", kind: "website" }),
-                project({ id: "b", kind: "workbench" }),
-                project({ id: "c", kind: "public-plugin" }),
-            ]);
-
-            expect(published.map((entry) => entry.id)).toEqual(["a", "c"]);
-            expect(workbench.map((entry) => entry.id)).toEqual(["b"]);
-        });
-
+    describe("isPublishedProject", () => {
         it("counts everything but the Workbench as published", () => {
             expect(isPublishedProject(project({ kind: "workbench" }))).toBe(false);
             expect(isPublishedProject(project({ kind: "public-package" }))).toBe(true);
         });
     });
 
-    describe("cardFeatures", () => {
-        it("names the kind with its version and the Showcase, never the glossary", () => {
-            const features = cardFeatures(
-                project({
-                    version: "3.0.0",
-                    showcase: { label: "Design System Showcase", url: "https://x/", sourcePath: "apps/s" },
-                    glossaryContext: { id: "ds", name: "Matrix Design System", url: "/glossary/ds/" },
-                }),
-            );
+    describe("homeSections", () => {
+        const sections = homeSections(
+            [
+                project({ id: "a", kind: "website" }),
+                project({ id: "b", kind: "workbench" }),
+                project({ id: "c", kind: "public-plugin" }),
+            ],
+            [standalone()],
+        );
 
-            expect(features).toEqual(["npm package, version 3.0.0", "Showcase: Design System Showcase"]);
+        it("lists the Lab Projects, then the Workbench, then the Standalone Projects", () => {
+            expect(sections.map((section) => section.id)).toEqual(["lab-projects", "workbench", "standalone-projects"]);
+            expect(sections.map((section) => section.title)).toEqual([
+                "Lab Projects",
+                "Workbench",
+                "Standalone Projects",
+            ]);
         });
 
-        it("omits the version when there is none", () => {
-            expect(cardFeatures(project({ kind: "workbench" }))).toEqual(["Workbench"]);
+        it("keeps the Workbench out of the Lab Projects, in catalog order", () => {
+            expect(sections[0]?.cards.map((card) => card.id)).toEqual(["a", "c"]);
+            expect(sections[1]?.cards.map((card) => card.id)).toEqual(["b"]);
+        });
+
+        it("describes the Standalone Projects as earlier experiments in their own repositories", () => {
+            expect(sections[2]?.subtitle).toBe("Earlier experiments from the same lab, each in its own repository.");
+        });
+
+        describe("a Lab Project card", () => {
+            const [card] = homeSections(
+                [
+                    project({
+                        version: "3.0.0",
+                        cardImage: "media/id.png",
+                        links: {
+                            visit: "https://site.dev",
+                            showcase: "https://x/design-system/",
+                            npm: "https://www.npmjs.com/package/id",
+                            source: "https://github.com/chicio/chicio-labs/tree/main/packages/id",
+                        },
+                    }),
+                ],
+                [],
+            ).flatMap((section) => section.cards);
+
+            it("carries its type, its version as the meta and its image", () => {
+                expect(card).toMatchObject({ type: "npm package", meta: "v3.0.0", image: "media/id.png" });
+            });
+
+            it("leads with its docs in the hub, then the outward links", () => {
+                expect(card?.primary).toEqual({ label: "Docs", href: "/lab/id/", internal: true });
+                expect(card?.links.map((link) => link.label)).toEqual(["Visit", "Showcase", "npm", "Source"]);
+            });
+
+            it("has no meta when it has no version", () => {
+                const [bare] = homeSections([project({})], []).flatMap((section) => section.cards);
+
+                expect(bare?.meta).toBeUndefined();
+            });
+        });
+
+        describe("a Workbench card", () => {
+            const [card] = homeSections(
+                [project({ kind: "workbench", version: "0.0.0", cardImage: "media/id.png" })],
+                [],
+            ).flatMap((section) => section.cards);
+
+            it("has docs only, no image and no version", () => {
+                expect(card?.links).toEqual([]);
+                expect(card?.image).toBeUndefined();
+                expect(card?.meta).toBeUndefined();
+                expect(card?.primary.label).toBe("Docs");
+            });
+        });
+
+        describe("a Standalone Project card", () => {
+            it("leads with GitHub, outside the hub, and carries its platform and image", () => {
+                const [card] = homeSections([], [standalone()]).flatMap((section) => section.cards);
+
+                expect(card?.primary).toEqual({
+                    label: "GitHub",
+                    href: "https://github.com/chicio/Tracer",
+                    internal: false,
+                });
+                expect(card?.meta).toBe("C++");
+                expect(card?.image).toBe("media/tracer.jpg");
+                expect(card?.links).toEqual([]);
+            });
+
+            it("adds its docs, thesis and download after GitHub, when it has them", () => {
+                const [card] = homeSections(
+                    [],
+                    [
+                        standalone({
+                            links: {
+                                github: "https://github.com/chicio/Tracer",
+                                docs: "https://docs.dev",
+                                thesis: "https://thesis.pdf",
+                                download: "https://get.dmg",
+                            },
+                        }),
+                    ],
+                ).flatMap((section) => section.cards);
+
+                expect(card?.links).toEqual([
+                    { label: "Docs", href: "https://docs.dev" },
+                    { label: "Thesis", href: "https://thesis.pdf" },
+                    { label: "Download", href: "https://get.dmg" },
+                ]);
+            });
+        });
+
+        it("builds a card for every Standalone Project of the real catalog", () => {
+            const cards = homeSections([], standaloneProjects).flatMap((section) => section.cards);
+
+            expect(cards).toHaveLength(standaloneProjects.length);
+            expect(cards.every((card) => card.image !== undefined && card.primary.href.startsWith("https://"))).toBe(
+                true,
+            );
         });
     });
 
-    describe("cardCallToActions", () => {
-        it("links a package to its docs in the hub, then its Showcase, npm and source", () => {
-            const actions = cardCallToActions(
+    describe("projectInfo", () => {
+        it("shows the type, the version of a published project and its workspace", () => {
+            const info = projectInfo(project({ version: "5.1.0", sourcePath: "apps/website" }));
+
+            expect(info.pills).toEqual([
+                { icon: ">_", label: "Type", value: "npm package" },
+                { icon: "#", label: "Version", value: "5.1.0" },
+                { icon: "/", label: "Workspace", value: "apps/website" },
+            ]);
+        });
+
+        it("leaves the version out of a Workbench project", () => {
+            const info = projectInfo(project({ kind: "workbench", version: "0.0.0" }));
+
+            expect(info.pills.map((pill) => pill.label)).toEqual(["Type", "Workspace"]);
+        });
+
+        it("makes Visit the primary action of the Website, then offers the changelog and the source", () => {
+            const info = projectInfo(
                 project({
-                    packageName: "matrix-design-system",
-                    showcase: { label: "Showcase", url: "https://x/design-system/", sourcePath: "apps/s" },
+                    kind: "website",
+                    changelogUrl: "/lab/id/changelog/",
+                    links: { visit: "https://site.dev", source: "https://github.com/x" },
                 }),
             );
 
-            expect(actions).toEqual([
-                { label: "Docs", link: "/lab/id/", sameTab: true },
-                { label: "Showcase", link: "https://x/design-system/" },
-                { label: "npm", link: "https://www.npmjs.com/package/matrix-design-system" },
-                { label: "Source", link: "https://github.com/chicio/chicio-labs/tree/main/packages/id" },
+            expect(info.primary).toEqual({ label: "Visit", href: "https://site.dev" });
+            expect(info.links).toEqual([
+                { label: "Changelog", href: "/lab/id/changelog/", internal: true },
+                { label: "Source", href: "https://github.com/x", internal: false },
             ]);
         });
 
-        it("links the Website to the live site", () => {
-            const labels = cardCallToActions(project({ kind: "website" })).map((action) => action.label);
+        it("prefers the Showcase over npm, and keeps npm as a text link", () => {
+            const info = projectInfo(
+                project({ links: { showcase: "https://s/", npm: "https://npm/", source: "https://github.com/x" } }),
+            );
 
-            expect(labels).toEqual(["Docs", "Visit", "Source"]);
+            expect(info.primary).toEqual({ label: "Showcase", href: "https://s/" });
+            expect(info.links.map((link) => link.label)).toEqual(["npm", "Source"]);
         });
 
-        it("gives a plugin only its docs and its source", () => {
-            expect(cardCallToActions(project({ kind: "public-plugin" })).map((action) => action.label)).toEqual([
-                "Docs",
-                "Source",
-            ]);
+        it("falls back to the source for a plugin, without repeating it as a text link", () => {
+            const info = projectInfo(project({ kind: "public-plugin", links: { source: "https://github.com/x" } }));
+
+            expect(info.primary).toEqual({ label: "Source", href: "https://github.com/x" });
+            expect(info.links).toEqual([]);
         });
     });
 });

@@ -36,7 +36,62 @@ export const checkCompleteness = (
     };
 };
 
-const workspacePatterns = (root: string): string[] => {
+/** What the hub reads of a Lab Project in `labs-catalog`: its id, where it lives and its Showcase, if any. */
+export interface CatalogLabProject {
+    id: string;
+    sourcePath: string;
+    links: { showcase?: string };
+}
+
+/**
+ * The registry holds the documentation wiring and `labs-catalog` the public facts of the same Lab Projects, so they
+ * must name exactly the same ones, in the same place, and agree on the Showcase. Returns one sentence per mismatch.
+ */
+export const checkCatalogAlignment = (
+    registry: readonly LabProjectDefinition[],
+    catalog: readonly CatalogLabProject[],
+): string[] => {
+    const registered = new Map(registry.map((project) => [project.id, project]));
+    const cataloged = new Map(catalog.map((project) => [project.id, project]));
+    const problems: string[] = [];
+
+    for (const project of registry) {
+        const entry = cataloged.get(project.id);
+
+        if (!entry) {
+            problems.push(`${project.id} is in the Labs Hub registry but not in labs-catalog`);
+            continue;
+        }
+
+        if (entry.sourcePath !== project.sourcePath) {
+            problems.push(
+                `${project.id} lives at ${project.sourcePath} in the Labs Hub registry but at ${entry.sourcePath} in labs-catalog`,
+            );
+        }
+
+        if (entry.links.showcase !== project.showcase?.url) {
+            problems.push(`${project.id} has a different Showcase in the Labs Hub registry and in labs-catalog`);
+        }
+    }
+
+    for (const entry of catalog) {
+        if (!registered.has(entry.id)) {
+            problems.push(`${entry.id} is in labs-catalog but not in the Labs Hub registry`);
+        }
+    }
+
+    return problems;
+};
+
+export const assertCatalogAligned = (problems: readonly string[]): void => {
+    if (problems.length > 0) {
+        throw new Error(
+            `The Labs Hub registry is out of step with labs-catalog:\n${problems.map((problem) => `  - ${problem}`).join("\n")}`,
+        );
+    }
+};
+
+const workspacePatterns =(root: string): string[] => {
     const manifest = readRepoJson<{ workspaces?: string[] }>(root, "package.json");
 
     return manifest.workspaces ?? [];

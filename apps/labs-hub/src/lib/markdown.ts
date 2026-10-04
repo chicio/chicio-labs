@@ -1,5 +1,5 @@
 import type { Element, Root as HastRoot } from "hast";
-import type { Paragraph, PhrasingContent, Root as MdastRoot } from "mdast";
+import type { Root as MdastRoot } from "mdast";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import remarkEmoji from "remark-emoji";
@@ -108,22 +108,4 @@ export const extractTitle = (markdown: string, fallback: string): string => {
     const heading = firstHeadingPattern.exec(markdown.replace(fencedCodePattern, ""))?.[1];
 
     return heading === undefined ? fallback : heading.replace(/[`*_]/g, "");
-};
-
-const inlineText = (node: PhrasingContent): string => {
-    if (node.type === "text" || node.type === "inlineCode") {
-        return node.value;
-    }
-
-    return "children" in node ? node.children.map(inlineText).join("") : "";
-};
-
-/** The lead paragraph of a document as plain text: no links, emphasis or code marks. Empty when there is none. */
-export const extractLead = (markdown: string): string => {
-    const paragraph = unified()
-        .use(remarkParse)
-        .parse(markdown)
-        .children.find((node): node is Paragraph => node.type === "paragraph");
-
-    return paragraph === undefined ? "" : paragraph.children.map(inlineText).join("").replace(/\s+/g, " ").trim();
 };
