@@ -78,7 +78,7 @@ export const CatalogCard: FC<CatalogCardProps> = ({
                             <Link
                                 key={link.label}
                                 href={link.href}
-                                className="text-secondary-text decoration-accent-alpha-40 hover:text-primary font-mono text-sm underline underline-offset-[3px]"
+                                className="text-secondary-text decoration-accent-alpha-40 hover:text-primary font-mono text-sm underline underline-offset-[3px] text-shadow-none"
                                 {...newTab}
                             >
                                 {link.label} ↗
