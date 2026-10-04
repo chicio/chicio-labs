@@ -20,7 +20,7 @@ every Lab Project is published. Each one is presented on the **[Labs Hub](https:
 | [Matrix Rain](packages/matrix-rain-webgpu)             | The WebGPU digital-rain effect → [Showcase](https://labs.fabrizioduroni.it/matrix-rain/)               |
 | [Claude Code plugins](.claude-plugin/marketplace.json) | The `chicio-labs` marketplace: `/plugin marketplace add chicio/chicio-labs`                            |
 
-![Chicio Labs](brand/readme-hero.jpg)
+![Chicio Labs](apps/labs-hub/brand/labs-featured.jpg)
 
 ---
 
