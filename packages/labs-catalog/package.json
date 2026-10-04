@@ -1,0 +1,33 @@
+{
+  "name": "labs-catalog",
+  "version": "0.0.0",
+  "description": "The public facts about every Lab Project and Standalone Project (name, type, description, links, card image), shared by the Labs Hub and the Website.",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    },
+    "./media/*": "./dist/media/*"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsdown && tsx scripts/build-media.ts",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "@vitest/coverage-v8": "^5.0.2",
+    "tsdown": "0.23.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
+}

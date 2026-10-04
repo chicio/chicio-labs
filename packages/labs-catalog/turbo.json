@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  // Each Lab Project keeps the images the catalog serves in its own Brand Kit (a brand/ folder at its root), and
+  // the build copies them into dist/media. A task's inputs default to this workspace's own files, so without these
+  // a changed Brand Kit would be a cache hit on a stale build, and the tests that check every card image exists
+  // would keep passing after one was deleted. Turborepo has no named inputs, so the list is repeated per task.
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/*/brand/**",
+        "$TURBO_ROOT$/packages/*/brand/**",
+        "$TURBO_ROOT$/claude-plugins/*/brand/**"
+      ]
+    },
+    "test:run": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/*/brand/**",
+        "$TURBO_ROOT$/packages/*/brand/**",
+        "$TURBO_ROOT$/claude-plugins/*/brand/**"
+      ]
+    },
+    "test:coverage": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/*/brand/**",
+        "$TURBO_ROOT$/packages/*/brand/**",
+        "$TURBO_ROOT$/claude-plugins/*/brand/**"
+      ]
+    }
+  }
+}
