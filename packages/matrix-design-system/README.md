@@ -1,3 +1,5 @@
+![matrix-design-system](brand/logo-transparent.png)
+
 # matrix-design-system
 
 A Matrix-inspired React design system: green on near-black, Open Sans for prose, Courier Prime for

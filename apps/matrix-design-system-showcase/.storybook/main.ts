@@ -6,6 +6,7 @@ const config: StorybookConfig = {
     // changes, and it is also where .design-sync reads them from, so there is one source of truth.
     stories: ["../../../packages/matrix-design-system/src/**/*.stories.@(ts|tsx)"],
     addons: [],
+    staticDirs: [{ from: "../../../packages/matrix-design-system/brand", to: "/brand" }],
     framework: {
         name: "@storybook/react-vite",
         options: {},
