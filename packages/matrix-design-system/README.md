@@ -1,4 +1,4 @@
-![matrix-design-system](brand/logo-transparent.png)
+![matrix-design-system](brand/icon.png)
 
 # matrix-design-system
 
