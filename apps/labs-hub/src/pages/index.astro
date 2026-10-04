@@ -1,85 +1,38 @@
 ---
-import { ProjectCard, SectionHeading, TerminalButton } from "matrix-design-system";
+import { standaloneProjects } from "labs-catalog";
+import { SectionHeading } from "matrix-design-system";
+import { optimizedCardImage } from "../components/card-image";
+import HubCard from "../components/HubCard.astro";
 import Layout from "../layouts/Layout.astro";
-import { cardCallToActions, cardFeatures, splitCatalog } from "../lib/catalog";
+import { homeSections } from "../lib/catalog";
 import { loadHubContent } from "../lib/content";
-import { hubIdentity } from "../lib/navigation";
-import path from "node:path";
-import { getImage } from "astro:assets";
-import type { ImageMetadata } from "astro";
 
 const { projects } = await loadHubContent();
-const { published, workbench } = splitCatalog(projects);
 
-// The card images live outside the app, in the repository. Vite can only import a literal list, so this mirrors
-// `cardImages` in the registry, and a registered image missing from it fails the build instead of shipping the logo.
-// Vite shortens the keys it returns, so each is resolved back to its repository path.
-const pageDirectory = "apps/labs-hub/src/pages";
-const globbedImages = import.meta.glob<ImageMetadata>(
-    [
-        "../../../../brand/featured/featured-horizontal.jpg",
-        "../../../../apps/website/src/content/blog/post/2026/09/11/monorepo-npm-workspaces-turborepo-nextjs-blog/media/monorepo-npm-workspaces-turborepo.jpg",
-        "../../../../apps/website/src/content/about-me/media/projects/matrix-rain-webgpu.png",
-        "../../../../apps/website/src/content/blog/post/2026/10/03/claude-code-mods-glossary-browser-domain-modeling-plugin-marketplace/media/claude-code-mods-glossary-browser.jpg",
-        "../../../../claude-plugins/image-peek/image-peek.jpg",
-    ],
-    { eager: true, import: "default" },
-);
-const importedImages = new Map(
-    Object.entries(globbedImages).map(([key, image]) => [path.posix.join(pageDirectory, key), image]),
-);
-
-const cardImage = async (image: string | undefined): Promise<string> => {
-    if (!image) {
-        return hubIdentity.logo;
-    }
-
-    const source = importedImages.get(image);
-
-    if (!source) {
-        throw new Error(`The card image ${image} is registered but not imported by the catalog`);
-    }
-
-    return (await getImage({ src: source, width: 1000, format: "webp" })).src;
-};
-
-const cards = await Promise.all(
-    published.map(async (project) => ({ project, image: await cardImage(project.image) })),
+const sections = await Promise.all(
+    homeSections(projects, standaloneProjects).map(async (section) => ({
+        ...section,
+        cards: await Promise.all(
+            section.cards.map(async (card) => ({
+                card,
+                image: card.image ? await optimizedCardImage(card.image) : undefined,
+            })),
+        ),
+    })),
 );
 ---
 
 <Layout title="Chicio Labs">
-    <SectionHeading
-        title="Lab Projects"
-        description="Everything Chicio Labs publishes, each with its docs generated from the repository."
-    />
     {
-        cards.map(({ project, image }) => (
-            <ProjectCard
-                name={project.name}
-                description={project.description}
-                features={cardFeatures(project)}
-                callToActions={cardCallToActions(project)}
-                image={image}
-            />
+        sections.map((section) => (
+            <section id={section.id} class="scroll-target mb-16">
+                <SectionHeading title={section.title} description={section.subtitle} />
+                <div class="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))]">
+                    {section.cards.map(({ card, image }) => (
+                        <HubCard card={card} image={image} tagLink={`#${section.id}`} />
+                    ))}
+                </div>
+            </section>
         ))
     }
-
-    <section id="workbench" class="scroll-target mt-12">
-        <SectionHeading
-            title="Workbench"
-            description="The Lab Projects that only work inside Chicio Labs: the tools the published ones are built with."
-        />
-        <div class="grid gap-4 md:grid-cols-2">
-            {
-                workbench.map((project) => (
-                    <div class="glow-container flex flex-col items-start gap-3 p-4 md:p-6">
-                        <h3 class="m-0">{project.name}</h3>
-                        <p class="m-0">{project.description}</p>
-                        <TerminalButton label="Docs" to={project.url} />
-                    </div>
-                ))
-            }
-        </div>
-    </section>
 </Layout>

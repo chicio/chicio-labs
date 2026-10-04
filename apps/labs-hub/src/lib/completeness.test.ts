@@ -3,8 +3,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+    assertCatalogAligned,
     assertComplete,
+    checkCatalogAlignment,
     checkCompleteness,
+    type CatalogLabProject,
     discoverLabProjectSources,
     discoverPlugins,
     discoverWorkspaces,
@@ -14,8 +17,6 @@ import { findRepoRoot } from "./repo";
 
 const project = (overrides: Partial<LabProjectDefinition>): LabProjectDefinition => ({
     id: "id",
-    name: "Name",
-    kind: "workbench",
     sourcePath: "packages/a",
     manifest: { type: "package" },
     ...overrides,
@@ -63,7 +64,7 @@ describe("completeness", () => {
         it("does not look for a manifest-less Lab Project in the repository", () => {
             const converter = project({
                 sourcePath: "packages/a/.design-sync",
-                manifest: { type: "none", description: "A converter" },
+                manifest: { type: "none" },
             });
 
             expect(checkCompleteness([converter], []).extra).toEqual([]);
@@ -78,6 +79,60 @@ describe("completeness", () => {
         it("names every gap in the error", () => {
             expect(() => assertComplete({ missing: ["packages/b"], extra: ["packages/gone"] })).toThrow(
                 /packages\/b exists but no Lab Project covers it[\s\S]*packages\/gone is registered/,
+            );
+        });
+    });
+
+    describe("checkCatalogAlignment", () => {
+        const entry = (overrides: Partial<CatalogLabProject> = {}): CatalogLabProject => ({
+            id: "id",
+            sourcePath: "packages/a",
+            links: {},
+            ...overrides,
+        });
+
+        it("finds nothing when both name the same Lab Projects", () => {
+            expect(checkCatalogAlignment([project({})], [entry()])).toEqual([]);
+        });
+
+        it("names a Lab Project that only the registry knows", () => {
+            expect(checkCatalogAlignment([project({ id: "a" }), project({ id: "b" })], [entry({ id: "a" })])).toEqual([
+                "b is in the Labs Hub registry but not in labs-catalog",
+            ]);
+        });
+
+        it("names a Lab Project that only the catalog knows", () => {
+            expect(checkCatalogAlignment([project({ id: "a" })], [entry({ id: "a" }), entry({ id: "b" })])).toEqual([
+                "b is in labs-catalog but not in the Labs Hub registry",
+            ]);
+        });
+
+        it("names a Lab Project the two place differently", () => {
+            expect(checkCatalogAlignment([project({})], [entry({ sourcePath: "packages/b" })])).toEqual([
+                "id lives at packages/a in the Labs Hub registry but at packages/b in labs-catalog",
+            ]);
+        });
+
+        it("names a Lab Project whose Showcase the two disagree about", () => {
+            const showcase = { label: "Showcase", url: "https://x/a/", sourcePath: "apps/s" };
+
+            expect(checkCatalogAlignment([project({ showcase })], [entry()])).toEqual([
+                "id has a different Showcase in the Labs Hub registry and in labs-catalog",
+            ]);
+            expect(
+                checkCatalogAlignment([project({ showcase })], [entry({ links: { showcase: showcase.url } })]),
+            ).toEqual([]);
+        });
+    });
+
+    describe("assertCatalogAligned", () => {
+        it("accepts an aligned registry", () => {
+            expect(() => assertCatalogAligned([])).not.toThrow();
+        });
+
+        it("lists every mismatch in the error", () => {
+            expect(() => assertCatalogAligned(["a is missing", "b is missing"])).toThrow(
+                /out of step with labs-catalog:\n {2}- a is missing\n {2}- b is missing/,
             );
         });
     });

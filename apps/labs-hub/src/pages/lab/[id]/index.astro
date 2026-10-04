@@ -1,9 +1,16 @@
 ---
-import { CallToActionExternalWithTracking, Chip, SectionHeading } from "matrix-design-system";
+import {
+    Breadcrumb,
+    CallToActionExternalWithTracking,
+    InfoPill,
+    SectionHeading,
+} from "matrix-design-system";
+import { optimizedCardImage } from "../../../components/card-image";
 import DocumentBody from "../../../components/DocumentBody.astro";
 import Layout from "../../../layouts/Layout.astro";
-import { kindLabel } from "../../../lib/catalog";
-import { loadHubContent, type LabProject } from "../../../lib/content";
+import { projectInfo } from "../../../lib/catalog";
+import { labUrl, loadHubContent, type LabProject } from "../../../lib/content";
+import { catalogUrl } from "../../../lib/navigation";
 
 export async function getStaticPaths() {
     const { projects } = await loadHubContent();
@@ -17,9 +24,18 @@ interface Props {
 
 const { project } = Astro.props;
 const newTab = { target: "_blank", rel: "noopener noreferrer" };
+const info = projectInfo(project);
+const cover = project.kind === "workbench" || !project.cardImage ? undefined : await optimizedCardImage(project.cardImage);
+const crumbs = [
+    { label: "Labs", href: catalogUrl, isCurrent: false as const },
+    { label: project.name, href: labUrl(project.id), isCurrent: true as const },
+];
+const textLink =
+    "text-secondary-text decoration-accent-alpha-40 hover:text-primary font-mono text-[15px] underline underline-offset-[3px]";
 ---
 
 <Layout title={project.name} description={project.description}>
+    <Breadcrumb client:load items={crumbs} />
     {
         project.readme ? (
             <DocumentBody html={project.readme.html} />
@@ -31,29 +47,39 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
         )
     }
 
-    <section class="glow-container mt-12 flex flex-col gap-5 p-4 md:p-8">
-        <SectionHeading title={`More about ${project.name}`} />
-        <div class="flex flex-wrap items-center gap-2">
-            <Chip>{kindLabel[project.kind]}</Chip>
-            {project.version && project.kind !== "workbench" && <Chip>{`version ${project.version}`}</Chip>}
-            {project.packageName && <Chip>{project.packageName}</Chip>}
-        </div>
-        <div class="flex flex-wrap items-center gap-4">
+    <section class="border-accent-alpha-25 mt-16 border-t pt-9">
+        <SectionHeading title="Project info" />
+        <div class="flex flex-wrap items-start gap-7">
             {
-                project.changelogUrl && (
-                    <CallToActionExternalWithTracking href={project.changelogUrl}>Changelog</CallToActionExternalWithTracking>
+                cover && (
+                    <div class="border-accent-alpha-40 aspect-video min-w-0 flex-[1_1_300px] overflow-hidden rounded-[14px] border shadow-[0_0_26px_rgba(0,255,65,0.3)]">
+                        <img src={cover} alt={project.name} class="m-0 block h-full w-full object-cover" />
+                    </div>
                 )
             }
-            {
-                project.showcase && (
-                    <CallToActionExternalWithTracking href={project.showcase.url} {...newTab}>
-                        {project.showcase.label}
+            <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-5">
+                <div class="flex flex-wrap gap-3">
+                    {info.pills.map((pill) => <InfoPill icon={pill.icon} label={pill.label} value={pill.value} />)}
+                </div>
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2.5">
+                    <CallToActionExternalWithTracking href={info.primary.href} {...newTab}>
+                        {info.primary.label}
                     </CallToActionExternalWithTracking>
-                )
-            }
-            <CallToActionExternalWithTracking href={project.sourceUrl} {...newTab}>
-                Source
-            </CallToActionExternalWithTracking>
+                    {
+                        info.links.map((link) =>
+                            link.internal ? (
+                                <a href={link.href} class={textLink}>
+                                    {link.label}
+                                </a>
+                            ) : (
+                                <a href={link.href} class={textLink} {...newTab}>
+                                    {link.label} ↗
+                                </a>
+                            ),
+                        )
+                    }
+                </div>
+            </div>
         </div>
     </section>
 </Layout>
