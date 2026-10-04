@@ -29,6 +29,12 @@ path inside it. A Standalone Project has no repository folder here, so its image
 its own folder) and fails when it is not sound; it then copies every card image into `dist/media/`, which is
 gitignored. Nothing is committed twice.
 
+There is deliberately no `dev` script. `dist/media/` comes from `build-media.ts`, not from tsdown, and `tsdown --watch`
+empties `dist/` when it starts (`clean: true`) without ever running that step, so a watcher would delete the card
+images that the Labs Hub and About me serve under `npm run dev`. The catalog is data, and the `^build` that turbo puts
+in front of every consumer's `dev` already builds it; restart `dev` (or run `npm run build` here) after editing a
+Brand Kit.
+
 ## Adding a project
 
 Add it to `src/catalog.ts`. For a Lab Project, put its card image in its own `brand/` folder and register it in the

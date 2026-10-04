@@ -16,7 +16,6 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsdown && tsx scripts/build-media.ts",
-    "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
