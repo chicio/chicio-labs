@@ -49,7 +49,7 @@ with it.
 
 Inspired by [claude-image-view](https://github.com/jarrodwatts/claude-image-view) by Jarrod Watts, which shows real
 pixels in kitty and Ghostty. Image Peek's paste detection, cache lookup and tile layout are adapted from it under the
-MIT License; its notice is in [LICENSE-claude-image-view](./LICENSE-claude-image-view).
+MIT License, as is Image Peek; both notices are in [LICENSE](./LICENSE).
 
 ## Development
 

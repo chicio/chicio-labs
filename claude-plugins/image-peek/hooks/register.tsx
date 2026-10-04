@@ -1,5 +1,5 @@
 // The paste detection and the cache lookup are adapted from jarrodwatts/claude-image-view (hooks/register.tsx),
-// MIT License, Copyright (c) 2026 Jarrod Watts. The full notice is in LICENSE-claude-image-view.
+// MIT License, Copyright (c) 2026 Jarrod Watts. Its notice is in this plugin's LICENSE.
 import { atom, read, update } from "claude-code";
 import type { EngineInterface, Register } from "claude-code";
 

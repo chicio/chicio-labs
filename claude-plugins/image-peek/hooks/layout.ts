@@ -1,5 +1,5 @@
 // Adapted from jarrodwatts/claude-image-view (hooks/layout.ts), MIT License, Copyright (c) 2026 Jarrod Watts.
-// The full notice is in LICENSE-claude-image-view beside this plugin's README.
+// Its notice is in this plugin's LICENSE.
 
 export type Size = { width: number; height: number };
 export type Cells = { columns: number; rows: number };

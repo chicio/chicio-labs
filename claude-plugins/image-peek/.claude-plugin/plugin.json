@@ -8,6 +8,7 @@
   },
   "homepage": "https://github.com/chicio/chicio-labs/tree/main/claude-plugins/image-peek",
   "repository": "https://github.com/chicio/chicio-labs",
+  "license": "MIT",
   "keywords": ["images", "paste", "preview", "thumbnails", "warp", "mod"],
   "types": "./types/index.d.ts"
 }
