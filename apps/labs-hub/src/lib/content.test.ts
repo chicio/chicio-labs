@@ -133,7 +133,7 @@ describe("content", () => {
 
             expect(images["website"]).toBe("media/website.jpg");
             expect(images["matrix-design-system"]).toBe("media/matrix-design-system.png");
-            expect(images["matrix-component-store"]).toBeUndefined();
+            expect(images["matrix-component-store"]).toBe("media/matrix-component-store.jpg");
             expect(images["chicio-labs-sdlc"]).toBeUndefined();
         });
 

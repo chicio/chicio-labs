@@ -1,8 +1,7 @@
 ---
 import { standaloneProjects } from "labs-catalog";
-import { SectionHeading } from "matrix-design-system";
+import { CatalogCard, SectionHeading } from "matrix-design-system";
 import { optimizedCardImage } from "../components/card-image";
-import HubCard from "../components/HubCard.astro";
 import Layout from "../layouts/Layout.astro";
 import { homeSections } from "../lib/catalog";
 import { loadHubContent } from "../lib/content";
@@ -29,7 +28,16 @@ const sections = await Promise.all(
                 <SectionHeading title={section.title} description={section.subtitle} />
                 <div class="grid gap-5 [grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))]">
                     {section.cards.map(({ card, image }) => (
-                        <HubCard card={card} image={image} tagLink={`#${section.id}`} />
+                        <CatalogCard
+                            name={card.name}
+                            type={card.type}
+                            typeHref={`#${section.id}`}
+                            meta={card.meta}
+                            description={card.description}
+                            image={image}
+                            primary={card.primary}
+                            links={card.links}
+                        />
                     ))}
                 </div>
             </section>

@@ -59,8 +59,8 @@ describe("catalog", () => {
             expect(sections[1]?.cards.map((card) => card.id)).toEqual(["b"]);
         });
 
-        it("describes the Standalone Projects as earlier experiments in their own repositories", () => {
-            expect(sections[2]?.subtitle).toBe("Earlier experiments from the same lab, each in its own repository.");
+        it("describes the Standalone Projects as other experiments in their own repositories", () => {
+            expect(sections[2]?.subtitle).toBe("Other experiments from the same lab, each in its own repository.");
         });
 
         describe("a Lab Project card", () => {
@@ -85,7 +85,7 @@ describe("catalog", () => {
             });
 
             it("leads with its docs in the hub, then the outward links", () => {
-                expect(card?.primary).toEqual({ label: "Docs", href: "/lab/id/", internal: true });
+                expect(card?.primary).toEqual({ label: "Docs", href: "/lab/id/" });
                 expect(card?.links.map((link) => link.label)).toEqual(["Visit", "Showcase", "npm", "Source"]);
             });
 
@@ -114,11 +114,7 @@ describe("catalog", () => {
             it("leads with GitHub, outside the hub, and carries its platform and image", () => {
                 const [card] = homeSections([], [standalone()]).flatMap((section) => section.cards);
 
-                expect(card?.primary).toEqual({
-                    label: "GitHub",
-                    href: "https://github.com/chicio/Tracer",
-                    internal: false,
-                });
+                expect(card?.primary).toEqual({ label: "GitHub", href: "https://github.com/chicio/Tracer" });
                 expect(card?.meta).toBe("C++");
                 expect(card?.image).toBe("media/tracer.jpg");
                 expect(card?.links).toEqual([]);

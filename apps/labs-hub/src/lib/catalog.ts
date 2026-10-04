@@ -16,7 +16,7 @@ export interface ProjectCardData {
     description: string;
     /** Where `labs-catalog` serves the card image from, relative to the package; absent: the card has no image. */
     image?: string;
-    primary: CardLink & { internal: boolean };
+    primary: CardLink;
     /** The secondary links, all outward. */
     links: CardLink[];
 }
@@ -55,7 +55,7 @@ const labCard = (project: LabProject): ProjectCardData => {
         meta: published && project.version ? `v${project.version}` : undefined,
         description: project.description,
         image: published ? project.cardImage : undefined,
-        primary: { label: "Docs", href: project.url, internal: true },
+        primary: { label: "Docs", href: project.url },
         links: published ? links : [],
     };
 };
@@ -82,7 +82,7 @@ const standaloneCard = (project: StandaloneProject): ProjectCardData => {
         meta: project.meta,
         description: project.description,
         image: cardImagePath(project),
-        primary: { label: "GitHub", href: project.links.github, internal: false },
+        primary: { label: "GitHub", href: project.links.github },
         links,
     };
 };
@@ -110,7 +110,7 @@ export const homeSections = (
     {
         id: "standalone-projects",
         title: "Standalone Projects",
-        subtitle: "Earlier experiments from the same lab, each in its own repository.",
+        subtitle: "Other experiments from the same lab, each in its own repository.",
         cards: standaloneProjects.map(standaloneCard),
     },
 ];
