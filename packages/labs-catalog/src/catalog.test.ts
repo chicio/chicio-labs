@@ -24,7 +24,7 @@ describe("catalog", () => {
         }
     });
 
-    it("lists the Lab Projects the hub documents, with a card image on the published ones but the component store", () => {
+    it("lists the Lab Projects the hub documents, with a card image on every published one", () => {
         expect(labProjects.map((project) => project.id)).toEqual([
             "website",
             "matrix-design-system",
@@ -42,7 +42,6 @@ describe("catalog", () => {
         const withoutImage = labProjects.filter((project) => project.cardImage === undefined).map(({ id }) => id);
 
         expect(withoutImage).toEqual([
-            "matrix-component-store",
             "chicio-labs-sdlc",
             "website-content",
             "eslint-plugin-chicio",

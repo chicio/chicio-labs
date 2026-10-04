@@ -52,6 +52,7 @@ export const labProjects: readonly LabProject[] = [
             npm: npmUrl("matrix-component-store"),
             source: sourceUrl("packages/matrix-component-store"),
         },
+        cardImage: "monorepo-npm-workspaces-turborepo.jpg",
     },
     {
         id: "matrix-rain-webgpu",
