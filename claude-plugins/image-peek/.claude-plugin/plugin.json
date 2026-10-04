@@ -1,0 +1,14 @@
+{
+  "name": "image-peek",
+  "version": "0.1.0",
+  "description": "See the images you paste into Claude Code: a thumbnail above the prompt for each [Image #N], drawn in any truecolor terminal (Warp included) and with real pixels in kitty and Ghostty, and a button that opens it full size in Quick Look. macOS",
+  "author": {
+    "name": "Fabrizio Duroni",
+    "url": "https://github.com/chicio"
+  },
+  "homepage": "https://github.com/chicio/chicio-labs/tree/main/claude-plugins/image-peek",
+  "repository": "https://github.com/chicio/chicio-labs",
+  "license": "MIT",
+  "keywords": ["images", "paste", "preview", "thumbnails", "warp", "mod"],
+  "types": "./types/index.d.ts"
+}

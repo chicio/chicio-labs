@@ -38,6 +38,7 @@ export const cardImages = {
     matrixRain: "apps/website/src/content/about-me/media/projects/matrix-rain-webgpu.png",
     glossaryBrowser:
         "apps/website/src/content/blog/post/2026/10/03/claude-code-mods-glossary-browser-domain-modeling-plugin-marketplace/media/claude-code-mods-glossary-browser.jpg",
+    imagePeek: "claude-plugins/image-peek/image-peek.jpg",
 } as const;
 
 export interface GlossaryContextDefinition {
@@ -115,6 +116,16 @@ export const labProjects: readonly LabProjectDefinition[] = [
         readme: "claude-plugins/glossary-browser/README.md",
         changelog: "claude-plugins/glossary-browser/CHANGELOG.md",
         image: cardImages.glossaryBrowser,
+    },
+    {
+        id: "image-peek",
+        name: "Image Peek",
+        kind: "public-plugin",
+        sourcePath: "claude-plugins/image-peek",
+        manifest: { type: "plugin" },
+        readme: "claude-plugins/image-peek/README.md",
+        changelog: "claude-plugins/image-peek/CHANGELOG.md",
+        image: cardImages.imagePeek,
     },
     {
         id: "chicio-labs-sdlc",

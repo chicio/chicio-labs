@@ -15,6 +15,7 @@ on:
         type: choice
         options:
           - glossary-browser
+          - image-peek
         required: true
       increment:
         description: 'Which release to cut ("initial" releases the version already in plugin.json)'
