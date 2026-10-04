@@ -119,9 +119,9 @@ describe("completeness", () => {
             expect(checkCatalogAlignment([project({ showcase })], [entry()])).toEqual([
                 "id has a different Showcase in the Labs Hub registry and in labs-catalog",
             ]);
-            expect(checkCatalogAlignment([project({ showcase })], [entry({ links: { showcase: showcase.url } })])).toEqual(
-                [],
-            );
+            expect(
+                checkCatalogAlignment([project({ showcase })], [entry({ links: { showcase: showcase.url } })]),
+            ).toEqual([]);
         });
     });
 

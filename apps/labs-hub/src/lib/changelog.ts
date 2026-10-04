@@ -50,7 +50,7 @@ export const formatReleaseDate = (date: string): string => {
 export const releaseLinkLabel = (compareUrl: string): string =>
     compareUrl.includes("/compare/") ? "compare" : "release";
 
-const cleanMessage =(text: string): string =>
+const cleanMessage = (text: string): string =>
     text.replace(shortcodePattern, "").replace(leadingEmojiPattern, "").replace(/\s+/g, " ").trim();
 
 const parseEntry = (line: string, repository: string | undefined, resolveUrl: (href: string) => string) => {

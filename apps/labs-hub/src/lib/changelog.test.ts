@@ -118,7 +118,9 @@ describe("changelog", () => {
         });
 
         it("does not mistake a trailing word for a commit hash", () => {
-            const [release] = parseChangelog("## [1.0.0](https://x/compare/a...b) (2026-01-01)\n\n### Features\n\n* **a:** decaded\n");
+            const [release] = parseChangelog(
+                "## [1.0.0](https://x/compare/a...b) (2026-01-01)\n\n### Features\n\n* **a:** decaded\n",
+            );
 
             expect(release?.groups[0]?.entries[0]?.message).toBe("decaded");
             expect(release?.groups[0]?.entries[0]?.commit).toBeUndefined();
@@ -159,7 +161,9 @@ describe("changelog", () => {
         });
 
         it("ignores everything before the first release and entries outside a group", () => {
-            const parsed = parseChangelog("# Changelog\n\n* **a:** stray 1234567\n\n## [1.0.0](https://x/compare/a...b) (2026-01-01)\n\n* **a:** orphan 1234567\n");
+            const parsed = parseChangelog(
+                "# Changelog\n\n* **a:** stray 1234567\n\n## [1.0.0](https://x/compare/a...b) (2026-01-01)\n\n* **a:** orphan 1234567\n",
+            );
 
             expect(parsed).toHaveLength(1);
             expect(parsed[0]?.groups).toEqual([]);

@@ -91,7 +91,7 @@ export const assertCatalogAligned = (problems: readonly string[]): void => {
     }
 };
 
-const workspacePatterns =(root: string): string[] => {
+const workspacePatterns = (root: string): string[] => {
     const manifest = readRepoJson<{ workspaces?: string[] }>(root, "package.json");
 
     return manifest.workspaces ?? [];
