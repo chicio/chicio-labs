@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatReleaseDate, parseChangelog } from "./changelog";
+import { formatReleaseDate, parseChangelog, releaseLinkLabel } from "./changelog";
 import { findRepoRoot, readRepoFile } from "./repo";
 
 const modern = `# Changelog
@@ -31,6 +31,13 @@ describe("changelog", () => {
         it("leaves anything that is not an ISO date untouched", () => {
             expect(formatReleaseDate("yesterday")).toBe("yesterday");
             expect(formatReleaseDate("2026-13-01")).toBe("2026-13-01");
+        });
+    });
+
+    describe("releaseLinkLabel", () => {
+        it("calls a compare URL a compare and a release tag a release", () => {
+            expect(releaseLinkLabel("https://github.com/chicio/chicio-labs/compare/v1...v2")).toBe("compare");
+            expect(releaseLinkLabel("https://github.com/chicio/chicio-labs/releases/tag/v1.0.0")).toBe("release");
         });
     });
 

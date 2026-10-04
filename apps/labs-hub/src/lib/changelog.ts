@@ -46,7 +46,11 @@ export const formatReleaseDate = (date: string): string => {
     return year === undefined || day === undefined || name === undefined ? date : `${day} ${name} ${year}`;
 };
 
-const cleanMessage = (text: string): string =>
+/** What the link of a release says: a diff against the previous release, or the release itself. */
+export const releaseLinkLabel = (compareUrl: string): string =>
+    compareUrl.includes("/compare/") ? "compare" : "release";
+
+const cleanMessage =(text: string): string =>
     text.replace(shortcodePattern, "").replace(leadingEmojiPattern, "").replace(/\s+/g, " ").trim();
 
 const parseEntry = (line: string, repository: string | undefined, resolveUrl: (href: string) => string) => {
