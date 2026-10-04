@@ -1,65 +1,31 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { labProjects as catalogLabProjects, type LabProject as CatalogLabProject } from "labs-catalog";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { describeProject, loadHubContent, loadHubContentFrom, type HubContent } from "./content";
+import { loadHubContent, loadHubContentFrom, type HubContent } from "./content";
 import { findRepoRoot, readRepoJson } from "./repo";
-import { cardImages, labProjects, type LabProjectDefinition } from "./registry";
+import { labProjects, type LabProjectDefinition } from "./registry";
 
 describe("content", () => {
-    describe("describeProject", () => {
-        const [website] = labProjects;
-        const converter = labProjects.find((project) => project.manifest.type === "none");
-
-        it("trims the manifest description", () => {
-            expect(website && describeProject(website, { description: "  A site  " })).toBe("A site");
-        });
-
-        it("drops the plugin kind prefix a plugin manifest carries", () => {
-            expect(
-                website &&
-                    describeProject(website, {
-                        description: "Project Plugin, Chicio Labs only. The agentic pipeline",
-                    }),
-            ).toBe("The agentic pipeline");
-            expect(website && describeProject(website, { description: "Public Plugin. Browse a glossary" })).toBe(
-                "Browse a glossary",
-            );
-        });
-
-        it("uses the description the registry carries when there is no manifest", () => {
-            expect(converter && describeProject(converter, {})).toBe(
-                converter?.manifest.type === "none" ? converter.manifest.description : undefined,
-            );
-        });
-
-        it("is empty when neither the manifest nor a README says anything", () => {
-            expect(website && describeProject(website, {})).toBe("");
-            expect(website && describeProject(website, {}, "# Title only")).toBe("");
-        });
-
-        it("falls back to the README lead paragraph when the manifest has no description", () => {
-            expect(website && describeProject(website, {}, "# Site\n\nThe [source](./x.md) of a **site**.")).toBe(
-                "The source of a site.",
-            );
-        });
-
-        it("prefers the manifest description over the README", () => {
-            expect(website && describeProject(website, { description: "From manifest" }, "# T\n\nFrom README")).toBe(
-                "From manifest",
-            );
-        });
-    });
-
-    describe("a registry that does not describe a Lab Project", () => {
+    describe("a registry that does not match the repository or the catalog", () => {
         let root: string;
 
         const definition = (overrides: Partial<LabProjectDefinition>): LabProjectDefinition => ({
             id: "fixture",
-            name: "Fixture",
-            kind: "workbench",
             sourcePath: "packages/fixture",
             manifest: { type: "package" },
+            ...overrides,
+        });
+
+        const entry = (overrides: Partial<CatalogLabProject> = {}): CatalogLabProject => ({
+            id: "fixture",
+            name: "Fixture",
+            kind: "workbench",
+            type: "Developer tool",
+            sourcePath: "packages/fixture",
+            description: "A fixture",
+            links: { docs: "https://x/lab/fixture/", source: "https://x/tree/main/packages/fixture" },
             ...overrides,
         });
 
@@ -72,67 +38,38 @@ describe("content", () => {
 
         beforeEach(() => {
             root = mkdtempSync(path.join(tmpdir(), "labs-hub-"));
-            writeFixture({ "package.json": JSON.stringify({ workspaces: ["packages/*"] }) });
+            writeFixture({
+                "package.json": JSON.stringify({ workspaces: ["packages/*"] }),
+                "packages/fixture/package.json": JSON.stringify({ name: "fixture", version: "1.2.3" }),
+            });
         });
 
         afterEach(() => {
             rmSync(root, { recursive: true, force: true });
         });
 
-        it("fails the build when the manifest has no description and there is no README", async () => {
-            writeFixture({ "packages/fixture/package.json": JSON.stringify({ name: "fixture" }) });
-
-            await expect(loadHubContentFrom(root, [definition({})])).rejects.toThrow(
-                "fixture has no description to present",
+        it("fails the build when a Lab Project is in the registry but not in the catalog", async () => {
+            await expect(loadHubContentFrom(root, [definition({})], [])).rejects.toThrow(
+                "fixture is in the Labs Hub registry but not in labs-catalog",
             );
         });
 
-        it("fails the build when the README has no lead paragraph either", async () => {
-            writeFixture({
-                "packages/fixture/package.json": JSON.stringify({ name: "fixture" }),
-                "packages/fixture/README.md": "# Fixture\n\n- only a list\n",
-            });
-
-            await expect(
-                loadHubContentFrom(root, [definition({ readme: "packages/fixture/README.md" })]),
-            ).rejects.toThrow("fixture has no description to present");
+        it("fails the build when a Lab Project is in the catalog but not in the registry", async () => {
+            await expect(loadHubContentFrom(root, [definition({})], [entry(), entry({ id: "other" })])).rejects.toThrow(
+                "other is in labs-catalog but not in the Labs Hub registry",
+            );
         });
 
         it("fails the build when a Lab Project names a glossary context that is not registered", async () => {
-            writeFixture({ "packages/fixture/package.json": JSON.stringify({ name: "fixture", description: "A" }) });
-
-            await expect(loadHubContentFrom(root, [definition({ glossaryContext: "nowhere" })])).rejects.toThrow(
-                "fixture names the unknown glossary context nowhere",
-            );
+            await expect(
+                loadHubContentFrom(root, [definition({ glossaryContext: "nowhere" })], [entry()]),
+            ).rejects.toThrow("fixture names the unknown glossary context nowhere");
         });
-    });
 
-    describe("a registry that names a missing card image", () => {
-        it("fails the build", async () => {
-            const root = mkdtempSync(path.join(tmpdir(), "labs-hub-"));
-            mkdirSync(path.join(root, "packages/fixture"), { recursive: true });
-            writeFileSync(path.join(root, "package.json"), JSON.stringify({ workspaces: ["packages/*"] }));
-            writeFileSync(
-                path.join(root, "packages/fixture/package.json"),
-                JSON.stringify({ name: "fixture", description: "A" }),
-            );
-
-            try {
-                await expect(
-                    loadHubContentFrom(root, [
-                        {
-                            id: "fixture",
-                            name: "Fixture",
-                            kind: "workbench",
-                            sourcePath: "packages/fixture",
-                            manifest: { type: "package" },
-                            image: "brand/missing.png",
-                        },
-                    ]),
-                ).rejects.toThrow("fixture names the card image brand/missing.png, which does not exist");
-            } finally {
-                rmSync(root, { recursive: true, force: true });
-            }
+        it("fails the build when a registered document does not exist", async () => {
+            await expect(
+                loadHubContentFrom(root, [definition({ readme: "packages/fixture/README.md" })], [entry()]),
+            ).rejects.toThrow("names packages/fixture/README.md, which does not exist");
         });
     });
 
@@ -143,23 +80,26 @@ describe("content", () => {
             content = await loadHubContentFrom(findRepoRoot());
         });
 
-        it("presents every registered Lab Project, published first in registry order", () => {
-            expect(content.projects.map((project) => project.id)).toEqual(labProjects.map((project) => project.id));
+        it("presents every registered Lab Project, in the catalog's order", () => {
+            expect(content.projects.map((project) => project.id)).toEqual(
+                catalogLabProjects.map((project) => project.id),
+            );
+            expect(content.projects.map((project) => project.id).sort()).toEqual(
+                labProjects.map((project) => project.id).sort(),
+            );
         });
 
-        it("reads version, npm name and description from the manifests", () => {
+        it("reads the version from the manifests and the public facts from the catalog", () => {
             const designSystem = content.projects.find((project) => project.id === "matrix-design-system");
 
-            expect(designSystem?.packageName).toBe("matrix-design-system");
             expect(designSystem?.version).toMatch(/^\d+\.\d+\.\d+/);
-            expect(designSystem?.description).not.toBe("");
+            expect(designSystem?.name).toBe("Matrix Design System");
+            expect(designSystem?.type).toBe("npm package");
+            expect(designSystem?.links.npm).toBe("https://www.npmjs.com/package/matrix-design-system");
         });
 
-        it("gives every Project Card a description, the Website's from its README lead", () => {
+        it("gives every Project Card a description", () => {
             expect(content.projects.every((project) => project.description !== "")).toBe(true);
-            expect(content.projects.find((project) => project.id === "website")?.description).toMatch(
-                /^The source of fabrizioduroni\.it, one of the Lab Projects of Chicio Labs/,
-            );
         });
 
         it("versions the Website from the root manifest, where its releases are cut", () => {
@@ -188,25 +128,38 @@ describe("content", () => {
             ]);
         });
 
-        it("gives every published Lab Project its own card image", () => {
-            const images = Object.fromEntries(content.projects.map((project) => [project.id, project.image]));
+        it("gives each Lab Project that has a card image the path the catalog serves it from", () => {
+            const images = Object.fromEntries(content.projects.map((project) => [project.id, project.cardImage]));
 
-            expect(images["website"]).toBe("brand/featured/featured-horizontal.jpg");
-            expect(images["matrix-component-store"]).toBe(images["matrix-design-system"]);
-            expect(images["matrix-rain-webgpu"]).toMatch(/matrix-rain-webgpu\.png$/);
-            expect(images["glossary-browser"]).toMatch(/claude-code-mods-glossary-browser\.jpg$/);
-            expect(images["image-peek"]).toBe("claude-plugins/image-peek/image-peek.jpg");
+            expect(images["website"]).toBe("media/website.jpg");
+            expect(images["matrix-design-system"]).toBe("media/matrix-design-system.png");
+            expect(images["matrix-component-store"]).toBe("media/matrix-component-store.jpg");
+            expect(images["chicio-labs-sdlc"]).toBeUndefined();
         });
 
-        it("lists every card image among the hub's build inputs and the Pages workflow's paths", () => {
-            const root = findRepoRoot();
-            const turbo = readFileSync(path.join(root, "apps/labs-hub/turbo.json"), "utf8");
-            const pages = readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
-
-            for (const image of Object.values(cardImages)) {
-                expect(turbo.split(`"$TURBO_ROOT$/${image}"`).length - 1, `${image} in turbo.json`).toBe(3);
-                expect(pages, `${image} in pages.yml`).toContain(`- "${image}"`);
+        it("parses the CHANGELOG of every Lab Project that has one into releases", () => {
+            for (const project of content.projects.filter((candidate) => candidate.changelog)) {
+                expect(project.changelog?.releases.length, project.id).toBeGreaterThan(0);
+                expect(project.changelog?.fileUrl).toContain("/blob/main/");
             }
+        });
+
+        it("resolves the compare links of the oldest Website releases to the repository", () => {
+            const releases = content.projects.find((project) => project.id === "website")?.changelog?.releases ?? [];
+
+            expect(releases.every((release) => !release.compareUrl?.startsWith("///"))).toBe(true);
+        });
+
+        it("reaches the hub's card images through the catalog package, not through per-image inputs", () => {
+            const root = findRepoRoot();
+            const hub = readRepoJson<{ dependencies: Record<string, string> }>(root, "apps/labs-hub/package.json");
+            const pages = readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
+            const turbo = readFileSync(path.join(root, "apps/labs-hub/turbo.json"), "utf8");
+
+            expect(hub.dependencies["labs-catalog"]).toBeDefined();
+            expect(pages).toContain('- "packages/labs-catalog/**"');
+            expect(pages).toContain('- "**/brand/**"');
+            expect(turbo).not.toMatch(/\.(jpg|png)"/);
         });
 
         it("attaches the Showcases to their Lab Projects", () => {
@@ -233,7 +186,6 @@ describe("content", () => {
                 "matrix-design-system",
                 "matrix-component-store",
                 "eslint-plugin-chicio",
-                "design-converter",
             ]);
         });
 

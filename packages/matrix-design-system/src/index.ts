@@ -49,6 +49,7 @@ export * from "./molecules/buttons/segmented-control";
 export * from "./molecules/buttons/social-contact";
 export * from "./molecules/buttons/tag";
 export * from "./molecules/buttons/terminal-button";
+export * from "./molecules/catalog-card";
 export * from "./molecules/containers/content-container";
 export * from "./molecules/controls/control-slider";
 export * from "./molecules/cover-card/cover-card";

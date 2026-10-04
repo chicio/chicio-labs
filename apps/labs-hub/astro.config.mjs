@@ -9,7 +9,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
     site: "https://labs.fabrizioduroni.it",
     base: "/",
-    trailingSlash: "always",
+    // `astro dev` applies "always" to the /docs-media/ endpoint too, and answers 404 to every image a rendered README
+    // embeds: Astro exempts only routes whose file name carries a literal extension. The build is the same either way.
+    trailingSlash: process.argv.includes("dev") ? "ignore" : "always",
     integrations: [react()],
     // The design system declares `--font-sans: "Open Sans"` and `--font-mono: "Courier Prime"` and ships
     // no font files, so these family names must stay exactly these for its components to pick them up.

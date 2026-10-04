@@ -20,6 +20,16 @@ _Avoid_: labs website, landing page, GitHub Pages site
 The Lab Projects that only work inside Chicio Labs, the tools the published ones are built with.
 _Avoid_: internal, private projects, tooling
 
+**Brand Kit**:
+The images that identify a Lab Project (its logo, icon and card image), kept inside the Lab Project itself. The Website
+builds its Host Identity from its own Brand Kit.
+_Avoid_: assets, branding, media
+
+**Standalone Project**:
+Open-source work by Fabrizio Duroni that lives in its own repository rather than in Chicio Labs; the Labs Hub lists it
+next to the Lab Projects, but it is not one.
+_Avoid_: open source project, side project, external project
+
 ## Contexts
 
 - [Website](./apps/website/GLOSSARY.md): Fabrizio Duroni's personal site, its content (posts, the DSA course, the videogame

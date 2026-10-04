@@ -16,7 +16,13 @@
       // declared, so a cache hit restored .next, skipped prebuild, and left the site with no
       // service worker and no content images. A workspace task replaces the root's outputs
       // rather than merging them, so the .next entries are restated here.
-      "outputs": [".next/**", "!.next/cache/**", "public/sw*", "public/media/content/**"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "public/sw*",
+        "public/media/content/**",
+        "public/media/labs-catalog/**"
+      ],
       "env": [
         "CONTACT_EMAIL",
         "GOOGLE_ANALYTICS_API_SECRET",

@@ -43,6 +43,7 @@ export default defineConfig({
             exclude: [
                 "src/lib/chat/chat-knowledge-upload.ts",
                 "src/lib/images/copy-content-media.ts",
+                "src/lib/images/copy-labs-catalog-media.ts",
                 "src/lib/build/prebuild.ts",
             ],
         },

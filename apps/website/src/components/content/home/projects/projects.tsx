@@ -1,24 +1,19 @@
-import NextImage from "next/image";
-import { ProjectCard } from "matrix-design-system";
-import { projects } from "@/content/home/projects";
+import { CallToActionExternalWithTracking } from "matrix-design-system";
+import { CatalogCard } from "@/components/features/design-system-next/catalog-card";
+import { everyLabProjectLink, openSourceSection } from "@/lib/content/about-me/open-source-section";
 import { FC } from "react";
 
 export const Projects: FC = () => (
-    <div className="my-9 flex w-full flex-col gap-2 md:gap-3">
-        {Object.keys(projects).map((projectKey) => {
-            const { name, description, features, callToActions, image } = projects[projectKey];
-
-            return (
-                <ProjectCard
-                    key={name}
-                    name={name}
-                    description={description}
-                    features={features}
-                    callToActions={callToActions}
-                    image={image}
-                    imageComponent={NextImage}
-                />
-            );
-        })}
+    <div className="my-9 flex w-full flex-col gap-8">
+        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr))] gap-5">
+            {openSourceSection().map(({ id, ...card }) => (
+                <CatalogCard key={id} {...card} />
+            ))}
+        </div>
+        <div className="flex justify-center">
+            <CallToActionExternalWithTracking href={everyLabProjectLink.href} target="_blank" rel="noopener noreferrer">
+                {everyLabProjectLink.label}
+            </CallToActionExternalWithTracking>
+        </div>
     </div>
 );

@@ -11,6 +11,8 @@ import { posts } from "./posts/posts";
 import { blogListingMarkdown, blogPostMarkdown, homepageMarkdown } from "./posts/posts-markdown";
 import { consoles, games, videogamesHome } from "./videogames/videogames";
 import { consoleMarkdown, gameMarkdown, videogamesMarkdown } from "./videogames/videogames-markdown";
+import { aboutMe } from "./about-me/about-me";
+import { aboutMeMarkdown } from "./about-me/about-me-markdown";
 import { art } from "./art/art";
 import { artMarkdown } from "./art/art-markdown";
 import { mangaHome, mangas } from "./manga/manga";
@@ -77,7 +79,7 @@ export const contentRegistry: ContentRegistryEntry[] = [
     { slug: slugs.blog.home, markdown: blogListingMarkdown },
     { slug: slugs.blog.stats, markdown: blogStatsMarkdown },
     { slug: slugs.contact, markdown: contactMarkdown },
-    { ...mdxPage(slugs.aboutMe), searchable: true },
+    { slug: slugs.aboutMe, markdown: aboutMeMarkdown, content: singleItem(aboutMe), searchable: true },
     mdxPage(slugs.mcp),
     mdxPage(slugs.cookiePolicy),
     { slug: slugs.art, markdown: artMarkdown, content: singleItem(art) },

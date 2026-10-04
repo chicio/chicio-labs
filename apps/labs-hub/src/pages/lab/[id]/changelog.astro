@@ -1,8 +1,10 @@
 ---
-import { TerminalButton } from "matrix-design-system";
+import { Breadcrumb, CallToActionInternalWithTracking, Chip } from "matrix-design-system";
 import DocumentBody from "../../../components/DocumentBody.astro";
 import Layout from "../../../layouts/Layout.astro";
-import { loadHubContent, type HubDocument, type LabProject } from "../../../lib/content";
+import { formatReleaseDate, releaseLinkLabel } from "../../../lib/changelog";
+import { changelogUrl, labUrl, loadHubContent, type ChangelogDocument, type LabProject } from "../../../lib/content";
+import { catalogUrl } from "../../../lib/navigation";
 
 export async function getStaticPaths() {
     const { projects } = await loadHubContent();
@@ -14,15 +16,109 @@ export async function getStaticPaths() {
 
 interface Props {
     project: LabProject;
-    changelog: HubDocument;
+    changelog: ChangelogDocument;
 }
 
 const { project, changelog } = Astro.props;
+const crumbs = [
+    { label: "Labs", href: catalogUrl, isCurrent: false as const },
+    { label: project.name, href: labUrl(project.id), isCurrent: false as const },
+    { label: "Changelog", href: changelogUrl(project.id), isCurrent: true as const },
+];
+const textLink =
+    "text-secondary-text decoration-accent-alpha-40 hover:text-primary font-mono text-[15px] underline underline-offset-[3px]";
+const releaseLink = "font-mono text-[13px]";
 ---
 
 <Layout title={`${project.name} changelog`} description={`The changelog of ${project.name}.`}>
-    <DocumentBody html={changelog.html} />
-    <div class="mt-12">
-        <TerminalButton label={`Back to ${project.name}`} to={project.url} />
+    <Breadcrumb client:load items={crumbs} />
+    {
+        changelog.releases.length === 0 ? (
+            <DocumentBody html={changelog.html} />
+        ) : (
+            <>
+                <h1 class="text-primary mb-2.5 text-[52px] leading-[1.05] font-extrabold">Changelog</h1>
+                <p class="text-secondary-text mb-10 text-[17px]">{`Every release of ${project.name}, newest first.`}</p>
+                <div class="relative flex flex-col gap-5 pl-7">
+                    <div class="bg-accent-alpha-25 absolute top-2 bottom-2 left-1.5 w-px"></div>
+                    {changelog.releases.map((release, index) => (
+                        <section id={`v${release.version}`} class="scroll-target relative">
+                            <span class="border-accent bg-general-background absolute top-5 -left-[27px] h-[13px] w-[13px] rounded-full border-2 shadow-[0_0_10px_rgba(57,255,20,0.6)]" />
+                            {release.groups.length > 0 ? (
+                                <div class="border-accent-alpha-25 overflow-hidden rounded-[14px] border bg-[rgba(0,34,0,0.45)]">
+                                    <div class="border-accent-alpha-15 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 border-b px-5 py-3.5">
+                                        <span class="text-primary font-mono text-2xl font-bold text-shadow-md">
+                                            {release.version}
+                                        </span>
+                                        {index === 0 && <Chip>latest</Chip>}
+                                        {release.date && (
+                                            <span class="text-secondary-text font-mono text-sm">
+                                                {formatReleaseDate(release.date)}
+                                            </span>
+                                        )}
+                                        <span class="flex-1" />
+                                        {release.compareUrl && (
+                                            <a href={release.compareUrl} class={releaseLink} target="_blank" rel="noopener noreferrer">
+                                                {releaseLinkLabel(release.compareUrl)} ↗
+                                            </a>
+                                        )}
+                                    </div>
+                                    <div class="flex flex-col gap-[18px] px-5 pt-4 pb-5">
+                                        {release.groups.map((group) => (
+                                            <div class="flex flex-col gap-2">
+                                                <div class="text-accent font-mono text-xs tracking-[0.12em] uppercase">
+                                                    &gt; {group.title}
+                                                </div>
+                                                {group.entries.map((entry) => (
+                                                    <div class="border-accent-alpha-10 grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 border-t py-1.5">
+                                                        <span class="text-primary-text text-[15.5px] leading-[1.55]">
+                                                            {entry.scope && (
+                                                                <span class="text-accent mr-2 font-mono text-[13px] font-bold">
+                                                                    {entry.scope}
+                                                                </span>
+                                                            )}
+                                                            {entry.message}
+                                                        </span>
+                                                        {entry.commit && entry.commitUrl && (
+                                                            <a
+                                                                href={entry.commitUrl}
+                                                                class="text-secondary-text hover:text-primary font-mono text-[13px]"
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                {entry.commit}
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1.5 px-1 py-3.5">
+                                    <span class="text-primary font-mono text-lg font-bold">{release.version}</span>
+                                    <span class="text-secondary-text font-mono text-sm">
+                                        {release.date ? `${formatReleaseDate(release.date)} · ` : ""}no notable changes
+                                    </span>
+                                    <span class="flex-1" />
+                                    {release.compareUrl && (
+                                        <a href={release.compareUrl} class={releaseLink} target="_blank" rel="noopener noreferrer">
+                                            {releaseLinkLabel(release.compareUrl)} ↗
+                                        </a>
+                                    )}
+                                </div>
+                            )}
+                        </section>
+                    ))}
+                </div>
+            </>
+        )
+    }
+    <div class="border-accent-alpha-25 mt-12 flex flex-wrap items-center gap-x-5 gap-y-2.5 border-t pt-7">
+        <CallToActionInternalWithTracking to={project.url}>Back to docs</CallToActionInternalWithTracking>
+        <a href={changelog.fileUrl} class={textLink} target="_blank" rel="noopener noreferrer">
+            CHANGELOG.md ↗
+        </a>
     </div>
 </Layout>
