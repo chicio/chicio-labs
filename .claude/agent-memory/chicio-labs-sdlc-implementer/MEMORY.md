@@ -90,3 +90,4 @@
 
 ## Features (continued 13)
 - [Labs Hub](feature_labs_hub.md) — apps/labs-hub Astro 7 build gotchas (cookie pin, hashed font names, turbo inputs), registry/docs pipeline, deploy wiring (2026-10-03)
+- [Labs Catalog](feature_labs_catalog.md) — packages/labs-catalog, Brand Kits, hub completeness forces a registry entry, Storybook favicon recipe (2026-10-04)
