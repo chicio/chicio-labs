@@ -45,13 +45,30 @@ describe("Open Source section", () => {
             expect(cards.map((card) => card.name)).toEqual(["Published"]);
         });
 
-        it("leaves out a Lab Project and a Standalone Project that have no card image", () => {
-            const cards = selectOpenSourceCards(
-                [labProject({ id: "no-image", cardImage: undefined })],
-                [standaloneProject({ id: "also-no-image", cardImage: undefined })],
-            );
+        it("keeps a Lab Project that has no card image, as a card without one", () => {
+            const cards = selectOpenSourceCards([labProject({ id: "no-image", cardImage: undefined })], []);
 
-            expect(cards).toEqual([]);
+            expect(cards.map((card) => card.id)).toEqual(["no-image"]);
+            expect(cards[0].image).toBeUndefined();
+        });
+
+        it("leads a Lab Project with its docs, tagged with the Labs Hub's Lab Projects section", () => {
+            const [card] = selectOpenSourceCards([labProject({})], []);
+
+            expect(card.primary).toEqual({ label: "Docs", href: "https://labs.example.com/docs" });
+            expect(card.typeHref).toBe("https://labs.fabrizioduroni.it/#lab-projects");
+            expect(card.meta).toBeUndefined();
+        });
+
+        it("leads a Standalone Project with GitHub and its platform, tagged with the Standalone Projects section", () => {
+            const [card] = selectOpenSourceCards([], [standaloneProject({})]);
+
+            expect(card.primary).toEqual({
+                label: "GitHub",
+                href: "https://github.com/chicio/a-standalone-project",
+            });
+            expect(card.meta).toBe("Swift");
+            expect(card.typeHref).toBe("https://labs.fabrizioduroni.it/#standalone-projects");
         });
 
         it("lists the Lab Projects before the Standalone Projects", () => {
@@ -62,20 +79,20 @@ describe("Open Source section", () => {
     });
 
     describe("openSourceSection", () => {
-        it("lists the published Lab Projects that have a card image, before the Standalone Projects", () => {
+        it("lists the published Lab Projects, before the Standalone Projects", () => {
             const names = openSourceSection().map((project) => project.name);
             const published = labProjects
-                .filter((project) => project.kind !== "workbench" && project.cardImage !== undefined)
+                .filter((project) => project.kind !== "workbench")
                 .map((project) => project.name);
 
             expect(names).toEqual([...published, ...standaloneProjects.map((project) => project.name)]);
         });
 
-        it("leaves out the Workbench and the Lab Projects without a card image", () => {
+        it("leaves out the Workbench", () => {
             const names = openSourceSection().map((project) => project.name);
 
             expect(names).not.toContain("Chicio Labs SDLC");
-            expect(names).not.toContain("Matrix Component Store");
+            expect(names).toContain("Matrix Component Store");
         });
 
         it("lists Matrix Rain once, as a Lab Project", () => {
@@ -87,28 +104,29 @@ describe("Open Source section", () => {
 
         it("serves every card image from the copy of the catalog's media", () => {
             openSourceSection().forEach((project) => {
-                expect(project.image).toMatch(/^\/media\/labs-catalog\/[\w-]+\.(jpg|png)$/);
+                expect(project.image, project.name).toMatch(/^\/media\/labs-catalog\/[\w-]+\.(jpg|png)$/);
             });
         });
 
-        it("gives a Lab Project its docs, showcase, visit, npm and source links where it has them", () => {
+        it("gives a Lab Project its showcase, visit, npm and source links where it has them", () => {
             const design = openSourceSection().find((project) => project.id === "matrix-design-system");
 
-            expect(design?.links.map((link) => link.label)).toEqual(["Docs", "Showcase", "npm", "Source"]);
+            expect(design?.links.map((link) => link.label)).toEqual(["Showcase", "npm", "Source"]);
         });
 
-        it("gives a Standalone Project its GitHub link first, then its docs, thesis or download", () => {
+        it("gives a Standalone Project GitHub as its primary link, then its docs, thesis or download", () => {
             const projects = openSourceSection();
             const tracer = projects.find((project) => project.id === "spectral-clara-lux-tracer");
             const tagger = projects.find((project) => project.id === "mp3id3tagger");
 
-            expect(tracer?.links.map((link) => link.label)).toEqual(["GitHub", "Thesis"]);
-            expect(tagger?.links.map((link) => link.label)).toEqual(["GitHub", "Download"]);
+            expect(tracer?.primary.label).toBe("GitHub");
+            expect(tracer?.links.map((link) => link.label)).toEqual(["Thesis"]);
+            expect(tagger?.links.map((link) => link.label)).toEqual(["Download"]);
         });
 
         it("only links to absolute https URLs", () => {
             openSourceSection()
-                .flatMap((project) => project.links)
+                .flatMap((project) => [project.primary, ...project.links])
                 .forEach((link) => {
                     expect(link.href).toMatch(/^https:\/\//);
                 });

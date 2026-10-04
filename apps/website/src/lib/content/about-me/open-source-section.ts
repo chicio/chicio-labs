@@ -7,13 +7,21 @@ export interface OpenSourceCardLink {
     href: string;
 }
 
+/** What one card of the About me "Open Source" section says: the props of the design system's CatalogCard. */
 export interface OpenSourceCard {
     id: string;
     name: string;
+    type: string;
+    /** Where the type Tag leads: the section of the Labs Hub the project is in. */
+    typeHref: string;
+    /** The language or platform of a Standalone Project. */
+    meta?: string;
     description: string;
+    primary: OpenSourceCardLink;
+    /** The other links, all outward. */
     links: OpenSourceCardLink[];
-    /** Where the card image is served from. */
-    image: string;
+    /** Where the card image is served from; absent: the card has no image. */
+    image?: string;
 }
 
 export const labsCatalogMediaUrl = "/media/labs-catalog";
@@ -29,52 +37,49 @@ const present = (link: OpenSourceCardLink | undefined): link is OpenSourceCardLi
 const optionalLink = (label: string, href: string | undefined): OpenSourceCardLink | undefined =>
     href === undefined ? undefined : { label, href };
 
-const fromLabProject = (project: LabProject, image: string): OpenSourceCard => ({
+const fromLabProject = (project: LabProject): OpenSourceCard => ({
     id: project.id,
     name: project.name,
+    type: project.type,
+    typeHref: `${labs.url}#lab-projects`,
     description: project.description,
+    primary: { label: "Docs", href: project.links.docs },
     links: [
-        optionalLink("Docs", project.links.docs),
-        optionalLink("Showcase", project.links.showcase),
         optionalLink("Visit", project.links.visit),
+        optionalLink("Showcase", project.links.showcase),
         optionalLink("npm", project.links.npm),
         optionalLink("Source", project.links.source),
     ].filter(present),
-    image,
+    image: imageUrl(project),
 });
 
-const fromStandaloneProject = (project: StandaloneProject, image: string): OpenSourceCard => ({
+const fromStandaloneProject = (project: StandaloneProject): OpenSourceCard => ({
     id: project.id,
     name: project.name,
+    type: project.type,
+    typeHref: `${labs.url}#standalone-projects`,
+    meta: project.meta,
     description: project.description,
+    primary: { label: "GitHub", href: project.links.github },
     links: [
-        optionalLink("GitHub", project.links.github),
         optionalLink("Docs", project.links.docs),
         optionalLink("Thesis", project.links.thesis),
         optionalLink("Download", project.links.download),
     ].filter(present),
-    image,
+    image: imageUrl(project),
 });
 
 /**
- * What the About me "Open Source" section lists: the published Lab Projects that have a card image (a card shows
- * one, so the Matrix Component Store, which has none, is not listed), then every Standalone Project that has one.
- * The Workbench is not published and is left out, whether or not it has a card image.
+ * What the About me "Open Source" section lists, as the Labs Hub's home does: the published Lab Projects, then the
+ * Standalone Projects. The Workbench is not published and is left out. A project without a card image gets a card
+ * without one.
  */
 export const selectOpenSourceCards = (
     labProjectList: readonly LabProject[],
     standaloneProjectList: readonly StandaloneProject[],
 ): OpenSourceCard[] => [
-    ...labProjectList.flatMap((project) => {
-        const image = imageUrl(project);
-
-        return project.kind === "workbench" || image === undefined ? [] : [fromLabProject(project, image)];
-    }),
-    ...standaloneProjectList.flatMap((project) => {
-        const image = imageUrl(project);
-
-        return image === undefined ? [] : [fromStandaloneProject(project, image)];
-    }),
+    ...labProjectList.filter((project) => project.kind !== "workbench").map(fromLabProject),
+    ...standaloneProjectList.map(fromStandaloneProject),
 ];
 
 export const openSourceSection = (): OpenSourceCard[] => selectOpenSourceCards(labProjects, standaloneProjects);
@@ -87,7 +92,7 @@ export const everyLabProjectLink: OpenSourceCardLink = {
 /** The Open Source section as the `/markdown` representation lists it: one bullet per project, then the Labs link. */
 export const openSourceSectionMarkdown = (): string => {
     const projects = openSourceSection().map((project) => {
-        const links = project.links.map((link) => `[${link.label}](${link.href})`).join(", ");
+        const links = [project.primary, ...project.links].map((link) => `[${link.label}](${link.href})`).join(", ");
 
         return `- **${project.name}**: ${project.description} ${links}`;
     });

@@ -18,28 +18,51 @@ describe("Projects", () => {
         });
     });
 
-    it("renders every link of a project as an external link", () => {
+    it("renders the Matrix Component Store now that it has a card image", () => {
+        render(<Projects />);
+        expect(screen.getByRole("heading", { level: 3, name: "Matrix Component Store" })).toBeInTheDocument();
+    });
+
+    it("lays the cards out in the Labs Hub's grid", () => {
+        const { container } = render(<Projects />);
+        const grid = container.querySelector("article")?.parentElement;
+        expect(grid).toHaveClass("grid");
+        expect(grid?.className).toContain("repeat(auto-fill,minmax(min(100%,320px),1fr))");
+        expect(grid?.querySelectorAll("article")).toHaveLength(openSourceSection().length);
+    });
+
+    it("renders the primary action of every project as a terminal button", () => {
+        render(<Projects />);
+        openSourceSection().forEach((project) => {
+            const primary = screen
+                .getAllByRole("link", { name: new RegExp(`^>\\s*${project.primary.label}`) })
+                .find((link) => link.getAttribute("href") === project.primary.href);
+            expect(primary, project.name).toBeDefined();
+        });
+    });
+
+    it("renders every secondary link of a project in a new tab", () => {
         render(<Projects />);
         const links = screen.getAllByRole("link");
         openSourceSection()
             .flatMap((project) => project.links)
             .forEach((projectLink) => {
-                const link = links.find((candidate) => candidate.getAttribute("href") === projectLink.href);
-                expect(link).toHaveTextContent(projectLink.label);
-                expect(link).toHaveAttribute("target", "_blank");
+                const link = links.find(
+                    (candidate) =>
+                        candidate.getAttribute("href") === projectLink.href &&
+                        candidate.textContent === `${projectLink.label} ↗`,
+                );
+                expect(link, projectLink.href).toHaveAttribute("target", "_blank");
             });
     });
 
-    it("renders the project images through next/image", () => {
+    it("renders the project images through next/image, from the catalog's media", () => {
         render(<Projects />);
-        const [project] = openSourceSection();
-        expect(screen.getAllByAltText(project.name)[0]).toHaveAttribute("data-next-image", "true");
-    });
-
-    it("renders the project images from the catalog's media", () => {
-        render(<Projects />);
-        const [project] = openSourceSection();
-        expect(screen.getAllByAltText(project.name)[0]).toHaveAttribute("src", project.image);
+        const images = Array.from(document.querySelectorAll("img[data-next-image]"));
+        const expected = openSourceSection()
+            .map((project) => project.image)
+            .filter((image) => image !== undefined);
+        expect(images.map((image) => image.getAttribute("src"))).toEqual(expected);
     });
 
     it("closes with a link to every Lab Project on Chicio Labs", () => {

@@ -16,7 +16,10 @@ test.describe("About me Open Source section", () => {
         await page.goto("/about-me");
 
         for (const name of ["Matrix Design System", "ID3TagEditor"]) {
-            const image = page.getByRole("img", { name, exact: true }).first();
+            const image = page
+                .getByRole("article")
+                .filter({ has: page.getByRole("heading", { name, exact: true }) })
+                .locator("img");
 
             await image.scrollIntoViewIfNeeded();
             await expect
@@ -25,12 +28,20 @@ test.describe("About me Open Source section", () => {
         }
     });
 
-    test("links every project outward in a new tab and closes with the Chicio Labs link", async ({ page }) => {
+    test("leads each card with a terminal button, links the rest outward and closes with the Chicio Labs link", async ({
+        page,
+    }) => {
         await page.goto("/about-me");
 
-        const github = page.getByRole("link", { name: "GitHub" }).first();
-        await expect(github).toHaveAttribute("target", "_blank");
-        await expect(github).toHaveAttribute("rel", "noopener noreferrer");
+        const card = page.getByRole("article").filter({ has: page.getByRole("heading", { name: "ID3TagEditor" }) });
+        await expect(card.getByRole("link", { name: /^>\s*GitHub/ })).toHaveAttribute(
+            "href",
+            "https://github.com/chicio/ID3TagEditor",
+        );
+
+        const source = page.getByRole("link", { name: "Source ↗" }).first();
+        await expect(source).toHaveAttribute("target", "_blank");
+        await expect(source).toHaveAttribute("rel", "noopener noreferrer");
 
         const labs = page.getByRole("link", { name: "Every Lab Project → Chicio Labs" });
         await expect(labs).toHaveAttribute("href", "https://labs.fabrizioduroni.it/");
