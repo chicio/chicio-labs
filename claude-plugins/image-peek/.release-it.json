@@ -1,0 +1,37 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "git": {
+    "tagName": "image-peek--v${version}",
+    "tagMatch": "image-peek--v*",
+    "tagAnnotation": "image-peek ${version}",
+    "commitMessage": "chore(release): :bookmark: image-peek ${version}",
+    "commitsPath": ".",
+    "requireCommits": true
+  },
+  "github": {
+    "release": true,
+    "releaseName": "image-peek ${version}"
+  },
+  "npm": false,
+  "hooks": {
+    "before:init": "claude plugin validate . && claude plugin test .",
+    "after:bump": "npx prettier --write .claude-plugin/plugin.json"
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": ".claude-plugin/plugin.json",
+      "out": ".claude-plugin/plugin.json"
+    },
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md",
+      "tagPrefix": "image-peek--v",
+      "commitsOpts": {
+        "path": "."
+      },
+      "gitRawCommitsOpts": {
+        "path": "."
+      }
+    }
+  }
+}

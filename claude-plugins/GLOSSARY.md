@@ -58,3 +58,9 @@ _Avoid_: local plugin, private plugin
 **Public Plugin**:
 A Claude Code plugin from this repository's marketplace meant to work in any repository.
 _Avoid_: generic package, general-purpose plugin, global plugin
+
+**Mod**:
+A plugin whose hooks run inside Claude Code and can draw in its interface, as Claude Code's
+[mods](https://claude.dev/blog/getting-started-with-claude-code-mods/) define them. A Mod is a Public Plugin or a
+Project Plugin, never a third kind.
+_Avoid_: extension, add-on
