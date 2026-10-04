@@ -1,10 +1,10 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { describeProject, loadHubContent, loadHubContentFrom, type HubContent } from "./content";
 import { findRepoRoot, readRepoJson } from "./repo";
-import { labProjects, type LabProjectDefinition } from "./registry";
+import { cardImages, labProjects, type LabProjectDefinition } from "./registry";
 
 describe("content", () => {
     describe("describeProject", () => {
@@ -184,6 +184,7 @@ describe("content", () => {
                 "matrix-design-system",
                 "matrix-rain-webgpu",
                 "glossary-browser",
+                "image-peek",
             ]);
         });
 
@@ -194,6 +195,18 @@ describe("content", () => {
             expect(images["matrix-component-store"]).toBe(images["matrix-design-system"]);
             expect(images["matrix-rain-webgpu"]).toMatch(/matrix-rain-webgpu\.png$/);
             expect(images["glossary-browser"]).toMatch(/claude-code-mods-glossary-browser\.jpg$/);
+            expect(images["image-peek"]).toBe("claude-plugins/image-peek/image-peek.jpg");
+        });
+
+        it("lists every card image among the hub's build inputs and the Pages workflow's paths", () => {
+            const root = findRepoRoot();
+            const turbo = readFileSync(path.join(root, "apps/labs-hub/turbo.json"), "utf8");
+            const pages = readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
+
+            for (const image of Object.values(cardImages)) {
+                expect(turbo.split(`"$TURBO_ROOT$/${image}"`).length - 1, `${image} in turbo.json`).toBe(3);
+                expect(pages, `${image} in pages.yml`).toContain(`- "${image}"`);
+            }
         });
 
         it("attaches the Showcases to their Lab Projects", () => {

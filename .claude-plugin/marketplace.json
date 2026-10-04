@@ -16,6 +16,13 @@
       "tags": ["ddd", "glossary", "ubiquitous-language", "adr", "mod"]
     },
     {
+      "name": "image-peek",
+      "source": "./claude-plugins/image-peek",
+      "description": "Public Plugin, macOS. See the images you paste into Claude Code: a thumbnail above the prompt for each [Image #N], drawn in any truecolor terminal (Warp included) and with real pixels in kitty and Ghostty, and a button that opens it full size in Quick Look",
+      "category": "productivity",
+      "tags": ["images", "paste", "preview", "thumbnails", "warp", "mod"]
+    },
+    {
       "name": "chicio-labs-sdlc",
       "source": "./claude-plugins/chicio-labs-sdlc",
       "description": "Project Plugin, Chicio Labs only. The agentic SDLC pipeline (explore, Human Gate, parallel Work Units, reviews, PR) and the release checklist"
