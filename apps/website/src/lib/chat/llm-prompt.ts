@@ -1,4 +1,17 @@
-const FABRIZIO_PROFILE = `
+import { openSourceProjects } from "@/lib/content/about-me/open-source-projects";
+
+const notableProjects = (): string =>
+    openSourceProjects()
+        .map((project) =>
+            [
+                project.name,
+                `- ${project.description}`,
+                ...project.links.map((link) => `- ${link.label}: ${link.href}`),
+            ].join("\n"),
+        )
+        .join("\n\n");
+
+const fabrizioProfile = () => `
 PROFESSIONAL PROFILE - FABRIZIO DURONI
 
 === BASIC INFORMATION ===
@@ -86,22 +99,7 @@ Bachelor Degree in Computer Science - University of Milano-Bicocca (2008)
 - Thesis: "Grandi Giardini: implementazione di un portale web con funzionalità e-commerce"
 
 === NOTABLE PROJECTS & OPEN SOURCE ===
-ID3TagEditor
-- A Swift library to read and write ID3 Tag v2.2, v2.3 and v2.4 of any mp3 file
-- Platform: iOS, macOS, tvOS, watchOS, Linux Ubuntu
-- GitHub: https://github.com/chicio/ID3TagEditor
-- Documentation: https://chicio.github.io/ID3TagEditor/documentation/id3tageditor/
-
-RangeUISlider  
-- An iOS range selection slider compatible with UIKit and SwiftUI
-- Developed using autolayout and highly customizable using IBDesignable and IBInspectable
-- GitHub: https://github.com/chicio/RangeUISlider
-- Documentation: https://chicio.github.io/RangeUISlider/
-
-Spectral-Clara-Lux-Tracer
-- A physically based ray tracer with multiple shading models support and Color Rendering Index (CRI) evaluation
-- GitHub: https://github.com/chicio/Spectral-Clara-Lux-Tracer
-- Thesis PDF: https://www.fabrizioduroni.it/tesi-fabrizio-duroni-770157.pdf
+${notableProjects()}
 
 Tech Radar (Contributor)
 - Contributed to the Zalando tech-radar javascript project by adding features and bug fixes
@@ -174,7 +172,7 @@ export const createSystemPrompt = () =>
 
 You have access to Fabrizio's complete professional profile and CV information. Use this information to answer questions about his background, experience, skills, and projects.
 
-${FABRIZIO_PROFILE}
+${fabrizioProfile()}
 ${FABRIZIO_JOKES}
 
 INSTRUCTIONS:

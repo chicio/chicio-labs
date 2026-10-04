@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { openSourceProjects } from "@/lib/content/about-me/open-source-projects";
 import { createSystemPrompt } from "./llm-prompt";
 
 describe("createSystemPrompt", () => {
@@ -25,6 +26,23 @@ describe("createSystemPrompt", () => {
 
         it("includes iOS / mobile development background", () => {
             expect(createSystemPrompt()).toContain("React Native");
+        });
+    });
+
+    describe("notable projects", () => {
+        it("lists every open source project of the About me page with its links", () => {
+            const prompt = createSystemPrompt();
+
+            openSourceProjects().forEach((project) => {
+                expect(prompt).toContain(project.name);
+                project.links.forEach((link) => {
+                    expect(prompt).toContain(`- ${link.label}: ${link.href}`);
+                });
+            });
+        });
+
+        it("keeps the Tech Radar contribution, which is not a project of his own", () => {
+            expect(createSystemPrompt()).toContain("Tech Radar (Contributor)");
         });
     });
 
