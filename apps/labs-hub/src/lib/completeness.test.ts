@@ -60,15 +60,6 @@ describe("completeness", () => {
 
             expect(checkCompleteness([covering], ["packages/a"]).extra).toEqual(["apps/showcase"]);
         });
-
-        it("does not look for a manifest-less Lab Project in the repository", () => {
-            const converter = project({
-                sourcePath: "packages/a/.design-sync",
-                manifest: { type: "none" },
-            });
-
-            expect(checkCompleteness([converter], []).extra).toEqual([]);
-        });
     });
 
     describe("assertComplete", () => {

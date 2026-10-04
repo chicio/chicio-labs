@@ -122,8 +122,6 @@ const manifestPath = (project: LabProjectDefinition): string | undefined => {
             return `${project.sourcePath}/package.json`;
         case "plugin":
             return `${project.sourcePath}/.claude-plugin/plugin.json`;
-        case "none":
-            return undefined;
     }
 };
 

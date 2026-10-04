@@ -186,7 +186,6 @@ describe("content", () => {
                 "matrix-design-system",
                 "matrix-component-store",
                 "eslint-plugin-chicio",
-                "design-converter",
             ]);
         });
 

@@ -8,10 +8,7 @@ export interface CompletenessReport {
     extra: string[];
 }
 
-/**
- * A Lab Project covers its own source path and, when it has one, its Showcase's. Projects whose manifest is `none`
- * (the Claude Design converter) are not a workspace or a plugin, so they cannot be checked against the repository.
- */
+/** A Lab Project covers its own source path and, when it has one, its Showcase's. */
 export const checkCompleteness = (
     projects: readonly LabProjectDefinition[],
     discoveredPaths: readonly string[],
@@ -19,9 +16,7 @@ export const checkCompleteness = (
     const covered = new Set<string>();
 
     for (const project of projects) {
-        if (project.manifest.type !== "none") {
-            covered.add(project.sourcePath);
-        }
+        covered.add(project.sourcePath);
 
         if (project.showcase) {
             covered.add(project.showcase.sourcePath);

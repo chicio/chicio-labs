@@ -37,7 +37,6 @@ describe("catalog", () => {
             "eslint-plugin-chicio",
             "labs-hub",
             "labs-catalog",
-            "design-converter",
         ]);
 
         const withoutImage = labProjects.filter((project) => project.cardImage === undefined).map(({ id }) => id);
@@ -49,7 +48,6 @@ describe("catalog", () => {
             "eslint-plugin-chicio",
             "labs-hub",
             "labs-catalog",
-            "design-converter",
         ]);
     });
 

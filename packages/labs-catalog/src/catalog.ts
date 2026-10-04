@@ -160,19 +160,6 @@ export const labProjects: readonly LabProject[] = [
             source: sourceUrl("packages/labs-catalog"),
         },
     },
-    {
-        id: "design-converter",
-        name: "Claude Design converter",
-        kind: "workbench",
-        type: "Developer tool",
-        sourcePath: "packages/matrix-design-system/.design-sync",
-        description:
-            "Converts the design system's stories into a Claude Design project, so claude.ai/design works on the real components.",
-        links: {
-            docs: docsUrl("design-converter"),
-            source: sourceUrl("packages/matrix-design-system/.design-sync"),
-        },
-    },
 ];
 
 export const standaloneProjects: readonly StandaloneProject[] = [

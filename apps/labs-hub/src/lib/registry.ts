@@ -1,7 +1,7 @@
 import { HUB_URL } from "./repo";
 
-/** Where a Lab Project's version and npm name are read from. `none`: it is not a workspace or a plugin. */
-export type ManifestSource = { type: "package" } | { type: "plugin" } | { type: "none" };
+/** Where a Lab Project's version and npm name are read from. */
+export type ManifestSource = { type: "package" } | { type: "plugin" };
 
 export interface Showcase {
     label: string;
@@ -125,13 +125,6 @@ export const labProjects: readonly LabProjectDefinition[] = [
         sourcePath: "packages/labs-catalog",
         manifest: { type: "package" },
         readme: "packages/labs-catalog/README.md",
-    },
-    {
-        id: "design-converter",
-        sourcePath: "packages/matrix-design-system/.design-sync",
-        manifest: { type: "none" },
-        readme: "packages/matrix-design-system/.design-sync/NOTES.md",
-        glossaryContext: "matrix-design-system",
     },
 ];
 
