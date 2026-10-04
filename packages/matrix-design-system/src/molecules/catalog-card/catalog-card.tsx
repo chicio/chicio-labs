@@ -28,6 +28,9 @@ export interface CatalogCardProps {
     imageComponent?: ImageComponent;
 }
 
+const cardClassName =
+    "border-accent-alpha-25 hover:border-accent flex flex-col overflow-hidden rounded-[14px] border bg-[rgba(0,34,0,0.5)] transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_22px_rgba(57,255,20,0.3)]";
+
 const newTab = { target: "_blank", rel: "noopener noreferrer" };
 
 export const CatalogCard: FC<CatalogCardProps> = ({
@@ -45,9 +48,7 @@ export const CatalogCard: FC<CatalogCardProps> = ({
     const Link = linkComponent ?? AnchorLink;
 
     return (
-        <article
-            className={`border-accent-alpha-25 hover:border-accent flex flex-col overflow-hidden rounded-[14px] border bg-[rgba(0,34,0,0.5)] transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_22px_rgba(57,255,20,0.3)]${image ? "" : "h-fit"}`}
-        >
+        <article className={image ? cardClassName : `${cardClassName} h-fit`}>
             {image && (
                 <Link
                     href={primary.href}
