@@ -61,7 +61,7 @@
     "react-dom": "^19.3.0",
     "typescript": "npm:tsover@6.0.2",
     "unplugin-typegpu": "^0.12.4",
-    "vite": "^8.3.2"
+    "vite": "^8.3.3"
   },
   "peerDependencies": {
     "react": "^19.0.0",
