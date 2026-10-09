@@ -78,7 +78,7 @@
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "unified": "^11.0.5",
-    "zod": "^4.4.3"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
