@@ -22,7 +22,11 @@
     }
   },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --ui=tui",
+    "dev:website": "turbo run dev --ui=tui --filter=website...",
+    "dev:hub": "turbo run dev --ui=tui --filter=labs-hub...",
+    "dev:design-system": "turbo run dev --ui=tui --filter=matrix-design-system-showcase...",
+    "dev:rain": "turbo run dev --ui=tui --filter=matrix-rain-showcase...",
     "build": "turbo run build",
     "start": "npm run start --workspace=website",
     "lint": "turbo run lint",
@@ -46,14 +50,14 @@
     "@release-it/conventional-changelog": "^12.0.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "framer-motion": "^13.4.4",
+    "framer-motion": "^14.0.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "release-it": "^21.1.0",
-    "turbo": "^2.11.5",
+    "turbo": "^2.11.7",
     "typescript": "^6.0.3"
   },
   "overrides": {

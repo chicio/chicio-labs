@@ -8,10 +8,7 @@ export interface CompletenessReport {
     extra: string[];
 }
 
-/**
- * A Lab Project covers its own source path and, when it has one, its Showcase's. Projects whose manifest is `none`
- * (the Claude Design converter) are not a workspace or a plugin, so they cannot be checked against the repository.
- */
+/** A Lab Project covers its own source path and, when it has one, its Showcase's. */
 export const checkCompleteness = (
     projects: readonly LabProjectDefinition[],
     discoveredPaths: readonly string[],
@@ -19,9 +16,7 @@ export const checkCompleteness = (
     const covered = new Set<string>();
 
     for (const project of projects) {
-        if (project.manifest.type !== "none") {
-            covered.add(project.sourcePath);
-        }
+        covered.add(project.sourcePath);
 
         if (project.showcase) {
             covered.add(project.showcase.sourcePath);
@@ -34,6 +29,61 @@ export const checkCompleteness = (
         missing: discoveredPaths.filter((discoveredPath) => !covered.has(discoveredPath)).sort(),
         extra: [...covered].filter((coveredPath) => !discovered.has(coveredPath)).sort(),
     };
+};
+
+/** What the hub reads of a Lab Project in `labs-catalog`: its id, where it lives and its Showcase, if any. */
+export interface CatalogLabProject {
+    id: string;
+    sourcePath: string;
+    links: { showcase?: string };
+}
+
+/**
+ * The registry holds the documentation wiring and `labs-catalog` the public facts of the same Lab Projects, so they
+ * must name exactly the same ones, in the same place, and agree on the Showcase. Returns one sentence per mismatch.
+ */
+export const checkCatalogAlignment = (
+    registry: readonly LabProjectDefinition[],
+    catalog: readonly CatalogLabProject[],
+): string[] => {
+    const registered = new Map(registry.map((project) => [project.id, project]));
+    const cataloged = new Map(catalog.map((project) => [project.id, project]));
+    const problems: string[] = [];
+
+    for (const project of registry) {
+        const entry = cataloged.get(project.id);
+
+        if (!entry) {
+            problems.push(`${project.id} is in the Labs Hub registry but not in labs-catalog`);
+            continue;
+        }
+
+        if (entry.sourcePath !== project.sourcePath) {
+            problems.push(
+                `${project.id} lives at ${project.sourcePath} in the Labs Hub registry but at ${entry.sourcePath} in labs-catalog`,
+            );
+        }
+
+        if (entry.links.showcase !== project.showcase?.url) {
+            problems.push(`${project.id} has a different Showcase in the Labs Hub registry and in labs-catalog`);
+        }
+    }
+
+    for (const entry of catalog) {
+        if (!registered.has(entry.id)) {
+            problems.push(`${entry.id} is in labs-catalog but not in the Labs Hub registry`);
+        }
+    }
+
+    return problems;
+};
+
+export const assertCatalogAligned = (problems: readonly string[]): void => {
+    if (problems.length > 0) {
+        throw new Error(
+            `The Labs Hub registry is out of step with labs-catalog:\n${problems.map((problem) => `  - ${problem}`).join("\n")}`,
+        );
+    }
 };
 
 const workspacePatterns = (root: string): string[] => {

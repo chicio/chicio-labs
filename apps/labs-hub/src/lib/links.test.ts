@@ -110,9 +110,9 @@ describe("links", () => {
         });
 
         it("serves a repository image from the hub", () => {
-            expect(rewriteImage("README.md", "brand/readme-hero.jpg")).toEqual({
-                src: "/docs-media/brand/readme-hero.jpg",
-                localPath: "brand/readme-hero.jpg",
+            expect(rewriteImage("README.md", "apps/labs-hub/brand/labs-featured.jpg")).toEqual({
+                src: "/docs-media/apps/labs-hub/brand/labs-featured.jpg",
+                localPath: "apps/labs-hub/brand/labs-featured.jpg",
             });
         });
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LinkContext } from "./links";
-import { extractLead, extractTitle, renderMarkdown } from "./markdown";
+import { extractTitle, renderMarkdown } from "./markdown";
 
 const links: LinkContext = {
     pages: new Map([["docs/adr/0001-a.md", "/glossary/chicio-labs/adr/0001/"]]),
@@ -96,19 +96,6 @@ describe("markdown", () => {
 
         it("falls back when there is no level-one heading", () => {
             expect(extractTitle("## Only a subheading", "CHANGELOG.md")).toBe("CHANGELOG.md");
-        });
-    });
-
-    describe("extractLead", () => {
-        it("is the first paragraph as plain text, without links, emphasis, code marks or line breaks", () => {
-            const markdown =
-                "# Title\n\nThe [source](https://x.dev) of **a** `site`,\nin two lines.\n\nSecond paragraph.";
-
-            expect(extractLead(markdown)).toBe("The source of a site, in two lines.");
-        });
-
-        it("is empty when the document has no paragraph", () => {
-            expect(extractLead("# Only a title\n\n- a list")).toBe("");
         });
     });
 });

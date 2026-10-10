@@ -1,13 +1,26 @@
-import { assertComplete, checkCompleteness, discoverLabProjectSources } from "./completeness";
-import type { LinkContext } from "./links";
-import { extractLead, extractTitle, renderMarkdown } from "./markdown";
+import {
+    cardImagePath,
+    labProjects as catalogLabProjects,
+    type LabProject as CatalogLabProject,
+    type LabProjectKind,
+    type LabProjectLinks,
+} from "labs-catalog";
+import { parseChangelog, type ChangelogRelease } from "./changelog";
+import {
+    assertCatalogAligned,
+    assertComplete,
+    checkCatalogAlignment,
+    checkCompleteness,
+    discoverLabProjectSources,
+} from "./completeness";
+import { rewriteLink, type LinkContext } from "./links";
+import { extractTitle, renderMarkdown } from "./markdown";
 import {
     glossaryContexts,
     labProjects,
     systemDocuments,
     type GlossaryContextDefinition,
     type LabProjectDefinition,
-    type LabProjectKind,
     type Showcase,
 } from "./registry";
 import {
@@ -31,22 +44,33 @@ export interface AdrDocument extends HubDocument {
     url: string;
 }
 
+export interface ChangelogDocument extends HubDocument {
+    /** Empty when the CHANGELOG is not in conventional-changelog format: the page then renders `html`. */
+    releases: ChangelogRelease[];
+    /** The CHANGELOG file on GitHub. */
+    fileUrl: string;
+}
+
 export interface LabProject {
     id: string;
     name: string;
     kind: LabProjectKind;
+    /** What sort of thing it is, as its card says. */
+    type: string;
     url: string;
     changelogUrl?: string;
-    packageName?: string;
     version?: string;
     description: string;
+    sourcePath: string;
     sourceUrl: string;
+    /** The outward links the catalog knows: the live site, its Showcase, npm and the source. Docs are the hub itself. */
+    links: Omit<LabProjectLinks, "docs">;
     readme?: HubDocument;
-    changelog?: HubDocument;
+    changelog?: ChangelogDocument;
     glossaryContext?: { id: string; name: string; url: string };
     showcase?: Showcase;
-    /** The repository path of the Project Card image; absent: the hub logo. */
-    image?: string;
+    /** Where `labs-catalog` serves the card image from, relative to the package; absent: no image. */
+    cardImage?: string;
 }
 
 export interface GlossaryContext {
@@ -74,11 +98,9 @@ export interface HubContent {
 interface Manifest {
     name?: string;
     version?: string;
-    description?: string;
 }
 
 const adrFilePattern = /^(\d{4})-.+\.md$/;
-const pluginPrefixPattern = /^(?:Public|Project) Plugin(?:, Chicio Labs only)?\.\s*/;
 
 export const labUrl = (id: string): string => `/lab/${id}/`;
 export const changelogUrl = (id: string): string => `/lab/${id}/changelog/`;
@@ -100,8 +122,6 @@ const manifestPath = (project: LabProjectDefinition): string | undefined => {
             return `${project.sourcePath}/package.json`;
         case "plugin":
             return `${project.sourcePath}/.claude-plugin/plugin.json`;
-        case "none":
-            return undefined;
     }
 };
 
@@ -109,18 +129,6 @@ const readManifest = (root: string, project: LabProjectDefinition): Manifest => 
     const manifestFile = manifestPath(project);
 
     return manifestFile === undefined ? {} : readRepoJson<Manifest>(root, manifestFile);
-};
-
-/**
- * What a Project Card says about a Lab Project: the manifest description (or the one the registry carries when there
- * is no manifest), else the lead paragraph of its README, for a package that declares no description of its own.
- */
-export const describeProject = (project: LabProjectDefinition, manifest: Manifest, readme?: string): string => {
-    const declared =
-        project.manifest.type === "none" ? project.manifest.description : (manifest.description ?? "").trim();
-    const description = declared === "" && readme !== undefined ? extractLead(readme) : declared;
-
-    return description.replace(pluginPrefixPattern, "");
 };
 
 const buildPageMap = (root: string, registry: readonly LabProjectDefinition[]): Map<string, string> => {
@@ -159,8 +167,10 @@ const buildPageMap = (root: string, registry: readonly LabProjectDefinition[]): 
 const buildContent = async (
     root: string,
     registry: readonly LabProjectDefinition[] = labProjects,
+    catalog: readonly CatalogLabProject[] = catalogLabProjects,
 ): Promise<HubContent> => {
     assertComplete(checkCompleteness(registry, discoverLabProjectSources(root)));
+    assertCatalogAligned(checkCatalogAlignment(registry, catalog));
 
     const media = new Set<string>();
     const context: LinkContext = {
@@ -186,6 +196,14 @@ const buildContent = async (
         };
     };
 
+    const changelogDocument = async (sourcePath: string): Promise<ChangelogDocument> => ({
+        ...(await document(sourcePath)),
+        releases: parseChangelog(readRepoFile(root, sourcePath), {
+            resolveUrl: (href) => rewriteLink(sourcePath, href, context).href,
+        }),
+        fileUrl: `${REPOSITORY_URL}/blob/main/${sourcePath}`,
+    });
+
     const adrDocuments = async (
         directory: string | undefined,
         urlFor: (number: string) => string,
@@ -202,27 +220,13 @@ const buildContent = async (
     const contextNames = new Map<string, GlossaryContextDefinition>(
         glossaryContexts.map((definition) => [definition.id, definition]),
     );
+    const definitions = new Map(registry.map((definition) => [definition.id, definition]));
 
     const projects: LabProject[] = [];
 
-    for (const definition of registry) {
+    for (const entry of catalog) {
+        const definition = definitions.get(entry.id) as LabProjectDefinition;
         const manifest = readManifest(root, definition);
-        const readme =
-            definition.readme && repoFileExists(root, definition.readme)
-                ? readRepoFile(root, definition.readme)
-                : undefined;
-        const description = describeProject(definition, manifest, readme);
-
-        if (description === "") {
-            throw new Error(
-                `${definition.id} has no description to present: its manifest declares none and it has no README lead paragraph`,
-            );
-        }
-
-        if (definition.image && !repoFileExists(root, definition.image)) {
-            throw new Error(`${definition.id} names the card image ${definition.image}, which does not exist`);
-        }
-
         const glossaryContext = definition.glossaryContext ? contextNames.get(definition.glossaryContext) : undefined;
 
         if (definition.glossaryContext && !glossaryContext) {
@@ -230,26 +234,28 @@ const buildContent = async (
         }
 
         projects.push({
-            id: definition.id,
-            name: definition.name,
-            kind: definition.kind,
-            url: labUrl(definition.id),
-            changelogUrl: definition.changelog ? changelogUrl(definition.id) : undefined,
-            packageName: definition.manifest.type === "package" ? manifest.name : undefined,
+            id: entry.id,
+            name: entry.name,
+            kind: entry.kind,
+            type: entry.type,
+            url: labUrl(entry.id),
+            changelogUrl: definition.changelog ? changelogUrl(entry.id) : undefined,
             version: definition.versionManifest
                 ? readRepoJson<Manifest>(root, definition.versionManifest).version
                 : manifest.version,
-            description,
-            sourceUrl: `${REPOSITORY_URL}/tree/main/${definition.sourcePath}`,
+            description: entry.description,
+            sourcePath: entry.sourcePath,
+            sourceUrl: entry.links.source,
+            links: entry.links,
             readme: definition.readme ? await document(definition.readme) : undefined,
-            changelog: definition.changelog ? await document(definition.changelog) : undefined,
+            changelog: definition.changelog ? await changelogDocument(definition.changelog) : undefined,
             glossaryContext: glossaryContext && {
                 id: glossaryContext.id,
                 name: glossaryContext.name,
                 url: glossaryUrl(glossaryContext.id),
             },
             showcase: definition.showcase,
-            image: definition.image,
+            cardImage: cardImagePath(entry),
         });
     }
 
@@ -291,4 +297,5 @@ export const loadHubContent = (): Promise<HubContent> => {
 export const loadHubContentFrom = (
     root: string,
     registry: readonly LabProjectDefinition[] = labProjects,
-): Promise<HubContent> => buildContent(root, registry);
+    catalog: readonly CatalogLabProject[] = catalogLabProjects,
+): Promise<HubContent> => buildContent(root, registry, catalog);

@@ -1,26 +1,28 @@
 ---
 name: next-build-injects-claude-md-block
-description: Running npm run build/dev can rewrite the nextjs-agent-rules block (now hosted in root AGENTS.md); an uncommitted change to it is a tool artifact, never the implementer's diff
+description: next dev/build writes the nextjs-agent-rules block; today it leaves UNTRACKED apps/website/AGENTS.md + apps/website/CLAUDE.md (root has no AGENTS.md since ADR-0006) — a tool artifact, never the implementer's diff
 metadata:
   type: project
 ---
 
-`npm run build` (and `next dev`) upserts a `<!-- BEGIN:nextjs-agent-rules -->` / `<!-- END:nextjs-agent-rules -->`
-block, written by `node_modules/next/dist/server/lib/generate-agent-files.js`. Current state (verified 2026-09-27): the
-project instructions moved to root `AGENTS.md` (PR #695; `CLAUDE.md` is just `@AGENTS.md`), and the generator prefers
-`AGENTS.md`, so the block now lives there and is COMMITTED. A build only dirties the tree when the generated block
-differs from the committed one (e.g. after a `next` bump), and then you see `M AGENTS.md` (historically `M CLAUDE.md`)
-even though the branch never touched it.
+`next dev` and `next build` upsert a `<!-- BEGIN:nextjs-agent-rules -->` / `<!-- END:nextjs-agent-rules -->` block,
+written by `node_modules/next/dist/server/lib/generate-agent-files.js`. Where it lands has moved twice:
 
-**Why:** it matters because a reviewer runs the build gate itself. Seeing `M CLAUDE.md` after that run looks
-exactly like the implementer smuggling an unrelated doc edit into the diff, and reporting it would be a false
-blocking finding. It is also a trap in the other direction: if the implementer ran a build, the block can get
-swept into a `git add -A` commit as real scope creep.
+- Up to 2026-09: root `AGENTS.md` (CLAUDE.md was `@AGENTS.md`), so a build showed `M AGENTS.md`.
+- Since the plugins PR (ADR-0006, CLAUDE.md is first-class, **no root AGENTS.md**): the block is committed at the end
+  of root `CLAUDE.md`, and a dev server or build started from `apps/website` creates two **untracked** files:
+  `apps/website/AGENTS.md` (just the block) and `apps/website/CLAUDE.md` (`@AGENTS.md`). Seen 2026-10-04 at Integration
+  Review, created by the e2e-sentinel's `next dev` and the gate-runner's build; neither exists on origin/main and
+  they are not gitignored.
+
+**Why:** a reviewer, the gate-runner and the e2e-sentinel all run Next in the worktree. The untracked pair (or an
+`M CLAUDE.md`) looks like the implementer smuggling doc edits into the branch; reporting it is a false finding. The
+opposite trap: a `git add -A` before the PR sweeps them into the commit as real scope creep.
 
 **How to apply:**
-- Attribute it by timing: `git status` was clean before your build, dirty after → yours, not theirs. Confirm with
-  `git diff main...HEAD --stat -- AGENTS.md CLAUDE.md` (empty = the branch genuinely does not touch them).
-- Restore it with `git checkout -- AGENTS.md` (or `CLAUDE.md`) before finishing, so you leave the read-only tree clean.
-- Do check whether the *committed* diff contains that block; if it does, that IS a legitimate scope finding.
+- Attribute by timing (`ls -la` mtimes vs the gate/sentinel run) and confirm `git diff origin/main...HEAD --stat --
+  CLAUDE.md apps/website/AGENTS.md apps/website/CLAUDE.md` shows nothing from Next.
+- Do not delete them yourself if you did not create them; mention them as non-blocking so the main thread leaves
+  them out of the PR. If the *committed* diff contains them, that IS a scope finding.
 
 Related: [[e2e-in-worktree-webserver]], [[e2e-reuse-existing-server-stale-app]].

@@ -199,6 +199,14 @@ Some prose after the heading.
         });
     });
 
+    describe("About me Open Source section", () => {
+        it("emits nothing for the Projects list, which the About me generator renders itself", () => {
+            const result = mdxToMarkdown(`## Open Source\n\n<Projects />`);
+
+            expect(result).toBe("## Open Source");
+        });
+    });
+
     describe("interactive component placeholder (generic fallback, no hardcoded name list)", () => {
         it("replaces a brand-new, never-seen-before self-closing component with an 'open the page' placeholder", () => {
             const mdx = `<SomeFutureVisualizer />`;

@@ -30,6 +30,13 @@ because the package-local copy holds only `jest-dom`. Copy `src`, `vitest.config
 sandbox accepts simple `for` loops of `ln -s`. It refuses a `sed` whose file argument is a shell
 variable, so spell the path out.
 
+Nested Work Unit worktrees (`.claude/worktrees/<feature>/.claude/worktrees/<feature>-wuN`) need extra care. The
+sandbox there also refuses `rsync`, `git -C`, runtime shell variables and heredocs, so write each step as one plain
+`cp`, `ln -sfn` or `sed` with spelled-out absolute paths, and create scratch test files with Write. To resolve a hoisted
+workspace package such as `labs-catalog`, mirror the monorepo layout: put the files at `<SH>/apps/website/`, symlink
+`<SH>/node_modules` to the worktree root's, and `<SH>/apps/website/node_modules` to the website's. When a lib test
+reads one page's content (about-me), copy only `src/content/<page>`, not all of it.
+
 Why it works: `vitest.config.ts` aliases `@` via `resolve(__dirname, "./src")`, so with the config
 copied to the shadow root the alias re-points at the shadow `src` automatically, and
 `setupFiles: ["./vitest.setup.ts"]` resolves there too. Establish a green baseline first — it

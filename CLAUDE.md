@@ -43,12 +43,23 @@ apps/matrix-rain-showcase/        Astro docs and playground for the rain effect;
 apps/labs-hub/                    the Labs Hub: an Astro site (private) presenting every Lab Project, its
                                   docs generated at build time from READMEs, CHANGELOGs, glossaries and ADRs
                                   elsewhere in the repository; deploys to the root of GitHub Pages
+packages/labs-catalog/            private: the public facts (name, type, description, links, card image) of every
+                                  Lab Project and Standalone Project, read by the Labs Hub and the Website's
+                                  About me (ADR-0008)
 packages/matrix-component-store/  the published ComponentStore/StateStore/EffectsStore contract
 packages/eslint-plugin-chicio/    the component-store lint rules, shared by both workspaces
 .claude-plugin/marketplace.json   the chicio-labs Claude Code plugin marketplace (see Claude Code Plugins)
 claude-plugins/                   the plugins it lists, plus the Agentic Delivery glossary and ADRs
 .claude/                          Claude Code config: rules, settings, agent memory, third-party skills
 ```
+
+**Every Lab Project keeps its Brand Kit in `brand/` at its own root** (`apps/website/brand/`,
+`packages/matrix-design-system/brand/`, `claude-plugins/image-peek/brand/`, …): the images that carry its identity,
+with their source files. A Lab Project's card image is one of them, registered in `packages/labs-catalog/src/catalog.ts`
+as a path inside its Brand Kit; the catalog's build gathers every card image into its gitignored `dist/media/`, so
+none is committed twice. A new Lab Project is also registered in the Labs Hub's `registry.ts`, which holds what is
+about documentation. A Standalone Project has no folder here, so its card image lives in `packages/labs-catalog/media/standalone/`.
+[ADR-0008](docs/adr/0008-labs-catalog-package.md) has the reasoning.
 
 The website depends on the packages by version (`"matrix-design-system": "^1.0.0"`), and npm
 resolves that to the workspace copy — so the site always builds against the local packages, while
@@ -113,7 +124,10 @@ watch-list.
 
 ```bash
 npm install              # Install every workspace (run from the repository root)
-npm run dev              # Dev server (auto-generates search index + copies images)
+npm run dev              # Every app + package watcher in Turborepo's TUI (website prebuild: search index + images)
+npm run dev:website      # One app + its packages; also dev:hub, dev:design-system, dev:rain
+# Fixed ports, never drifting: Website :3000, Labs Hub :4321, Matrix Rain Showcase :4322/matrix-rain/,
+# Storybook :6006. Without a TTY (an agent's Bash tool) turbo falls back to streamed output on its own.
 npm run build && npm start  # Production build
 npm run lint             # Linting (--max-warnings 0 in CI)
 npm run validate-architecture  # dependency-cruiser: import rules, layering, isolation (all at error)

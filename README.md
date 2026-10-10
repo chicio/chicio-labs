@@ -20,7 +20,7 @@ every Lab Project is published. Each one is presented on the **[Labs Hub](https:
 | [Matrix Rain](packages/matrix-rain-webgpu)             | The WebGPU digital-rain effect → [Showcase](https://labs.fabrizioduroni.it/matrix-rain/)               |
 | [Claude Code plugins](.claude-plugin/marketplace.json) | The `chicio-labs` marketplace: `/plugin marketplace add chicio/chicio-labs`                            |
 
-![Chicio Labs](brand/readme-hero.jpg)
+![Chicio Labs](apps/labs-hub/brand/labs-featured.jpg)
 
 ---
 
@@ -59,10 +59,21 @@ Every command runs from the repository root and fans out across the workspaces t
 
 ```bash
 npm install              # install every workspace
-npm run dev              # dev server (also generates the search index and copies content images)
+npm run dev              # every app and package watcher, in Turborepo's TUI
+npm run dev:website      # one app plus the packages it depends on (also dev:hub, dev:design-system, dev:rain)
 npm run build && npm start  # production build
 npm run release          # release with conventional changelog
 ```
+
+`npm run dev` opens Turborepo's terminal UI: the sidebar lists every task, and selecting one shows its own log, which
+starts with that server's URL. Every app has a fixed port and fails to start rather than move when it is taken:
+
+| App                           | URL                                |
+| ----------------------------- | ---------------------------------- |
+| Website                       | http://localhost:3000              |
+| Labs Hub                      | http://localhost:4321              |
+| Matrix Rain Showcase          | http://localhost:4322/matrix-rain/ |
+| Matrix Design System Showcase | http://localhost:6006              |
 
 Quality gates, all of which run in CI:
 
