@@ -12,6 +12,8 @@ export default defineConfig({
     // `astro dev` applies "always" to the /docs-media/ endpoint too, and answers 404 to every image a rendered README
     // embeds: Astro exempts only routes whose file name carries a literal extension. The build is the same either way.
     trailingSlash: process.argv.includes("dev") ? "ignore" : "always",
+    // Its own port, so it never races the Matrix Rain Showcase (also an Astro app) for 4321 under `npm run dev`.
+    server: { port: 4321 },
     integrations: [react()],
     // The design system declares `--font-sans: "Open Sans"` and `--font-mono: "Courier Prime"` and ships
     // no font files, so these family names must stay exactly these for its components to pick them up.
@@ -43,6 +45,8 @@ export default defineConfig({
             dedupe: ["react", "react-dom", "framer-motion", "typegpu", "@typegpu/noise", "@typegpu/react"],
         },
         server: {
+            // A taken port fails the dev server instead of silently moving it to the next free one.
+            strictPort: true,
             fs: { allow: ["../.."] },
         },
     },
