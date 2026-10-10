@@ -9,7 +9,7 @@
 - [catalog_2022.md](catalog_2022.md) — 4 posts: React scroll hook, Jackson SPI, microfrontends, SwiftUI Path
 - [catalog_2023.md](catalog_2023.md) — 4 posts: Widget iOS, SwiftUI Text, Advent of TypeScript intro + RPS
 - [catalog_2024.md](catalog_2024.md) — 6 posts: AoT series finale, RN Skia shapes, React Universe, RN carousel
-- [catalog_2025_2026.md](catalog_2025_2026.md) — 12 of 14 Posts (NOT yet cataloged: 2026-06-01 app-js-conf-2026, 2026-07-18 memories-failures-18-years-software-engineer): Styled Components types, LLM guide, locale, Skia gradients, DSA, Chrome AI, LLM guardrails, MCP server, SDLC skills pyramid, monorepo, Claude Code mods, perfect-recipe essay (IT draft)
+- [catalog_2025_2026.md](catalog_2025_2026.md) — 12 of 14 Posts (NOT yet cataloged: 2026-06-01 app-js-conf-2026, 2026-07-18 memories-failures-18-years-software-engineer): Styled Components types, LLM guide, locale, Skia gradients, DSA, Chrome AI, LLM guardrails, MCP server, SDLC skills pyramid, monorepo, Claude Code mods, perfect-recipe essay
 
 ## Editorial Reference
 - [feedback_term_check_resend.md](feedback_term_check_resend.md) — Term Check refuses Post edits for generic Avoid words (title/filter/problem/page): resend unchanged when meant
