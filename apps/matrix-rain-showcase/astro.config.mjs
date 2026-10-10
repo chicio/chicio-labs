@@ -16,6 +16,8 @@ import mermaid from "astro-mermaid";
 export default defineConfig({
     site: "https://labs.fabrizioduroni.it",
     base: "/matrix-rain/",
+    // Its own port, so it never races the Labs Hub (also an Astro app) for 4321 under `npm run dev`.
+    server: { port: 4322 },
     markdown: {
         // Sätteri is Astro's default processor but parses math without rendering it and has no
         // external-link handling, so the docs' KaTeX and new-tab links need the unified processor.
@@ -82,6 +84,8 @@ export default defineConfig({
             dedupe: ["typegpu", "@typegpu/noise", "@typegpu/react", "react", "react-dom"],
         },
         server: {
+            // A taken port fails the dev server instead of silently moving it to the next free one.
+            strictPort: true,
             // The library source lives outside this app, in a sibling workspace.
             fs: { allow: ["../.."] },
         },

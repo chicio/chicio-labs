@@ -124,7 +124,10 @@ watch-list.
 
 ```bash
 npm install              # Install every workspace (run from the repository root)
-npm run dev              # Dev server (auto-generates search index + copies images)
+npm run dev              # Every app + package watcher in Turborepo's TUI (website prebuild: search index + images)
+npm run dev:website      # One app + its packages; also dev:hub, dev:design-system, dev:rain
+# Fixed ports, never drifting: Website :3000, Labs Hub :4321, Matrix Rain Showcase :4322/matrix-rain/,
+# Storybook :6006. Without a TTY (an agent's Bash tool) turbo falls back to streamed output on its own.
 npm run build && npm start  # Production build
 npm run lint             # Linting (--max-warnings 0 in CI)
 npm run validate-architecture  # dependency-cruiser: import rules, layering, isolation (all at error)
