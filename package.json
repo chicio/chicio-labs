@@ -22,7 +22,11 @@
     }
   },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --ui=tui",
+    "dev:website": "turbo run dev --ui=tui --filter=website...",
+    "dev:hub": "turbo run dev --ui=tui --filter=labs-hub...",
+    "dev:design-system": "turbo run dev --ui=tui --filter=matrix-design-system-showcase...",
+    "dev:rain": "turbo run dev --ui=tui --filter=matrix-rain-showcase...",
     "build": "turbo run build",
     "start": "npm run start --workspace=website",
     "lint": "turbo run lint",
