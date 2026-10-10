@@ -1,13 +1,40 @@
 ---
-title: "The obsession with the perfect recipe: why AI won't save us from \"It depends\""
+title: "L’ossessione per la ricetta perfetta e l'odio per l'ambiguità: la malattia del programmatore"
 description: "TODO"
 date: 2026-10-09
 image: /media/content/blog/post/2026/10/09/obsession-perfect-recipe-ai-it-depends/obsession-perfect-recipe-ai-it-depends.jpg
-tags: [ai, llm]
+tags: [personal, career]
 authors: [fabrizio_duroni]
 ---
 
 *TODO: description.*
 
 ---
+
+Ogni mattina mi alzo e la prima cosa che faccio è aprire X e Linkedin per vedere le ultime notizie nel mondo tech e IT. Questi social sono sempre stati una fonte di ispirazione e di ricerca della nuova soluzione tencologica all'ultimo grido, e mi hanno permesso nel corso della mia carriera di rimanere sempre aggiornato rispetto alle evoluzioni del settore. Ovviamente, con l'esplosione dell'AI di questi ultimi anni, il focus è principalmente su questo tema.  
+La cosa interessante è che anche se il tema generale è in parte diverso da quello degli anni precedenti, c'e un pattern comune che tuttora resta ancora valido nella stragrande maggioranza dei post che vedo su questi social: cercare di vendere la "soluzione definitiva", la "ricetta perfetta" al problema del giorno.
+
+Questo è di fatto un film che ho già visto più volte durante [la mia carriera](/blog/post/2026/07/18/memories-failures-18-years-software-engineer), e potrei dire ancora prima durante l'università. Già proprio durante quegli anni, ricordo le lotte infinite tra PHP, Java e una moltitudine di altri linguaggi.  
+Ricordo, durante i miei prima anni di lavoro a Milano quando ho iniziato a sviluppare applicazioni mobile, le lotte infinite tra "solo nativo" e tutti i framework di sviluppo cross-platform che si sono succeduti nel tempo (per poi sfociare in React Native e Flutter). I primi anni in particolare le discussioni sul web e al lavoro tendevano ad essere particolarmente accese, sfociando quasi nel ridicolo.  
+Anche negli ultimi anni non è stato diverso, dal push a "tutto deve essere un microservizio" al "tutto deve stare nel cloud", c'e sempre stato qualcuno che ha cercato di spingere nella direzione del "dobbiamo fare \<nuova tech/soluzione disposibile\> perché è la ricetta definitiva per tutti i nostri problemi".  
+Anche lato pratiche di sviluppo ho visto le stesse sbagliate: chi di voi non ha mai discusso su temi legati alle pratiche agile? Quante società di consulenza abbiamo visto nel corso degli anni proporre "la ricetta definitiva per rendere snelli i tuoi processi di sviluppo e adattarti alla 'velocità della luce' ai cambiamenti di mercato"?  
+Ed ora la storia si sta ripentendo di nuovo: ogni giorno sui social trovo qualcuno che scrive con convinzione di aver trovato la ricetta definitiva per lanciare n-mila milioni di agenti per sviluppare, skill definitive per cui non ti servirà null'altro, plugin e soluzioni generali e che vanno bene per tutti per automatizzare i processi di sviluppo. Ma quante di queste soluzioni sono davvero valide al 100% per tutti?
+
+Sono convinto che tutto quello che ho riportato sopra sia una conseguenza intrinseca nella natura del settore della computer science, e di conseguenza di chi ne fa parte, in particolare degli sviluppatori software. Da sempre siamo portati ad astrarre. Ne siamo talmente convinti che è diventato anche uno dei principi cardini della programmazione: [DRY (Don't Repeat Yourself)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). Quando scriviamo codice (e di questi tempi quando l'AI lo scrive per noi :sweat_smile:), questo diventa uno dei nostri superpoteri, per scrivere software facili da mantenere e riutilizzabili nel tempo.  
+Questo peró è diventata anche la nostra ossessione come programmatori, al limite della patologia: voglia astrarre ogni cosa, anche fuori dalla programmazione. Vogliamo generalizzare ogni cosa, inclusi processi e persone. Perchè? La causa va cercata nel nostro odio per l'ambiguità.
+
+La nostra ossessione per la generalizzazione è così radicata al punto che ha generato ricerca e dei paper universitari nel corso del tempo sul tema. In particolare, vorrei soffermare la mia attenzione su ["No Silver Bullet Essence and Accidents of Software Engineering"](https://www.cs.unc.edu/techreports/86-020.pdf) di Fred Brooks, che ho visto riportato anche in [blog post](https://cekrem.github.io/posts/there-is-still-no-silver-bullet/) in cui mi sono imbattuto di recente.  
+Brooks apre il saggio paragonando i progetti software a dei licantropi. Come persone normali si possono trasformare in mostri spaventosi, anche i progetti software seguono lo stesso schema: timeline sforate, feature mancanti, bugs, budget sforati. Da qui la tesi di Brooks: molti cercano la "silver bullet" per i progetti software, ma quest'ultima non esiste.
+Brooks parte descrivendo la difficoltà di sviluppare software [usando la filosofia aristotelica](https://it.wikipedia.org/wiki/Essenza_(filosofia)), e le divide in due grandi categorie:
+
+- complessità accidentale, data dal modo (dagli strumenti e i limiti intrisechi che portano con se) in cui traduciamo  una visione/un prodotto in un software. Questi sono fortemente accoppiati alla tecnologia disponibile in un determinato momento storico 
+- complessità essenziale, data dalla natura stessa dell'attività di creare software. Risolvere le ambiguità dei requisiti, capire e definire cosa si vuole creare, modellare tale visione in un dominio ben definito.
+
+Il punto fondamentale del paper è un tema che spesso discuto con vari colleghi: la parte difficile nello sviluppo software è legata alla complessità essenziale.
+La cosa incredibile di quel paper (riportata anche nel post che ho linkato sopra), è che 40 anni fa (fun fact, il paper è stato rilasciato nel mese/anno in cui sono nato :laughing:) Brooks parla anche di AI, usando un termine che sento spesso sui social da vari tech influencer: automatic programming.  
+Di fatto è vero: gli LLM hanno praticamente azzerato la complessità accidentale dello sviluppo software. Nonostante il loro grado di generalizzazione in termini di scrittura, hanno azzerato anche la complessità essenziale? Non fraintedetemi, so bene che allo stato attuale delle cose gli LLM possono aiutarti a ragionare su un set di problemi molto ampio. Ma sono davvero la "silver bullet" del software development? O abbiamo nuovamente alzato il livello di astrazione con cui scriviamo software? La risposta sta davanti a me tutti i giorni.  
+Nell'azienda in cui lavoro facciamo un uso massiccio di questi strumenti, e di fatto abbiamo velocizzato incredibilmente molte delle nostre attività. 
+Ma di fatto, ancora oggi nonostante tutto, mi ritrovo spesso a dover affrontare problematiche dove non esiste una risposta generale/l'algoritmo del tutto: ad oggi la risoluzione di un determinato problema o lo sviluppo di una nuova feature richiedono soluzioni che dipendono fortemente da quello che si sta facendo.  
+Senza scendere nei dettagli, anche l'utilizzo degli LLM per lo sviluppo cambia radicalmente tra team/aree diverse, e a volte addirittura anche all'interno dello stesso team. Questo perché ancora oggi il prodotto su cui un'area lavora, e le persona che ci lavorano, hanno esigenze diverse dettate dal prodotto stesso o dalla natura della persona, e richiedono un approccio che **dipende dalla situazione**.  
+
 
