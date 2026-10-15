@@ -56,3 +56,4 @@ No per-PR facts — those go stale.
 - [data-redundant-filter-guard-equivalent-mutant.md](data-redundant-filter-guard-equivalent-mutant.md) — a guard the current data makes redundant survives deletion; "excludes X" tests over real data are vacuous
 - [run-prettier-check-in-unit-review.md](run-prettier-check-in-unit-review.md) — Unit Checks skip CI's `format` job (gates build); `npx prettier --check` the diff's files; .astro is never checked
 - [turbo-affected-head-flag-false-positive.md](turbo-affected-head-flag-false-positive.md) — `turbo query affected --head=<sha>` falsely reports website affected; inputs globs never make dependents affected
+- [hook-and-ci-changes-drift-testing-rule.md](hook-and-ci-changes-drift-testing-rule.md) — .claude/rules/testing.md quotes .husky/pre-push verbatim + the CI graph; a hook/ci.yml diff leaves it stale
