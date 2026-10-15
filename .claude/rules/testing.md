@@ -138,10 +138,14 @@ validate-arch  -+- typecheck -+- test -> build -> e2e
 ## Pre-Push Hook (.husky/pre-push)
 
 ```
+npm run format:check
 npm run validate-architecture
 npm run typecheck
 npm run test:run
 ```
+
+`format:check` runs first because it is the cheapest, and because a direct push to `main` skips PR CI: an unformatted
+file pushed that way turns the Format job red on every branch built on `main`.
 
 E2E is NOT in pre-push — the production build takes too long. Run `npm run test:e2e` manually before opening a PR that touches routing or API routes.
 
