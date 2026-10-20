@@ -17,7 +17,7 @@
     "@astrojs/starlight": "^0.42.6",
     "@mermaid-js/layout-elk": "^1.0.1",
     "@typegpu/noise": "^0.12.1",
-    "@typegpu/react": "^0.12.1",
+    "@typegpu/react": "^0.12.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "astro": "^7.3.8",
@@ -27,7 +27,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "sharp": "^0.35.5",
-    "typegpu": "^0.12.7"
+    "typegpu": "^0.12.8"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
@@ -37,7 +37,7 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "typescript": "npm:tsover@6.0.2",
-    "unplugin-typegpu": "^0.12.5"
+    "unplugin-typegpu": "^0.12.6"
   },
   "overrides": {
     "typescript": "npm:tsover@6.0.2"
