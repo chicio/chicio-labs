@@ -17,7 +17,7 @@
     "@astrojs/react": "^7.1.0",
     "astro": "^7.4.1",
     "cookie": "2.0.1",
-    "framer-motion": "^14.3.0",
+    "framer-motion": "^14.4.0",
     "labs-catalog": "^0.0.0",
     "matrix-design-system": "^3.0.0",
     "react": "^19.3.0",
