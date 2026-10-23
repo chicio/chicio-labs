@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "matrix-design-system": "^3.0.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@storybook/react-vite": "^10.6.2",
