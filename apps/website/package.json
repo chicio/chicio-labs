@@ -97,7 +97,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^5.0.4",
-    "agent-browser": "^0.39.1",
+    "agent-browser": "^0.39.2",
     "babel-plugin-react-compiler": "^1.0.0",
     "dependency-cruiser": "^18.7.0",
     "esbuild": "^0.28.2",
