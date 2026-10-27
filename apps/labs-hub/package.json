@@ -14,8 +14,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.0",
-    "astro": "^7.4.1",
+    "@astrojs/react": "^7.1.1",
+    "astro": "^7.4.2",
     "cookie": "2.0.1",
     "framer-motion": "^14.6.0",
     "labs-catalog": "^0.0.0",
