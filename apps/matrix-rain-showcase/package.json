@@ -32,7 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.11",
     "@webgpu/types": "^0.1.74",
-    "katex": "^0.19.0",
+    "katex": "^0.19.1",
     "rehype-external-links": "^3.0.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
