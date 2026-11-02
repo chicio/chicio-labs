@@ -44,7 +44,7 @@
     "release": "release-it"
   },
   "devDependencies": {
-    "tsdown": "0.23.2",
+    "tsdown": "0.23.4",
     "typescript": "^7.0.2"
   }
 }
