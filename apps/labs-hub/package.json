@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^7.1.1",
-    "astro": "^7.4.2",
+    "astro": "^7.4.12",
     "cookie": "2.0.1",
     "framer-motion": "^14.6.0",
     "labs-catalog": "^0.0.0",
