@@ -27,7 +27,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "sharp": "^0.35.5",
-    "typegpu": "^0.12.9"
+    "typegpu": "^0.12.10"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
@@ -37,7 +37,7 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "typescript": "npm:tsover@6.0.2",
-    "unplugin-typegpu": "^0.12.7"
+    "unplugin-typegpu": "^0.12.8"
   },
   "overrides": {
     "typescript": "npm:tsover@6.0.2"
