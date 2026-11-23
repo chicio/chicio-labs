@@ -73,7 +73,7 @@
     "remark-mdx": "^3.1.1",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
-    "resend": "^6.38.1",
+    "resend": "^6.39.0",
     "serwist": "^9.5.15",
     "tailwindcss": "^4.3.5",
     "tsx": "^4.23.15",
