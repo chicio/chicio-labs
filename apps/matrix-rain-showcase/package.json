@@ -12,7 +12,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.9",
+    "@astrojs/markdown-remark": "^7.3.10",
     "@astrojs/react": "^7.1.9",
     "@astrojs/starlight": "^0.43.1",
     "@mermaid-js/layout-elk": "^1.0.2",
@@ -20,7 +20,7 @@
     "@typegpu/react": "^0.12.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "astro": "^7.4.12",
+    "astro": "^7.4.13",
     "astro-mermaid": "^2.2.0",
     "cookie": "2.0.2",
     "mermaid": "^12.3.0",
