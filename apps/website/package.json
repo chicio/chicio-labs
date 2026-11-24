@@ -99,13 +99,13 @@
     "@vitest/coverage-v8": "^5.1.1",
     "agent-browser": "^0.43.0",
     "babel-plugin-react-compiler": "^1.0.0",
-    "dependency-cruiser": "^18.7.0",
+    "dependency-cruiser": "^18.8.0",
     "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "eslint-plugin-chicio": "^1.0.0",
     "jsdom": "^31.0.1",
-    "knip": "^6.43.0",
+    "knip": "^6.47.0",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }
