@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "@typegpu/noise": "0.12.1",
-    "@typegpu/react": "0.12.3",
-    "typegpu": "0.12.10"
+    "@typegpu/react": "0.12.4",
+    "typegpu": "0.12.11"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
@@ -60,7 +60,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "npm:tsover@6.0.2",
-    "unplugin-typegpu": "^0.12.8",
+    "unplugin-typegpu": "^0.12.9",
     "vite": "^8.3.5"
   },
   "peerDependencies": {
